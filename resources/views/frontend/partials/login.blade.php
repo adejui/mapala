@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="p-10 md:p-16 flex flex-col justify-center h-full">=
-                    <div x-data="{ userType: 'anggota' }" class="w-full">
+                    <div x-data="{ userType: 'anggota' }" @trigger-login-opa.window="userType = 'opa'; $dispatch('open-login-modal')" class="w-full">
 
                         <div class="text-center mb-8">
                             <img src="{{ asset('frontend/images/logo.jpeg') }}" alt="Logo"

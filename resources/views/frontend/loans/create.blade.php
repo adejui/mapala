@@ -55,7 +55,7 @@
                                 <div class="md:col-span-2">
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Nama
                                         Lengkap <span class="text-red-500">*</span></label>
-                                    <input type="text" name="name" value="{{ old('name') }}"
+                                    <input type="text" name="name" value="{{ old('name', auth()->user()->full_name ?? '') }}"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                         @error('name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="Masukkan nama lengkap sesuai KTP...">
@@ -68,7 +68,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Kampus
                                         Asal <span class="text-red-500">*</span></label>
-                                    <input type="text" name="campus_name" value="{{ old('campus_name') }}"
+                                    <input type="text" name="campus_name" value="{{ old('campus_name', auth()->check() ? 'Universitas Bina Sarana Informatika Yogyakarta' : '') }}"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                         @error('campus_name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="Contoh: UBSI Yogyakarta">
@@ -82,7 +82,7 @@
                                     <label
                                         class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Organisasi
                                         <span class="text-red-500">*</span></label>
-                                    <input type="text" name="organization_name" value="{{ old('organization_name') }}"
+                                    <input type="text" name="organization_name" value="{{ old('organization_name', auth()->check() ? 'Tarantula Adventure' : '') }}"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                         @error('organization_name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="Mapala / UKM / Umum">
@@ -95,7 +95,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">No
                                         WhatsApp <span class="text-red-500">*</span></label>
-                                    <input type="number" name="phone_number" value="{{ old('phone_number') }}"
+                                    <input type="number" name="phone_number" value="{{ old('phone_number', auth()->user()->phone ?? '') }}"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                         @error('phone_number') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="08xxxxxxxxxx">
@@ -108,7 +108,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Email
                                         <span class="text-red-500">*</span></label>
-                                    <input type="email" name="email" value="{{ old('email') }}"
+                                    <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                         @error('email') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="email@domain.com">

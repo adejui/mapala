@@ -92,10 +92,30 @@
 
                             <div class="flex items-center gap-2">
 
-                                <button onclick="addToCart({{ $item->id }})"
-                                    class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm">
-                                    <i class="fa-solid fa-plus text-sm"></i>
-                                </button>
+                                @auth
+                                    <button onclick="addToCart({{ $item->id }})"
+                                        class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm">
+                                        <i class="fa-solid fa-plus text-sm"></i>
+                                    </button>
+                                @else
+                                    <button
+                                        onclick="Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Login Dulu!',
+                                            text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
+                                            confirmButtonText: 'Login OPA', // Ubah teks biar jelas
+                                            confirmButtonColor: '#7C3AED',
+                                            showCancelButton: true,
+                                            cancelButtonText: 'Nanti Saja'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // 1. Kirim Sinyal 'Buka Modal OPA'
+                                                window.dispatchEvent(new CustomEvent('trigger-login-opa'));
+                                            }
+                                        })"
+                                        class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400 flex items-center justify-center hover:border-[#7C3AED] hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
+                                        <i class="fa-solid fa-lock text-sm"></i> </button>
+                                @endauth
 
 
 
@@ -222,8 +242,19 @@
 
                     <p class="text-sm text-gray-500 mb-6">Pastikan barang sudah sesuai sebelum mengajukan peminjaman.</p>
 
-                    <a href="{{ route('frontend.pinjaman') }}"
-                        class="flex items-center justify-center rounded-xl bg-[#7C3AED] px-6 py-4 text-base font-bold text-white shadow-lg hover:bg-[#6D28D9] transition-all">
+                    <button type="button" id="btn-empty"
+                        onclick="Swal.fire({
+                            icon: 'warning',
+                            title: 'Keranjang Kosong!',
+                            text: 'Silakan pilih alat terlebih dahulu.',
+                            confirmButtonColor: '#7C3AED'
+                        })"
+                        class="w-full flex items-center justify-center rounded-xl bg-gray-200 px-6 py-4 text-base font-bold text-gray-400 cursor-not-allowed transition-all {{ count(session('cart', [])) > 0 ? 'hidden' : '' }}">
+                        <i class="fa-solid fa-ban mr-2"></i> Keranjang Kosong
+                    </button>
+
+                    <a href="{{ route('frontend.pinjaman') }}" id="btn-filled"
+                        class="w-full flex items-center justify-center rounded-xl bg-[#7C3AED] px-6 py-4 text-base font-bold text-white shadow-lg hover:bg-[#6D28D9] transition-all transform hover:-translate-y-1 {{ count(session('cart', [])) == 0 ? 'hidden' : '' }}">
                         Lanjut Isi Formulir <i class="fa-solid fa-arrow-right ml-2"></i>
                     </a>
 
@@ -244,10 +275,8 @@
     <script>
         function updateFloatingBadge(total) {
             const badge = document.getElementById("cart-badge");
-
             if (badge) {
                 badge.innerText = total;
-
                 if (total > 0) {
                     badge.classList.remove("hidden");
                 } else {
@@ -255,6 +284,7 @@
                 }
             }
         }
+
 
         function toggleCart() {
             const drawer = document.getElementById("cart-drawer");
@@ -276,6 +306,7 @@
             }
         }
 
+
         function reloadCart() {
             fetch("{{ route('frontend.inventory') }}?cart=1")
                 .then(res => res.text())
@@ -283,8 +314,10 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, "text/html");
 
+
                     document.getElementById("cart-items").innerHTML =
                         doc.querySelector("#cart-items").innerHTML;
+
 
                     const newTotal = doc.querySelector("#cart-total").innerText;
                     const footerTotal = document.getElementById("cart-total");
@@ -292,13 +325,29 @@
                         footerTotal.innerText = newTotal;
                     }
 
+
                     const newHeaderCount = doc.querySelector("#drawer-count").innerText;
                     const headerCountElement = document.getElementById("drawer-count");
-
                     if (headerCountElement) {
                         headerCountElement.innerText = newHeaderCount;
                     }
                 });
+        }
+
+
+        function checkCartButton(totalQty) {
+            let btnEmpty = document.getElementById('btn-empty');
+            let btnFilled = document.getElementById('btn-filled');
+
+            if (btnEmpty && btnFilled) {
+                if (totalQty > 0) {
+                    btnEmpty.classList.add('hidden');
+                    btnFilled.classList.remove('hidden');
+                } else {
+                    btnEmpty.classList.remove('hidden');
+                    btnFilled.classList.add('hidden');
+                }
+            }
         }
 
         function addToCart(id) {
@@ -310,11 +359,12 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    reloadCart(); 
-                    toggleCart(); 
+                    reloadCart();
+                    toggleCart();
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
+                        checkCartButton(data.total);
                     }
                 })
                 .catch(err => console.error("Error:", err));
@@ -338,13 +388,13 @@
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
+                        checkCartButton(data.total);
                     }
                 })
                 .catch(err => console.error("Error:", err));
         }
 
         function removeItem(id) {
-
             fetch("/inventory/cart/remove/" + id, {
                     method: "POST",
                     headers: {
@@ -357,6 +407,7 @@
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
+                        checkCartButton(data.total);
                     }
                 });
         }
