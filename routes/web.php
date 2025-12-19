@@ -48,10 +48,9 @@ Route::name('frontend.')->group(function () {
     Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
 
     Route::get('/kegiatan', [PublicActivityController::class, 'index'])->name('kegiatan');
+    Route::get('/kegiatan/show', [PublicActivityController::class, 'show'])->name('kegiatan.show');
 
     Route::post('/inventory/cart/add/{id}', [InventoryController::class, 'addToCart'])->name('inventory.cart.add');
-
-
     Route::post('/inventory/cart/update-qty', [InventoryController::class, 'updateQty'])
         ->name('inventory.cart.updateQty');
 

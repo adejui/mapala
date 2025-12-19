@@ -45,4 +45,9 @@ class PublicActivityController extends Controller
 
         return view('frontend.activities.index', compact('events', 'upcomingActivities'));
     }
+
+    public function show()
+    {
+        return view('frontend.activities.show');
+    }
 }

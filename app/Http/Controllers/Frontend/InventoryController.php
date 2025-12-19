@@ -15,8 +15,7 @@ class InventoryController extends Controller
     {
         $query = Item::with('category');
 
-        // --- LOGIC 1: PENCARIAN (SEARCH) ---
-        // Jika user mengetik sesuatu di kolom search
+        
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -25,8 +24,7 @@ class InventoryController extends Controller
             });
         }
 
-        // --- LOGIC 2: FILTER KATEGORI ---
-        // Jika user memilih kategori selain "Semua"
+        
         if ($request->filled('category') && $request->category !== 'Semua') {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('name', $request->category);

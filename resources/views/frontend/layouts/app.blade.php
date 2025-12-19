@@ -55,7 +55,10 @@
     @include('frontend.partials.login')
 
     <script src="{{ asset('frontend/js/aos.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('frontend/js/sweetalert2.js') }}"></script>
+    <script src="{{ asset('frontend/js/alpine-collapse.js') }}"></script>
+    <script src="{{ asset('frontend/js/alpine.js') }}"></script>
+
     <script>
         /* --- INIT AOS & PRELOADER --- */
         AOS.init({

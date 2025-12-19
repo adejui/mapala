@@ -123,7 +123,7 @@
                         {{ Str::limit($activity->description, 120) }}
                     </p>
 
-                    <a href="#"
+                    <a href="{{ route('frontend.kegiatan.show') }}"
                         class="inline-flex items-center gap-2 text-[#7753AF] font-semibold text-sm hover:underline">
                         Lihat Detail Kegiatan <i class="fa-solid fa-arrow-right"></i>
                     </a>
