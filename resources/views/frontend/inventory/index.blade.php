@@ -92,10 +92,30 @@
 
                             <div class="flex items-center gap-2">
 
-                                <button onclick="addToCart({{ $item->id }})"
-                                    class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm">
-                                    <i class="fa-solid fa-plus text-sm"></i>
-                                </button>
+                                @auth
+                                    <button onclick="addToCart({{ $item->id }})"
+                                        class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm">
+                                        <i class="fa-solid fa-plus text-sm"></i>
+                                    </button>
+                                @else
+                                    <button
+                                        onclick="Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Login Dulu!',
+                                            text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
+                                            confirmButtonText: 'Login OPA', // Ubah teks biar jelas
+                                            confirmButtonColor: '#7C3AED',
+                                            showCancelButton: true,
+                                            cancelButtonText: 'Nanti Saja'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // 1. Kirim Sinyal 'Buka Modal OPA'
+                                                window.dispatchEvent(new CustomEvent('trigger-login-opa'));
+                                            }
+                                        })"
+                                        class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400 flex items-center justify-center hover:border-[#7C3AED] hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
+                                        <i class="fa-solid fa-lock text-sm"></i> </button>
+                                @endauth
 
 
 
@@ -265,7 +285,7 @@
             }
         }
 
-        
+
         function toggleCart() {
             const drawer = document.getElementById("cart-drawer");
             const panel = document.getElementById("cart-panel");
@@ -286,7 +306,7 @@
             }
         }
 
-       
+
         function reloadCart() {
             fetch("{{ route('frontend.inventory') }}?cart=1")
                 .then(res => res.text())
@@ -294,18 +314,18 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, "text/html");
 
-                    
+
                     document.getElementById("cart-items").innerHTML =
                         doc.querySelector("#cart-items").innerHTML;
 
-                    
+
                     const newTotal = doc.querySelector("#cart-total").innerText;
                     const footerTotal = document.getElementById("cart-total");
                     if (footerTotal) {
                         footerTotal.innerText = newTotal;
                     }
 
-                    
+
                     const newHeaderCount = doc.querySelector("#drawer-count").innerText;
                     const headerCountElement = document.getElementById("drawer-count");
                     if (headerCountElement) {
@@ -314,7 +334,7 @@
                 });
         }
 
-    
+
         function checkCartButton(totalQty) {
             let btnEmpty = document.getElementById('btn-empty');
             let btnFilled = document.getElementById('btn-filled');
@@ -340,11 +360,11 @@
                 .then(res => res.json())
                 .then(data => {
                     reloadCart();
-                    toggleCart(); 
+                    toggleCart();
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
-                        checkCartButton(data.total); 
+                        checkCartButton(data.total);
                     }
                 })
                 .catch(err => console.error("Error:", err));
@@ -368,7 +388,7 @@
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
-                        checkCartButton(data.total); 
+                        checkCartButton(data.total);
                     }
                 })
                 .catch(err => console.error("Error:", err));
@@ -387,7 +407,7 @@
 
                     if (data.total !== undefined) {
                         updateFloatingBadge(data.total);
-                        checkCartButton(data.total); 
+                        checkCartButton(data.total);
                     }
                 });
         }
