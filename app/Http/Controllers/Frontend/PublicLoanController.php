@@ -19,9 +19,15 @@ class PublicLoanController extends Controller
     {
         $cart = session('cart', []);
 
-        return view('frontend.loans.create', [
-            'cartItems' => $cart
-        ]);
+    // Kalau kosong, tendang balik ke inventory
+    if (empty($cart)) {
+        return redirect()->route('frontend.inventory')
+            ->with('error', 'Keranjang masih kosong! Pilih alat dulu bosku.');
+    }
+
+    return view('frontend.loans.create', [
+        'cartItems' => $cart
+    ]);
     }
 
     public function store(Request $request)

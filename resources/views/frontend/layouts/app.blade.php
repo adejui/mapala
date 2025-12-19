@@ -22,7 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 </head>
 
-<body x-data="{ loginOpen: {{ $errors->any() ? 'true' : 'false' }} }" @open-login-modal.window="loginOpen = true" class="text-white m-0 p-0 overflow-x-hidden antialiased">
+<body x-data="{ loginOpen: false }" @open-login-modal.window="loginOpen = true" class="text-white m-0 p-0 overflow-x-hidden antialiased">
     <div id="preloader"
         class="fixed inset-0 z-[9999] bg-gray-900 flex items-center justify-center transition-opacity duration-500">
         <div class="flex flex-col items-center gap-4">
@@ -60,7 +60,6 @@
     <script src="{{ asset('frontend/js/alpine.js') }}"></script>
 
     <script>
-        /* --- INIT AOS & PRELOADER --- */
         AOS.init({
             once: true,
             duration: 800
@@ -76,27 +75,22 @@
             });
         }
 
-        /* =========================================
-           LOGIC NAVBAR & MOBILE MENU
-        ========================================= */
+        
         const navbar = document.getElementById("navbar");
         const btn = document.getElementById("mobile-menu-btn");
         const menu = document.getElementById("mobile-menu");
         const icon = btn ? btn.querySelector("i") : null;
 
-        // 1. INI VARIABEL BARU (Wajib ada biar JS tau ini halaman apa)
         const isHomePage = {{ Request::routeIs('frontend.home') ? 'true' : 'false' }}; 
 
         function updateNavbar() {
 
-            // 2. INI LOGIKA PENGAMAN BARU (Kalau bukan Home, Paksa Hitam & Stop)
             if (!isHomePage) {
                 navbar.classList.add("bg-[#1c1c1c]", "shadow-lg", "py-3");
                 navbar.classList.remove("bg-transparent", "py-4", "border-white/10");
                 if (btn) btn.classList.add("text-white");
                 return; 
             }
-            // ---------------------------------------------------------
 
             
             const isScrolled = window.scrollY > 50;
@@ -113,7 +107,6 @@
             if (btn) btn.classList.add("text-white");
         }
 
-        // --- EKSEKUSI ---
 
         updateNavbar();
         window.addEventListener("scroll", updateNavbar);
