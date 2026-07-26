@@ -51,23 +51,6 @@
 
         <div class="hidden md:flex items-center gap-4">
 
-            {{-- @auth
-                @if (!in_array(auth()->user()->role, ['member', 'logistics', 'admin']))
-                @endif
-            @else
-                <div class="relative group">
-                    <input type="text" placeholder="Cari alat, artikel..."
-                        class="bg-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-white/20 focus:outline-none focus:border-[#7C3AED] focus:bg-white/20 focus:w-64 placeholder-gray-400 w-48 transition-all duration-300">
-                    <i
-                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 group-hover:text-white transition-colors text-xs"></i>
-                </div>
-
-                <a href="javascript:void(0)" @click="loginOpen = true"
-                    class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
-                    Sign In
-                </a>
-            @endauth --}}
-
             @if (!Auth::guard('web')->check() && !Auth::guard('opa')->check())
                 <div class="relative group">
                     <input type="text" placeholder="Cari alat, artikel..."
@@ -78,24 +61,9 @@
 
                 <a href="javascript:void(0)" @click="loginOpen = true"
                     class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
-                   Login
+                    Login
                 </a>
             @endif
-
-
-            {{-- @guest
-                <div class="relative group">
-                    <input type="text" placeholder="Cari alat, artikel..."
-                        class="bg-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-white/20 focus:outline-none focus:border-[#7C3AED] focus:bg-white/20 focus:w-64 placeholder-gray-400 w-48 transition-all duration-300">
-                    <i
-                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 group-hover:text-white transition-colors text-xs"></i>
-                </div>
-
-                <a href="javascript:void(0)" @click="loginOpen = true"
-                    class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
-                    Sign In
-                </a>
-            @endguest --}}
 
             @auth('opa')
                 <div x-data="{ open: false }" class="relative">
@@ -164,11 +132,6 @@
 
                         </button>
 
-                        @php
-                            $opa = auth('opa')->user();
-                            $user = auth('web')->user();
-                        @endphp
-
                         <div x-show="openNotif" x-transition.opacity.duration.150ms x-cloak
                             class="absolute right-0 mt-2 w-80 bg-white text-gray-800 rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
 
@@ -211,82 +174,75 @@
                         </div>
                     </div>
 
-                    @php
-                        $opa = auth('opa')->user();
-                        $user = auth('web')->user();
-                    @endphp
-                    @if ($user)
-                        <div x-data="{ userDropdown: false }" class="relative">
-                            <button @click="userDropdown = !userDropdown" @click.away="userDropdown = false"
-                                class="flex items-center gap-3 focus:outline-none group text-left">
+                    <div x-data="{ userDropdown: false }" class="relative">
+                        <button @click="userDropdown = !userDropdown" @click.away="userDropdown = false"
+                            class="flex items-center gap-3 focus:outline-none group text-left">
 
+                            <div
+                                class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-white/10 transition-all border border-transparent hover:border-white/10">
+                                <div class="hidden lg:flex flex-col items-end leading-tight">
+                                    <span class="font-bold text-sm text-white group-hover:text-[#7C3AED] transition-colors">
+                                        {{ Auth::user()->full_name }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
+                                        {{ Auth::user()->role ?? 'ANGGOTA' }}
+                                    </span>
+                                </div>
                                 <div
-                                    class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-white/10 transition-all border border-transparent hover:border-white/10">
-                                    <div class="hidden lg:flex flex-col items-end leading-tight">
-                                        <span
-                                            class="font-bold text-sm text-white group-hover:text-[#7C3AED] transition-colors">
-                                            {{ Auth::user()->full_name }}
-                                        </span>
-                                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-                                            {{ Auth::user()->role ?? 'ANGGOTA' }}
-                                        </span>
-                                    </div>
-                                    <div
-                                        class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-500 group-hover:border-[#7C3AED] transition-all shadow-md">
-                                        <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('frontend/images/user-default.jpeg') }}"
-                                            alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
-                                    </div>
-                                    <i class="fa-solid fa-chevron-down text-gray-500 text-[10px] transition-transform duration-300 group-hover:text-white mr-2"
-                                        :class="{ 'rotate-180': userDropdown }"></i>
+                                    class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-500 group-hover:border-[#7C3AED] transition-all shadow-md">
+                                    <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('frontend/images/user-default.jpeg') }}"
+                                        alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                                 </div>
-                            </button>
+                                <i class="fa-solid fa-chevron-down text-gray-500 text-[10px] transition-transform duration-300 group-hover:text-white mr-2"
+                                    :class="{ 'rotate-180': userDropdown }"></i>
+                            </div>
+                        </button>
 
-                            <div x-show="userDropdown" x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 translate-y-2"
-                                x-transition:enter-end="opacity-100 translate-y-0" x-cloak
-                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 text-gray-800 z-50 overflow-hidden border border-gray-100 origin-top-right ring-1 ring-black ring-opacity-5">
+                        <div x-show="userDropdown" x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0" x-cloak
+                            class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 text-gray-800 z-50 overflow-hidden border border-gray-100 origin-top-right ring-1 ring-black ring-opacity-5">
 
-                                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 lg:hidden">
-                                    <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
-                                </div>
-                                <div class="py-1">
-                                    <a href="{{ route('frontend.user.profile') }}"
+                            <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 lg:hidden">
+                                <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                            </div>
+                            <div class="py-1">
+                                <a href="{{ route('frontend.user.profile') }}"
+                                    class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                                    <i
+                                        class="fa-regular fa-user w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                    Profile Saya
+                                </a>
+
+                                @if (Auth::check() && (Auth::user()->role === 'member' || Auth::user()->role === 'opa'))
+                                    <a href="{{ route('frontend.history') }}"
                                         class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
                                         <i
-                                            class="fa-regular fa-user w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
-                                        Profile Saya
+                                            class="fa-solid fa-clipboard-list w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                        Riwayat Peminjaman
                                     </a>
-
-                                    @if (Auth::check() && (Auth::user()->role === 'member' || Auth::user()->role === 'opa'))
-                                        <a href="{{ route('frontend.history') }}"
-                                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
-                                            <i
-                                                class="fa-solid fa-clipboard-list w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
-                                            Riwayat Peminjaman
-                                        </a>
-                                    @endif
-                                    @if (Auth::user()->role === 'admin' || Auth::user()->role === 'logistics')
-                                        <a href="{{ route('dashboard') }}"
-                                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
-                                            <i
-                                                class="fa-solid fa-gauge-high w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
-                                            Dashboard
-                                        </a>
-                                    @endif
-                                </div>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full group flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                                @endif
+                                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'logistics')
+                                    <a href="{{ route('dashboard') }}"
+                                        class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
                                         <i
-                                            class="fa-solid fa-right-from-bracket w-5 text-red-400 group-hover:text-red-600 transition-colors"></i>
-                                        Logout
-                                    </button>
-                                </form>
+                                            class="fa-solid fa-gauge-high w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                        Dashboard
+                                    </a>
+                                @endif
                             </div>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full group flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                                    <i
+                                        class="fa-solid fa-right-from-bracket w-5 text-red-400 group-hover:text-red-600 transition-colors"></i>
+                                    Logout
+                                </button>
+                            </form>
                         </div>
-                    @endif
+                    </div>
                 @endif
             @endauth
         </div>
@@ -368,11 +324,9 @@
                         </a>
                     @endif
 
-                    <a href="#" class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
+                    <a href="{{ route('frontend.user.profile') }}"
+                        class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
                         <i class="fa-regular fa-user w-6 text-center"></i> Profile Saya
-                    </a>
-                    <a href="#" class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
-                        <i class="fa-solid fa-gear w-6 text-center"></i> Pengaturan
                     </a>
 
                     <form method="POST" action="{{ route('logout') }}">
@@ -385,15 +339,16 @@
                 </div>
             @endauth
 
-            {{-- @guest
+            {{-- TOMBOL LOGIN UNTUK MOBILE (GUEST) — INI YANG SEBELUMNYA HILANG KARENA DI-COMMENT --}}
+            @if (!Auth::guard('web')->check() && !Auth::guard('opa')->check())
                 <div class="border-t border-white/10 pt-6 flex flex-col gap-4 mt-4">
                     <a href="javascript:void(0)"
                         @click="loginOpen = true; document.getElementById('mobile-menu').classList.add('hidden')"
                         class="block w-full text-center py-3 rounded-xl bg-[#7C3AED] text-white font-semibold hover:bg-[#6D28D9] transition-colors shadow-lg">
-                        Sign In
+                        Login
                     </a>
                 </div>
-            @endguest --}}
+            @endif
 
             <div class="mt-8 pt-6 border-t border-white/10">
                 <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-4">Hubungi Kami</p>

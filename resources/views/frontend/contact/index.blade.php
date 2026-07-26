@@ -6,45 +6,47 @@
         style="background-image: radial-gradient(#7C3AED 0.5px, transparent 0.5px), radial-gradient(#7C3AED 0.5px, #f9fafb 0.5px); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
     </div>
 
-    <div class="min-h-screen pt-32 pb-20 px-6 md:px-16 relative">
+    <div class="min-h-screen pt-24 md:pt-32 pb-16 md:pb-20 px-4 sm:px-6 md:px-16 relative overflow-x-hidden">
 
-        {{-- Blob dekorasi: statis, tanpa blur-3xl & tanpa animasi.
-             Ini titik terberat di versi lama (blur besar + animate-pulse-slow = repaint terus-menerus). --}}
-        <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-purple-200/30 rounded-full pointer-events-none">
+        {{-- Blob dekorasi: ukuran mengecil di mobile + overflow-x-hidden di parent
+             supaya nggak nambah lebar halaman & memicu scroll horizontal --}}
+        <div
+            class="absolute top-0 right-0 -mt-10 -mr-10 sm:-mt-20 sm:-mr-20 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-purple-200/30 rounded-full pointer-events-none">
         </div>
-        <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-blue-100/30 rounded-full pointer-events-none">
+        <div
+            class="absolute bottom-0 left-0 -mb-10 -ml-10 sm:-mb-20 sm:-ml-20 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-blue-100/30 rounded-full pointer-events-none">
         </div>
 
         <div class="max-w-7xl mx-auto relative z-10">
 
-            <div class="text-center mb-16">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+            <div class="text-center mb-12 md:mb-16">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
                     Hubungi Kami
                 </h1>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed px-2">
                     Punya pertanyaan, saran, atau ingin berkolaborasi? Jangan ragu untuk menghubungi kami. Tim kami siap
                     membantu Anda.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-20 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12 mb-16 md:mb-20 items-start">
 
                 {{-- Card info kontak: backdrop-blur diganti solid bg putih -> visual mirip, jauh lebih ringan --}}
                 <div
-                    class="lg:col-span-1 bg-white rounded-[2.5rem] p-8 shadow-lg shadow-purple-100/50 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                    class="lg:col-span-1 w-full bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 shadow-lg shadow-purple-100/50 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-3">
                         <i class="fa-solid fa-circle-info text-[#7C3AED]"></i> Informasi Kontak
                     </h3>
 
-                    <div class="space-y-8">
+                    <div class="space-y-6 sm:space-y-8">
 
-                        <div class="flex items-start gap-5 group">
+                        <div class="flex items-start gap-4 sm:gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-purple-50 text-[#7C3AED] rounded-2xl group-hover:bg-[#7C3AED] group-hover:text-white transition-colors duration-300">
-                                <i class="fa-solid fa-location-dot text-2xl fa-fw"></i>
+                                class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center bg-purple-50 text-[#7C3AED] rounded-2xl group-hover:bg-[#7C3AED] group-hover:text-white transition-colors duration-300">
+                                <i class="fa-solid fa-location-dot text-xl sm:text-2xl fa-fw"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-1">Alamat Kampus</h4>
+                            <div class="min-w-0">
+                                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">Alamat Kampus</h4>
                                 <p class="text-gray-600 leading-relaxed text-sm md:text-base">
                                     Universitas Bina Sarana Informatika (UBSI) Kampus Yogyakarta.
                                     <br>Jl. Ringroad Barat, Gamping, Sleman.
@@ -52,26 +54,26 @@
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-5 group">
+                        <div class="flex items-start gap-4 sm:gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                                <i class="fa-solid fa-phone text-xl fa-fw"></i>
+                                class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                                <i class="fa-solid fa-phone text-lg sm:text-xl fa-fw"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-1">Telepon & WhatsApp</h4>
+                            <div class="min-w-0">
+                                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">Telepon & WhatsApp</h4>
                                 <p class="text-gray-600 font-medium text-sm md:text-base">
                                     +62 812-3456-7890 (WA)
                                 </p>
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-5 group">
+                        <div class="flex items-start gap-4 sm:gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
-                                <i class="fa-solid fa-envelope text-xl fa-fw"></i>
+                                class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                                <i class="fa-solid fa-envelope text-lg sm:text-xl fa-fw"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-1">Email Resmi</h4>
+                            <div class="min-w-0">
+                                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">Email Resmi</h4>
                                 <p class="text-gray-600 font-medium text-sm md:text-base break-all">
                                     info@mapala-tarantula.com <br>
                                     kerjasama@mapala-tarantula.com
@@ -79,17 +81,18 @@
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-5 group border-t border-gray-100 pt-8 mt-2">
+                        <div class="flex items-start gap-4 sm:gap-5 group border-t border-gray-100 pt-6 sm:pt-8 mt-2">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
-                                <i class="fa-solid fa-clock text-xl fa-fw"></i>
+                                class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
+                                <i class="fa-solid fa-clock text-lg sm:text-xl fa-fw"></i>
                             </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                                    Jam Operasional
+                            <div class="min-w-0">
+                                <h4
+                                    class="text-base sm:text-lg font-bold text-gray-900 mb-1 flex flex-wrap items-center gap-2">
+                                    <span>Jam Operasional</span>
 
                                     <span
-                                        class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-extrabold border border-green-200">
+                                        class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-extrabold border border-green-200 whitespace-nowrap">
                                         <span class="relative flex h-2 w-2">
                                             <span
                                                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -114,26 +117,26 @@
 
                 {{-- Card form: backdrop-blur & blob blur dihapus, ganti solid --}}
                 <div
-                    class="lg:col-span-2 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-lg shadow-purple-100/50 border border-gray-100 relative overflow-hidden">
+                    class="lg:col-span-2 w-full bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 md:p-12 shadow-lg shadow-purple-100/50 border border-gray-100 relative overflow-hidden">
 
-                    <h3 class="text-2xl font-bold text-gray-900 mb-8 relative z-10 flex items-center justify-between">
-
-                        <div class="flex items-center gap-3">
+                    <div
+                        class="mb-6 sm:mb-8 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
                             <i class="fa-regular fa-paper-plane text-[#7C3AED]"></i>
                             Kirim Pesan Kepada Kami
-                        </div>
+                        </h3>
 
                         @if (session('success'))
-                            <div class="text-green-500">
+                            <div class="text-green-600 text-sm sm:text-base font-medium">
                                 {{ session('success') }}
                             </div>
                         @endif
+                    </div>
 
-                    </h3>
-
-                    <form action="{{ route('frontend.contact.send') }}" method="POST" class="space-y-6 relative z-10">
+                    <form action="{{ route('frontend.contact.send') }}" method="POST"
+                        class="space-y-5 sm:space-y-6 relative z-10">
                         @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                             <div class="space-y-2">
                                 <label for="name" class="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap
                                     <span class="text-red-500">*</span></label>
@@ -172,8 +175,8 @@
                             <label for="message" class="text-sm font-bold text-gray-700 tracking-wide">Isi Pesan <span
                                     class="text-red-500">*</span></label>
                             <div class="relative">
-                                <textarea id="message" name="message" rows="6" placeholder="Tuliskan pesan lengkap Anda di sini..." required
-                                    class="w-full py-3.5 px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 resize-none font-medium leading-relaxed"></textarea>
+                                <textarea id="message" name="message" rows="5" placeholder="Tuliskan pesan lengkap Anda di sini..." required
+                                    class="w-full py-3.5 px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 resize-none font-medium leading-relaxed sm:rows-6"></textarea>
                             </div>
                         </div>
 
@@ -188,18 +191,20 @@
             </div>
 
             {{-- Peta: dimuat otomatis. loading="lazy" tetap dipakai supaya browser
-                 menunda request sampai elemen mendekati viewport (native lazy-load) --}}
-            <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl border border-gray-100">
+                 menunda request sampai elemen mendekati viewport (native lazy-load).
+                 Tinggi wrapper dibuat responsif via class, iframe ikut mengisi penuh. --}}
+            <div
+                class="relative rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-xl border border-gray-100 h-72 sm:h-96 md:h-[500px]">
                 <div
-                    class="absolute top-0 left-0 right-0 bg-gradient-to-b from-white/90 to-transparent p-8 z-10 pointer-events-none">
-                    <h3 class="text-2xl font-bold text-gray-900 text-center flex items-center justify-center gap-3">
+                    class="absolute top-0 left-0 right-0 bg-gradient-to-b from-white/90 to-transparent p-4 sm:p-6 md:p-8 z-10 pointer-events-none">
+                    <h3
+                        class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 text-center flex items-center justify-center gap-2 sm:gap-3">
                         <i class="fa-solid fa-map-location-dot text-[#7C3AED]"></i> Temukan Lokasi Kami
                     </h3>
                 </div>
 
-                <iframe src="https://maps.google.com/maps?q=-7.801948,110.326779&z=15&output=embed" width="100%"
-                    height="500" style="border:0;" allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
+                <iframe src="https://maps.google.com/maps?q=-7.801948,110.326779&z=15&output=embed" class="w-full h-full"
+                    style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
 

@@ -1,13 +1,14 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-    <div class="bg-white min-h-screen pt-32 pb-20 px-6 md:px-16">
+    <div class="bg-white min-h-screen pt-24 md:pt-32 pb-20 px-4 sm:px-6 md:px-16">
         <div class="max-w-screen-2xl mx-auto">
 
-            <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 gap-3 md:gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Inventaris Peralatan</h1>
-                    <p class="text-gray-500 mt-1">Mahasiswa Pencinta Alam Universitas Bina Sarana Informatika</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Inventaris Peralatan</h1>
+                    <p class="text-gray-500 mt-1 text-sm sm:text-base">Mahasiswa Pencinta Alam Universitas Bina Sarana
+                        Informatika</p>
                 </div>
                 <nav class="flex text-sm font-medium text-gray-500">
                     <a href="{{ route('frontend.home') }}" class="hover:text-[#7C3AED] transition-colors">Home</a>
@@ -17,7 +18,7 @@
             </div>
 
             <form action="{{ route('frontend.inventory') }}" method="GET"
-                class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-10 w-full">
+                class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 sm:gap-4 mb-8 md:mb-10 w-full">
 
                 <div class="relative w-full lg:w-1/3">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
@@ -62,44 +63,46 @@
 
                 </div>
             </form>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6 mb-12">
 
                 @forelse ($items as $item)
                     <div
-                        class="w-full bg-white border-2 border-gray-200 rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
+                        class="w-full bg-white border-2 border-gray-200 rounded-2xl sm:rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
 
-                        <div class="relative w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
+                        <div
+                            class="relative w-full h-36 sm:h-48 md:h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
 
                             <span
-                                class="absolute top-4 left-4 bg-black/20 backdrop-blur-sm text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
+                                class="absolute top-2 left-2 sm:top-4 sm:left-4 bg-black/20 backdrop-blur-sm text-black text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full uppercase tracking-wide z-10">
                                 {{ $item->category->name ?? 'Umum' }}
                             </span>
 
                             <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('frontend/images/tas.jpg') }}"
                                 alt="{{ $item->name }}"
-                                class="w-full h-full object-contain pt-11 px-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                                class="w-full h-full object-contain pt-8 sm:pt-11 px-4 sm:px-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
                         </div>
 
-                        <div class="p-5 flex justify-between items-end grow border-t border-gray-100">
-                            <div>
-                                <h3 class="text-gray-900 font-semibold text-base leading-tight mb-1 line-clamp-2">
+                        <div class="p-3 sm:p-5 flex justify-between items-end gap-2 grow border-t border-gray-100">
+                            <div class="min-w-0">
+                                <h3
+                                    class="text-gray-900 font-semibold text-sm sm:text-base leading-tight mb-1 line-clamp-2">
                                     {{ $item->name }}
                                 </h3>
 
-                                <p class="text-gray-500 text-sm font-medium">
+                                <p class="text-gray-500 text-xs sm:text-sm font-medium">
                                     {{ $item->quantity ?? ($item->stock ?? 0) }} Unit
                                 </p>
                             </div>
 
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
 
                                 @if (($item->quantity ?? ($item->stock ?? 0)) > 0)
                                     @if (auth()->check() || auth('opa')->check())
                                         <button onclick="addToCart({{ $item->id }})"
-                                            class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED]
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 border-[#7C3AED] text-[#7C3AED]
                 flex items-center justify-center hover:bg-[#7C3AED]
                 hover:text-white transition-all duration-300 shadow-sm">
-                                            <i class="fa-solid fa-plus text-sm"></i>
+                                            <i class="fa-solid fa-plus text-xs sm:text-sm"></i>
                                         </button>
                                     @else
                                         <button
@@ -116,22 +119,22 @@
                         window.dispatchEvent(new CustomEvent('trigger-login-opa'));
                     }
                 })"
-                                            class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 border-gray-300 text-gray-400
                 flex items-center justify-center hover:border-[#7C3AED]
                 hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
-                                            <i class="fa-solid fa-lock text-sm"></i>
+                                            <i class="fa-solid fa-lock text-xs sm:text-sm"></i>
                                         </button>
                                     @endif
                                 @endif
 
                                 <a href="{{ route('frontend.inventory.show', $item->id) }}"
-                                    class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center
+                                    class="w-8 h-8 sm:w-10 sm:h-10 bg-[#7753AF] rounded-lg sm:rounded-xl flex items-center justify-center
         text-white hover:bg-[#5e3d8e] hover:scale-110
         transition-all duration-300 shadow-md group/btn"
                                     title="Lihat Detail">
 
                                     <i
-                                        class="fa-solid fa-arrow-right -rotate-45
+                                        class="fa-solid fa-arrow-right text-xs sm:text-sm -rotate-45
             group-hover/btn:rotate-0 transition-transform duration-300"></i>
 
                                 </a>
@@ -142,107 +145,16 @@
                     </div>
 
                 @empty
-                    <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 text-center px-4">
                         <div
-                            class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-3xl">
+                            class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-2xl sm:text-3xl">
                             <i class="fa-solid fa-box-open"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Belum ada barang</h3>
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Belum ada barang</h3>
                         <p class="text-gray-500 text-sm">Inventaris saat ini masih kosong.</p>
                     </div>
                 @endforelse
             </div>
-            {{-- <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
-
-                @forelse ($items as $item)
-                    <div
-                        class="w-full bg-white border-2 border-gray-200 rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
-
-                        <div class="relative w-full h-56 bg-gray-100 overflow-hidden">
-
-                            <span
-                                class="absolute top-4 left-4 bg-black/20 backdrop-blur-sm text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
-                                {{ $item->category->name ?? 'Umum' }}
-                            </span>
-
-                            <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('frontend/images/tas.jpg') }}"
-                                alt="{{ $item->name }}"
-                                class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110">
-                        </div>
-
-                        <div class="p-5 flex justify-between items-end grow border-t border-gray-100">
-                            <div>
-                                <h3 class="text-gray-900 font-semibold text-base leading-tight mb-1 line-clamp-2">
-                                    {{ $item->name }}
-                                </h3>
-
-                                <p class="text-gray-500 text-sm font-medium">
-                                    {{ $item->quantity ?? ($item->stock ?? 0) }} Unit
-                                </p>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-
-                                @if (($item->quantity ?? ($item->stock ?? 0)) > 0)
-
-                                    @if (auth()->check() || auth('opa')->check())
-                                        <button onclick="addToCart({{ $item->id }})"
-                                            class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED]
-                flex items-center justify-center hover:bg-[#7C3AED]
-                hover:text-white transition-all duration-300 shadow-sm">
-                                            <i class="fa-solid fa-plus text-sm"></i>
-                                        </button>
-                                    @else
-                                        <button
-                                            onclick="Swal.fire({
-                    icon: 'warning',
-                    title: 'Login Dulu!',
-                    text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
-                    confirmButtonText: 'Login OPA',
-                    confirmButtonColor: '#7C3AED',
-                    showCancelButton: true,
-                    cancelButtonText: 'Nanti Saja'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.dispatchEvent(new CustomEvent('trigger-login-opa'));
-                    }
-                })"
-                                            class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400
-                flex items-center justify-center hover:border-[#7C3AED]
-                hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
-                                            <i class="fa-solid fa-lock text-sm"></i>
-                                        </button>
-                                    @endif
-                                @endif
-
-                                <a href="{{ route('frontend.inventory.show', $item->id) }}"
-                                    class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center
-        text-white hover:bg-[#5e3d8e] hover:scale-110
-        transition-all duration-300 shadow-md group/btn"
-                                    title="Lihat Detail">
-
-                                    <i
-                                        class="fa-solid fa-arrow-right -rotate-45
-            group-hover/btn:rotate-0 transition-transform duration-300"></i>
-
-                                </a>
-
-                            </div>
-
-                        </div>
-                    </div>
-
-                @empty
-                    <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                        <div
-                            class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-3xl">
-                            <i class="fa-solid fa-box-open"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Belum ada barang</h3>
-                        <p class="text-gray-500 text-sm">Inventaris saat ini masih kosong.</p>
-                    </div>
-                @endforelse
-            </div> --}}
 
             <div class="mt-12">
                 {{ $items->links('vendor.pagination.custom') }}
@@ -250,13 +162,13 @@
 
         </div>
     </div>
-    <div onclick="toggleCart()" class="fixed bottom-8 right-8 z-40">
+    <div onclick="toggleCart()" class="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40">
         <button
-            class="relative w-16 h-16 bg-[#7C3AED] text-white rounded-full shadow-2xl hover:bg-[#6D28D9] hover:scale-110 transition-all duration-300 flex items-center justify-center group">
-            <i class="fa-solid fa-cart-shopping text-2xl group-hover:animate-bounce"></i>
+            class="relative w-12 h-12 sm:w-16 sm:h-16 bg-[#7C3AED] text-white rounded-full shadow-2xl hover:bg-[#6D28D9] hover:scale-110 transition-all duration-300 flex items-center justify-center group">
+            <i class="fa-solid fa-cart-shopping text-lg sm:text-2xl group-hover:animate-bounce"></i>
 
             <span id="cart-badge"
-                class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center 
+                class="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 bg-red-600 text-white text-[10px] sm:text-xs font-bold rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center 
             {{ count(session('cart', [])) > 0 ? '' : 'hidden' }}">
                 {{ count(session('cart', [])) }}
             </span>
@@ -270,60 +182,64 @@
             onclick="toggleCart()"></div>
 
         <!-- Drawer Wrapper -->
-        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 sm:pl-10">
 
             <!-- Drawer Panel -->
             <div id="cart-panel"
                 class="pointer-events-auto w-screen max-w-md transform transition-all duration-500 ease-in-out translate-x-full bg-white shadow-2xl flex flex-col h-full">
 
                 <!-- HEADER -->
-                <div class="flex items-start justify-between px-6 py-6 border-b border-gray-100">
+                <div class="flex items-start justify-between px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-100">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900">Keranjang Alat</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900">Keranjang Alat</h2>
                         <p class="text-sm text-gray-500 mt-1">
                             <span id="drawer-count">{{ count(session('cart', [])) }}</span> Jenis Barang dipilih
                         </p>
                     </div>
                     <button type="button" class="text-gray-400 hover:text-gray-500" onclick="toggleCart()">
-                        <i class="fa-solid fa-xmark text-2xl"></i>
+                        <i class="fa-solid fa-xmark text-xl sm:text-2xl"></i>
                     </button>
                 </div>
 
                 <!-- CART ITEMS -->
-                <div class="flex-1 overflow-y-auto px-6 py-6 space-y-6" id="cart-items">
+                <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 space-y-5 sm:space-y-6" id="cart-items">
                     @foreach (session('cart', []) as $cart)
-                        <div class="flex gap-4">
-                            <div class="h-20 w-20 shrink-0 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
+                        <div class="flex gap-3 sm:gap-4">
+                            <div
+                                class="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
                                 <img src="{{ $cart['photo'] ? asset('storage/' . $cart['photo']) : asset('frontend/images/tas.jpg') }}"
                                     class="h-full w-full object-contain p-2 mix-blend-multiply">
                             </div>
 
-                            <div class="flex flex-1 flex-col">
+                            <div class="flex flex-1 flex-col min-w-0">
                                 <div>
-                                    <div class="flex justify-between text-base font-semibold text-gray-900">
-                                        <h3>{{ $cart['name'] }}</h3>
-                                        <p class="ml-4 text-[#7C3AED] font-bold">#{{ $cart['code'] }}</p>
+                                    <div
+                                        class="flex justify-between gap-2 text-sm sm:text-base font-semibold text-gray-900">
+                                        <h3 class="truncate">{{ $cart['name'] }}</h3>
+                                        <p class="text-[#7C3AED] font-bold flex-shrink-0">#{{ $cart['code'] }}</p>
                                     </div>
-                                    <p class="mt-1 text-sm text-gray-500">Kategori: {{ $cart['category'] }}</p>
+                                    <p class="mt-1 text-xs sm:text-sm text-gray-500">Kategori: {{ $cart['category'] }}</p>
                                 </div>
 
-                                <div class="flex flex-1 items-end justify-between text-sm mt-2">
+                                <div class="flex flex-1 items-end justify-between text-sm mt-2 gap-2">
 
                                     <!-- QTY CONTROL -->
                                     <div class="flex items-center border border-gray-300 rounded-lg">
                                         <button onclick="updateQty({{ $cart['id'] }}, {{ $cart['qty'] - 1 }})"
-                                            class="px-3 py-1 text-gray-600 hover:bg-gray-100 border-r border-gray-300">-</button>
+                                            class="px-2.5 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 border-r border-gray-300">-</button>
 
-                                        <span class="px-3 py-1 font-medium text-gray-900">{{ $cart['qty'] }}</span>
+                                        <span
+                                            class="px-2.5 sm:px-3 py-1 font-medium text-gray-900">{{ $cart['qty'] }}</span>
 
                                         <button onclick="updateQty({{ $cart['id'] }}, {{ $cart['qty'] + 1 }})"
-                                            class="px-3 py-1 text-gray-600 hover:bg-gray-100 border-l border-gray-300">+</button>
+                                            class="px-2.5 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 border-l border-gray-300">+</button>
                                     </div>
 
                                     <!-- REMOVE -->
                                     <button onclick="removeItem({{ $cart['id'] }})"
-                                        class="font-medium text-red-500 hover:text-red-700 flex items-center gap-1">
-                                        <i class="fa-regular fa-trash-can"></i> Hapus
+                                        class="font-medium text-red-500 hover:text-red-700 flex items-center gap-1 text-xs sm:text-sm flex-shrink-0">
+                                        <i class="fa-regular fa-trash-can"></i> <span
+                                            class="hidden sm:inline">Hapus</span>
                                     </button>
                                 </div>
                             </div>
@@ -332,15 +248,16 @@
                 </div>
 
                 <!-- FOOTER -->
-                <div class="border-t border-gray-100 px-6 py-6 bg-gray-50">
-                    <div class="flex justify-between text-base font-semibold text-gray-900 mb-4">
+                <div class="border-t border-gray-100 px-4 sm:px-6 py-4 sm:py-6 bg-gray-50">
+                    <div class="flex justify-between text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4">
 
                         <p>Total Barang</p>
                         <p><span id="cart-total">{{ collect(session('cart', []))->sum('qty') }}</span> Unit</p>
 
                     </div>
 
-                    <p class="text-sm text-gray-500 mb-6">Pastikan barang sudah sesuai sebelum mengajukan peminjaman.</p>
+                    <p class="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Pastikan barang sudah sesuai sebelum
+                        mengajukan peminjaman.</p>
 
                     <button type="button" id="btn-empty"
                         onclick="Swal.fire({
@@ -349,17 +266,17 @@
                             text: 'Silakan pilih alat terlebih dahulu.',
                             confirmButtonColor: '#7C3AED'
                         })"
-                        class="w-full flex items-center justify-center rounded-xl bg-gray-200 px-6 py-4 text-base font-bold text-gray-400 cursor-not-allowed transition-all {{ count(session('cart', [])) > 0 ? 'hidden' : '' }}">
+                        class="w-full flex items-center justify-center rounded-xl bg-gray-200 px-6 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-gray-400 cursor-not-allowed transition-all {{ count(session('cart', [])) > 0 ? 'hidden' : '' }}">
                         <i class="fa-solid fa-ban mr-2"></i> Keranjang Kosong
                     </button>
 
                     <a href="{{ route('frontend.pinjaman') }}" id="btn-filled"
-                        class="w-full flex items-center justify-center rounded-xl bg-[#7C3AED] px-6 py-4 text-base font-bold text-white shadow-lg hover:bg-[#6D28D9] transition-all transform hover:-translate-y-1 {{ count(session('cart', [])) == 0 ? 'hidden' : '' }}">
+                        class="w-full flex items-center justify-center rounded-xl bg-[#7C3AED] px-6 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-white shadow-lg hover:bg-[#6D28D9] transition-all transform hover:-translate-y-1 {{ count(session('cart', [])) == 0 ? 'hidden' : '' }}">
                         Lanjut Isi Formulir <i class="fa-solid fa-arrow-right ml-2"></i>
                     </a>
 
 
-                    <div class="mt-6 text-center text-sm text-gray-500">
+                    <div class="mt-5 sm:mt-6 text-center text-sm text-gray-500">
                         atau
                         <button type="button" class="font-medium text-[#7C3AED]" onclick="toggleCart()">Lanjut Cari
                             Barang

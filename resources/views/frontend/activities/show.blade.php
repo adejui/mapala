@@ -214,14 +214,14 @@
                             </div>
                         </div>
 
-                        @if ($activity->activity_type !== 'meeting' && \Carbon\Carbon::parse($activity->start_date)->isFuture())
+                        {{-- @if ($activity->activity_type !== 'meeting' && \Carbon\Carbon::parse($activity->start_date)->isFuture())
                             <div class="mt-8 pt-6 border-t border-gray-100">
                                 <a href="#"
                                     class="block w-full py-3.5 rounded-xl bg-[#7C3AED] text-white font-bold text-center shadow-lg hover:bg-[#6D28D9] hover:shadow-purple-500/30 hover:-translate-y-1 transition-all duration-300">
                                     <i class="fa-solid fa-user-plus mr-2"></i> Daftar Sekarang
                                 </a>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
 
                     <div class="bg-[#2a2a2a] rounded-2xl p-4 flex items-center justify-between border border-white/10">
