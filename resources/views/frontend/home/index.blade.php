@@ -1,6 +1,124 @@
 @extends('frontend.layouts.app')
 
 @section('content')
+    @if ($showCompleteProfileModal)
+        <div id="completeProfileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md px-8 py-5 relative">
+
+                <!-- Tombol Close -->
+                <button type="button"
+                    class="closeCompleteProfileModal absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="text-center mt-2">
+
+                    <div class="flex items-center justify-center mb-3">
+                        <div class="w-22 h-22 rounded-full bg-purple-100 flex items-center justify-center">
+
+                            <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center shadow-md">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-3.314 0-6 2.686-6 6h12c0-3.314-2.686-6-6-6z" />
+                                </svg>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <h2 class="text-tarantulaPurple text-xl font-bold dark:text-white">
+                        Lengkapi Profile
+                    </h2>
+
+                    <div class="text-sm text-gray-500 dark:text-gray-300 mt-2 leading-relaxed">
+
+                        <p>Lengkapi profilmu dulu agar bisa meminjam barang.</p>
+                        <p>Hanya butuh <span class="text-tarantulaPurple font-semibold">1 menit</span> untuk melengkapi</p>
+                        <p>data
+                            yang
+                            diperlukan.</p>
+                    </div>
+
+                    <div class="mt-6">
+
+                        @if (auth()->guard('web')->check())
+                            <a href="{{ route('frontend.user.profile') }}"
+                                class="inline-flex items-center justify-center w-full px-6 py-2 text-md text-white font-light rounded-xl bg-purple-600 hover:bg-purple-700 transition duration-300 shadow-md">
+
+                                Ke Halaman Profile
+                                <span class="ml-2">→</span>
+                            </a>
+                        @elseif(auth()->guard('opa')->check())
+                            <a href="{{ route('frontend.opa.profile') }}"
+                                class="inline-flex items-center justify-center w-full px-6 py-2 text-white font-light rounded-xl bg-purple-600 hover:bg-purple-700 transition duration-300 shadow-md">
+
+                                Ke Halaman Profile
+                                <span class="ml-2">→</span>
+                            </a>
+                        @endif
+
+                        <div class="text-center mt-2">
+                            <button type="button"
+                                class="closeCompleteProfileModal text-gray-700 font-light hover:text-gray-600 transition duration-300">
+                                Nanti Saja
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+
+                const modal = document.getElementById("completeProfileModal");
+
+                // ambil SEMUA tombol dengan class ini
+                const closeButtons = document.querySelectorAll(".closeCompleteProfileModal");
+
+                // looping semua tombol
+                closeButtons.forEach(button => {
+
+                    button.addEventListener("click", function() {
+
+                        modal.classList.add("hidden");
+
+                    });
+
+                });
+
+            });
+        </script>
+    @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div id="hero-section" class="relative h-[590px] w-full overflow-hidden">
         <div class="absolute inset-0 z-0">
             <img src="{{ asset('frontend/images/hero-section.jpeg') }}" alt="Background"
@@ -8,7 +126,8 @@
         </div>
         <div class="absolute inset-0 z-0 bg-black/40"></div>
         <main class="absolute inset-0 z-10 flex flex-col justify-center items-center text-center px-4">
-            <h3 data-aos="fade-up" class="text-xl md:text-2xl font-semibold mb-2 text-gray-200 drop-shadow-md">Welcome to</h3>
+            <h3 data-aos="fade-up" class="text-xl md:text-2xl font-semibold mb-2 text-gray-200 drop-shadow-md">Welcome to
+            </h3>
             <h1 data-aos="fade-up" data-aos-delay="200" class="text-5xl md:text-7xl font-bold mb-4 drop-shadow-lg">
                 Tarantula <span class="text-tarantulaPurple">Adventure</span>
             </h1>
@@ -35,7 +154,7 @@
                         pelestarian lingkungan.
                     </p>
 
-                    <a href="#"
+                    <a href="{{ route('frontend.about') }}"
                         class="inline-block bg-[#7c56b5] text-white font-medium px-6 py-3 rounded-lg hover:bg-purple-800 transition shadow-md">
                         Tentang kami
                     </a>
@@ -101,7 +220,8 @@
                                 <div class="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gray-200"
                                     title="{{ $member->full_name }}">
                                     <img src="{{ $member->photo ? asset('storage/' . $member->photo) : asset('frontend/images/user-default.jpeg') }}"
-                                        alt="{{ $member->name }}" class="w-full h-full object-cover rounded-full border-2 border-gray">
+                                        alt="{{ $member->name }}"
+                                        class="w-full h-full object-cover rounded-full border-2 border-gray">
                                 </div>
                             @endforeach
 
@@ -123,7 +243,7 @@
                         {{ Str::limit($activity->description, 120) }}
                     </p>
 
-                    <a href="{{ route('frontend.kegiatan.show') }}"
+                    <a href="{{ route('frontend.kegiatan.show', $activity->id) }}"
                         class="inline-flex items-center gap-2 text-[#7753AF] font-semibold text-sm hover:underline">
                         Lihat Detail Kegiatan <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -134,8 +254,6 @@
                     <p class="text-gray-500 font-medium">Belum ada jadwal kegiatan terbaru.</p>
                 </div>
             @endforelse
-
-
 
         </div>
     </section>
@@ -193,11 +311,22 @@
                             </p>
                         </div>
 
-                        <button
+                        <a href="{{ route('frontend.inventory.show', $item->id) }}">
+                            <button
+                                class="w-12 h-12 bg-[#7753AF] rounded-xl flex items-center justify-center text-white hover:bg-[#5e3d8e] hover:scale-110 transition-all duration-300 shadow-md flex-shrink-0 group/btn">
+
+                                <i
+                                    class="fa-solid fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300">
+                                </i>
+
+                            </button>
+                        </a>
+
+                        {{-- <button
                             class="w-12 h-12 bg-[#7753AF] rounded-xl flex items-center justify-center text-white hover:bg-[#5e3d8e] hover:scale-110 transition-all duration-300 shadow-md flex-shrink-0 group/btn">
                             <i
                                 class="fa-solid fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300"></i>
-                        </button>
+                        </button> --}}
                     </div>
 
                 </div>
@@ -229,7 +358,7 @@
             </div>
 
             <div class="flex-shrink-0">
-                <a href="#jadwal"
+                <a href="{{ route('frontend.artikel') }}"
                     class="bg-[#7753AF] hover:bg-[#5e3d8e] text-white font-medium px-6 py-3 rounded-xl transition shadow-md whitespace-nowrap">
                     Lihat Semua
                 </a>
@@ -238,75 +367,48 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- 1 -->
-            <div
-                class="relative h-[300px] rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-all duration-300">
+            @foreach ($articles as $article)
                 <div
-                    class="absolute top-4 left-4 z-20 bg-white text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-                    <i class="fa-regular fa-calendar"></i> <span>07 Nov 2025</span>
-                </div>
-                <img src="{{ asset('frontend/images/artikel-1.jpeg') }}"
-                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div
-                    class="absolute bottom-0 left-0 w-full h-[40%] z-10 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-md">
-                    <h3 class="text-white text-xl font-bold leading-tight mb-3 drop-shadow-md">
-                        Ekspedisi Pendakian <br> Gunung Merapi 2025
-                    </h3>
-                    <a href="#"
-                        class="inline-flex items-center text-white text-sm font-semibold hover:text-purple-300 transition-colors group/btn">
-                        Read More
-                        <i
-                            class="fa-solid fa-arrow-right ml-2 text-xs transform transition-transform group-hover/btn:translate-x-1"></i>
-                    </a>
-                </div>
-            </div>
+                    class="relative h-[300px] rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-all duration-300">
 
-            <!-- 2 -->
-            <div
-                class="relative h-[300px] rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-all duration-300">
-                <div
-                    class="absolute top-4 left-4 z-20 bg-white text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-                    <i class="fa-regular fa-calendar"></i> <span>12 Des 2025</span>
-                </div>
-                <img src="{{ asset('frontend/images/artikel-2.jpeg') }}" alt="Artikel 2"
-                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div
-                    class="absolute bottom-0 left-0 w-full h-[40%] z-10 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-md">
-                    <h3 class="text-white text-xl font-bold leading-tight mb-3 drop-shadow-md">
-                        Pelatihan Navigasi Darat & Survival Hutan
-                    </h3>
-                    <a href="#"
-                        class="inline-flex items-center text-white text-sm font-semibold hover:text-purple-300 transition-colors group/btn">
-                        Read More
-                        <i
-                            class="fa-solid fa-arrow-right ml-2 text-xs transform transition-transform group-hover/btn:translate-x-1"></i>
-                    </a>
-                </div>
-            </div>
+                    <!-- Tanggal -->
+                    <div
+                        class="absolute top-4 left-4 z-20 bg-white text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>
+                            {{ \Carbon\Carbon::parse($article->created_at)->translatedFormat('l, d F Y') }}
+                        </span>
+                    </div>
 
-            <!-- 3 -->
-            <div
-                class="relative h-[300px] rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-all duration-300">
-                <div
-                    class="absolute top-4 left-4 z-20 bg-white text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
-                    <i class="fa-regular fa-calendar"></i> <span>01 Jan 2026</span>
+                    <!-- Gambar -->
+                    <img src="{{ $article->file_path
+                        ? asset('storage/' . $article->file_path)
+                        : asset('assets/images/articles/default-image.png') }}"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+
+                    <!-- Overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full h-[40%] z-10 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-md">
+
+                        <!-- Judul -->
+                        <h3 class="text-white text-xl font-bold leading-tight mb-3 drop-shadow-md">
+                            {{ $article->title }}
+                        </h3>
+
+                        <!-- Link -->
+                        <a href="{{ route('frontend.artikel.show', $article->slug) }}"
+                            class="inline-flex items-center text-white text-sm font-semibold hover:text-purple-300 transition-colors group/btn">
+                            Read More
+                            <i
+                                class="fa-solid fa-arrow-right ml-2 text-xs transform transition-transform group-hover/btn:translate-x-1"></i>
+                        </a>
+
+                    </div>
                 </div>
-                <img src="{{ asset('frontend/images/artikel-3.jpeg') }}" alt="Artikel 3"
-                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div
-                    class="absolute bottom-0 left-0 w-full h-[40%] z-10 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-md">
-                    <h3 class="text-white text-xl font-bold leading-tight mb-3 drop-shadow-md">
-                        Tips Memilih Peralatan Camping Pemula
-                    </h3>
-                    <a href="#"
-                        class="inline-flex items-center text-white text-sm font-semibold hover:text-purple-300 transition-colors group/btn">
-                        Read More
-                        <i
-                            class="fa-solid fa-arrow-right ml-2 text-xs transform transition-transform group-hover/btn:translate-x-1"></i>
-                    </a>
-                </div>
-            </div>
+            @endforeach
+
         </div>
+
     </section>
     <!-- artikel end-->
 @endsection

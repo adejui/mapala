@@ -498,7 +498,7 @@
                             <!-- Tombol Batal -->
                             <a href="{{ route('users.index') }}" title="Hapus"
                                 class="p-2.5 border-2 text-sm border-[#7753AF] bg-transparent w-full rounded-xl text-[#7753AF] text-center hover:bg-[#F3E8FF] transition">
-                                Batal
+                                Kembali
                             </a>
 
                             <!-- Tombol Simpan -->

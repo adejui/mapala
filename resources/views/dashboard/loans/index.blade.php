@@ -151,6 +151,13 @@
                         <span class="text-gray-700 dark:text-gray-400">Reset</span>
                     </button>
 
+                    <a href="#" id="exportBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white
+    px-4 py-2 rounded-md text-sm font-medium
+    transition flex items-center gap-2 shadow-sm">
+                        Export Excel
+                    </a>
+
                 </div>
             </div>
         </div>
@@ -397,17 +404,46 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+
             const searchInput = document.querySelector("#search-input");
             const tableContainer = document.querySelector("#loan-table");
             const perPageSelect = document.querySelector("#perPageSelect");
+
             const statusButtons = document.querySelectorAll(".status-option");
             const statusBtnLabel = document.querySelector("#statusDropdownBtn");
+
             const resetBtn = document.querySelector("#resetFiltersBtn");
 
+            const exportBtn = document.querySelector("#exportBtn");
+
             let searchTimeout = null;
+
             let currentStatus = "{{ request('status', 'all') }}";
 
+            // =========================
+            // UPDATE EXPORT URL
+            // =========================
+            function updateExportUrl() {
+
+                const params = new URLSearchParams();
+
+                if (searchInput.value) {
+                    params.set("search", searchInput.value);
+                }
+
+                if (currentStatus !== "all") {
+                    params.set("status", currentStatus);
+                }
+
+                exportBtn.href =
+                    `{{ route('loans.export') }}?${params.toString()}`;
+            }
+
+            // =========================
+            // FETCH DATA AJAX
+            // =========================
             async function fetchData(url = "{{ route('loans.index') }}") {
+
                 const params = new URLSearchParams({
                     search: searchInput.value,
                     perPage: perPageSelect.value,
@@ -415,13 +451,21 @@
                 });
 
                 if (url.includes("?")) {
+
                     const baseUrl = url.split("?")[0];
-                    const existingParams = new URLSearchParams(url.split("?")[1]);
+
+                    const existingParams = new URLSearchParams(
+                        url.split("?")[1]
+                    );
+
                     existingParams.set("search", searchInput.value);
                     existingParams.set("perPage", perPageSelect.value);
                     existingParams.set("status", currentStatus);
+
                     url = `${baseUrl}?${existingParams.toString()}`;
+
                 } else {
+
                     url = `${url}?${params.toString()}`;
                 }
 
@@ -430,25 +474,43 @@
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 });
+
                 const html = await response.text();
+
                 tableContainer.innerHTML = html;
 
-                // 🧠 Tambahkan ini supaya modal & komponen aktif lagi
+                // Re-init component
                 if (window.HSStaticMethods) {
                     window.HSStaticMethods.autoInit();
                 }
 
-                // 🧩 Tambahkan ulang event listener untuk form delete (karena DOM diganti)
+                // Re-init delete form
                 initDeleteForms();
+
+                // Update export URL
+                updateExportUrl();
             }
 
-            // Fungsi untuk inisialisasi ulang tombol/form delete
+            // =========================
+            // DELETE FORM
+            // =========================
             function initDeleteForms() {
-                const deleteForms = document.querySelectorAll('form.btn-delete');
+
+                const deleteForms = document.querySelectorAll(
+                    "form.btn-delete"
+                );
+
                 deleteForms.forEach(form => {
-                    form.addEventListener('submit', function(e) {
-                        const confirmed = confirm('Yakin ingin menghapus data ini?');
-                        if (!confirmed) e.preventDefault();
+
+                    form.addEventListener("submit", function(e) {
+
+                        const confirmed = confirm(
+                            "Yakin ingin menghapus data ini?"
+                        );
+
+                        if (!confirmed) {
+                            e.preventDefault();
+                        }
                     });
                 });
             }
@@ -456,46 +518,102 @@
             // Jalankan sekali di awal
             initDeleteForms();
 
-            // Pencarian otomatis
+            // =========================
+            // SEARCH
+            // =========================
             searchInput.addEventListener("input", function() {
+
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => fetchData(), 300);
+
+                searchTimeout = setTimeout(() => {
+
+                    fetchData();
+
+                }, 300);
             });
 
-            // Ganti jumlah per halaman
+            // =========================
+            // PER PAGE
+            // =========================
             perPageSelect.addEventListener("change", function() {
+
                 fetchData();
             });
 
-            // Filter Status
+            // =========================
+            // FILTER STATUS
+            // =========================
             statusButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentStatus = this.dataset.value;
+
                     statusBtnLabel.innerHTML = this.textContent + `
-            <svg class='hs-dropdown-open:rotate-180 size-4' xmlns='http://www.w3.org/2000/svg'
-                width='24' height='24' viewBox='0 0 24 24' fill='none'
-                stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
-                <path d='m6 9 6 6 6-6'/>
-            </svg>`;
+                <svg class='hs-dropdown-open:rotate-180 size-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'>
+                    <path d='m6 9 6 6 6-6'/>
+                </svg>`;
+
                     fetchData();
                 });
             });
 
-            // Pagination AJAX
+            // =========================
+            // PAGINATION AJAX
+            // =========================
             document.addEventListener("click", function(e) {
+
                 const link = e.target.closest(".pagination a");
+
                 if (link) {
+
                     e.preventDefault();
+
                     fetchData(link.getAttribute("href"));
                 }
             });
 
-            // Reset Filter
+            // =========================
+            // RESET FILTER
+            // =========================
             resetBtn.addEventListener("click", function() {
+
                 currentStatus = "all";
+
                 searchInput.value = "";
+
+                statusBtnLabel.innerHTML = `
+                Semua Status
+                <svg class='hs-dropdown-open:rotate-180 size-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'>
+                    <path d='m6 9 6 6 6-6'/>
+                </svg>`;
+
                 fetchData();
             });
+
+            // =========================
+            // INIT EXPORT URL
+            // =========================
+            updateExportUrl();
+
         });
     </script>
 @endsection

@@ -33,18 +33,35 @@
 
                 <div class="flex justify-between items-center my-2">
                     {{-- Search --}}
-                    <div class="hidden lg:max-w-[430px] md:block">
-                        <div class="relative">
+                    <div class="hidden md:flex items-center gap-3 lg:max-w-[600px]">
+
+                        <!-- Search -->
+                        <div class="relative flex-1">
+
                             <span class="absolute top-1/2 left-4 -translate-y-1/2">
                                 <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
                                     viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+
                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                         d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z" />
                                 </svg>
                             </span>
+
                             <input type="text" placeholder="Search" id="search-input"
-                                class="dark:bg-dark-900 shadow-theme-xs focus:border-[#7653afaa] focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-sm rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30" />
+                                class="dark:bg-dark-900 shadow-theme-xs focus:border-[#7653afaa] focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-xl border-2 border-gray-300 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30" />
+
                         </div>
+
+                        <!-- Export -->
+                        <a href="#" id="exportBtn"
+                            class="inline-flex items-center gap-2 border-2 border-[#7EE2A8] text-[#22C55E] bg-white hover:bg-[#F0FFF5] px-5 h-11 rounded-xl text-sm font-medium transition-all duration-300 shadow-sm whitespace-nowrap">
+
+                            <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="excel" class="w-4 h-4">
+
+                            Export
+
+                        </a>
+
                     </div>
 
                     {{-- Filter & Tambah --}}
@@ -92,6 +109,7 @@
                             <img src="{{ asset('assets/images/icons/plus.svg') }}" alt="Tambah" class="h-4 w-4">
                             Tambah
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -215,6 +233,13 @@
                             class="w-4 h-4 opacity-80 hidden dark:block">
                         <span class="text-gray-700 dark:text-gray-400">Reset</span>
                     </button>
+
+                    {{-- <a href="#" id="exportBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white
+    px-4 py-2 rounded-md text-sm font-medium
+    transition flex items-center gap-2 shadow-sm">
+                        Export Excel
+                    </a> --}}
 
                 </div>
             </div>
@@ -568,23 +593,62 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+
             const searchInput = document.querySelector("#search-input");
             const tableContainer = document.querySelector("#user-table");
             const perPageSelect = document.querySelector("#perPageSelect");
+
             const statusButtons = document.querySelectorAll(".status-option");
             const statusBtnLabel = document.querySelector("#statusDropdownBtn");
+
             const majorButtons = document.querySelectorAll(".major-option");
             const majorBtnLabel = document.querySelector("#majorDropdownBtn");
+
             const generationButtons = document.querySelectorAll(".generation-option");
             const generationBtnLabel = document.querySelector("#generationDropdownBtn");
+
             const resetBtn = document.querySelector("#resetFiltersBtn");
 
+            const exportBtn = document.querySelector("#exportBtn");
+
             let searchTimeout = null;
+
             let currentStatus = "{{ request('status', 'all') }}";
             let currentMajor = "{{ request('major', 'all') }}";
             let currentGeneration = "{{ request('generation', 'all') }}";
 
+            // =========================
+            // UPDATE EXPORT URL
+            // =========================
+            function updateExportUrl() {
+
+                const params = new URLSearchParams();
+
+                if (searchInput.value) {
+                    params.set("search", searchInput.value);
+                }
+
+                if (currentStatus !== "all") {
+                    params.set("status", currentStatus);
+                }
+
+                if (currentMajor !== "all") {
+                    params.set("major", currentMajor);
+                }
+
+                if (currentGeneration !== "all") {
+                    params.set("generation", currentGeneration);
+                }
+
+                exportBtn.href =
+                    `{{ route('users.export') }}?${params.toString()}`;
+            }
+
+            // =========================
+            // FETCH DATA AJAX
+            // =========================
             async function fetchData(url = "{{ route('users.index') }}") {
+
                 const params = new URLSearchParams({
                     search: searchInput.value,
                     perPage: perPageSelect.value,
@@ -594,15 +658,23 @@
                 });
 
                 if (url.includes("?")) {
+
                     const baseUrl = url.split("?")[0];
-                    const existingParams = new URLSearchParams(url.split("?")[1]);
+
+                    const existingParams = new URLSearchParams(
+                        url.split("?")[1]
+                    );
+
                     existingParams.set("search", searchInput.value);
                     existingParams.set("perPage", perPageSelect.value);
                     existingParams.set("status", currentStatus);
                     existingParams.set("major", currentMajor);
                     existingParams.set("generation", currentGeneration);
+
                     url = `${baseUrl}?${existingParams.toString()}`;
+
                 } else {
+
                     url = `${url}?${params.toString()}`;
                 }
 
@@ -611,102 +683,189 @@
                         "X-Requested-With": "XMLHttpRequest"
                     }
                 });
+
                 const html = await response.text();
+
                 tableContainer.innerHTML = html;
 
-                // 🧠 Tambahkan ini supaya modal & komponen aktif lagi
+                // Re-init component
                 if (window.HSStaticMethods) {
                     window.HSStaticMethods.autoInit();
                 }
 
-                // 🧩 Tambahkan ulang event listener untuk form delete (karena DOM diganti)
+                // Re-init delete form
                 initDeleteForms();
+
+                // Update export URL
+                updateExportUrl();
             }
 
-            // Fungsi untuk inisialisasi ulang tombol/form delete
+            // =========================
+            // DELETE FORM
+            // =========================
             function initDeleteForms() {
-                const deleteForms = document.querySelectorAll('form.btn-delete');
+
+                const deleteForms = document.querySelectorAll(
+                    "form.btn-delete"
+                );
+
                 deleteForms.forEach(form => {
-                    form.addEventListener('submit', function(e) {
-                        const confirmed = confirm('Yakin ingin menghapus data ini?');
-                        if (!confirmed) e.preventDefault();
+
+                    form.addEventListener("submit", function(e) {
+
+                        const confirmed = confirm(
+                            "Yakin ingin menghapus data ini?"
+                        );
+
+                        if (!confirmed) {
+                            e.preventDefault();
+                        }
                     });
                 });
             }
 
-            // Jalankan sekali di awal
             initDeleteForms();
 
-            // 🔍 Pencarian otomatis
+            // =========================
+            // SEARCH
+            // =========================
             searchInput.addEventListener("input", function() {
+
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => fetchData(), 300);
+
+                searchTimeout = setTimeout(() => {
+
+                    fetchData();
+
+                }, 300);
             });
 
-            // Ganti jumlah per halaman
+            // =========================
+            // PER PAGE
+            // =========================
             perPageSelect.addEventListener("change", function() {
+
                 fetchData();
             });
 
-            // Filter Status
+            // =========================
+            // FILTER STATUS
+            // =========================
             statusButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentStatus = this.dataset.value;
+
                     statusBtnLabel.innerHTML = this.textContent + `
-            <svg class='hs-dropdown-open:rotate-180 size-4' xmlns='http://www.w3.org/2000/svg'
-                width='24' height='24' viewBox='0 0 24 24' fill='none'
-                stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
-                <path d='m6 9 6 6 6-6'/>
-            </svg>`;
+                <svg class='hs-dropdown-open:rotate-180 size-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'>
+                    <path d='m6 9 6 6 6-6'/>
+                </svg>`;
+
                     fetchData();
                 });
             });
 
-            // Filter Prodi
+            // =========================
+            // FILTER MAJOR
+            // =========================
             majorButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentMajor = this.dataset.value;
+
                     majorBtnLabel.innerHTML = this.textContent + `
-            <svg class='hs-dropdown-open:rotate-180 size-4' xmlns='http://www.w3.org/2000/svg'
-                width='24' height='24' viewBox='0 0 24 24' fill='none'
-                stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
-                <path d='m6 9 6 6 6-6'/>
-            </svg>`;
+                <svg class='hs-dropdown-open:rotate-180 size-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'>
+                    <path d='m6 9 6 6 6-6'/>
+                </svg>`;
+
                     fetchData();
                 });
             });
 
-            // Filter Angkatan
+            // =========================
+            // FILTER GENERATION
+            // =========================
             generationButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentGeneration = this.dataset.value;
+
                     generationBtnLabel.innerHTML = this.textContent + `
-            <svg class='hs-dropdown-open:rotate-180 size-4' xmlns='http://www.w3.org/2000/svg'
-                width='24' height='24' viewBox='0 0 24 24' fill='none'
-                stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
-                <path d='m6 9 6 6 6-6'/>
-            </svg>`;
+                <svg class='hs-dropdown-open:rotate-180 size-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'>
+                    <path d='m6 9 6 6 6-6'/>
+                </svg>`;
+
                     fetchData();
                 });
             });
 
-            // Pagination AJAX
+            // =========================
+            // PAGINATION AJAX
+            // =========================
             document.addEventListener("click", function(e) {
+
                 const link = e.target.closest(".pagination a");
+
                 if (link) {
+
                     e.preventDefault();
+
                     fetchData(link.getAttribute("href"));
                 }
             });
 
-            // Reset Filter
+            // =========================
+            // RESET FILTER
+            // =========================
             resetBtn.addEventListener("click", function() {
+
                 currentStatus = "all";
                 currentMajor = "all";
                 currentGeneration = "all";
+
                 searchInput.value = "";
+
+                statusBtnLabel.innerHTML = "Semua Status";
+                majorBtnLabel.innerHTML = "Semua Prodi";
+                generationBtnLabel.innerHTML = "Semua Angkatan";
+
                 fetchData();
             });
+
+            // =========================
+            // INIT EXPORT URL
+            // =========================
+            updateExportUrl();
         });
     </script>
 @endsection

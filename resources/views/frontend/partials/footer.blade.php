@@ -32,10 +32,17 @@
             <div class="text-left">
                 <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
                 <ul class="space-y-4 text-gray-400 text-sm">
-                    <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Home</a></li>
-                    <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Inventory</a></li>
-                    <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Activities</a></li>
-                    <li><a href="#" class="hover:text-[#7C3AED] transition-colors">About Us</a></li>
+                    <li><a href="{{ route('frontend.home') }}" class="hover:text-[#7C3AED] transition-colors">Home</a>
+                    </li>
+                    <li><a href="{{ route('frontend.inventory') }}"
+                            class="hover:text-[#7C3AED] transition-colors">Inventory</a>
+                    </li>
+                    <li><a href="{{ route('frontend.kegiatan') }}"
+                            class="hover:text-[#7C3AED] transition-colors">Activities</a>
+                    </li>
+                    <li><a href="{{ route('frontend.contact') }}" class="hover:text-[#7C3AED] transition-colors">About
+                            Us</a>
+                    </li>
                 </ul>
             </div>
         </div>

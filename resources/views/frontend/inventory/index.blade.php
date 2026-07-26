@@ -77,7 +77,7 @@
 
                             <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('frontend/images/tas.jpg') }}"
                                 alt="{{ $item->name }}"
-                                class="w-full h-full object-contain p-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                                class="w-full h-full object-contain pt-11 px-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
                         </div>
 
                         <div class="p-5 flex justify-between items-end grow border-t border-gray-100">
@@ -85,6 +85,7 @@
                                 <h3 class="text-gray-900 font-semibold text-base leading-tight mb-1 line-clamp-2">
                                     {{ $item->name }}
                                 </h3>
+
                                 <p class="text-gray-500 text-sm font-medium">
                                     {{ $item->quantity ?? ($item->stock ?? 0) }} Unit
                                 </p>
@@ -92,43 +93,51 @@
 
                             <div class="flex items-center gap-2">
 
-                                @auth
-                                    <button onclick="addToCart({{ $item->id }})"
-                                        class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm">
-                                        <i class="fa-solid fa-plus text-sm"></i>
-                                    </button>
-                                @else
-                                    <button
-                                        onclick="Swal.fire({
-                                            icon: 'warning',
-                                            title: 'Login Dulu!',
-                                            text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
-                                            confirmButtonText: 'Login OPA', // Ubah teks biar jelas
-                                            confirmButtonColor: '#7C3AED',
-                                            showCancelButton: true,
-                                            cancelButtonText: 'Nanti Saja'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                // 1. Kirim Sinyal 'Buka Modal OPA'
-                                                window.dispatchEvent(new CustomEvent('trigger-login-opa'));
-                                            }
-                                        })"
-                                        class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400 flex items-center justify-center hover:border-[#7C3AED] hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
-                                        <i class="fa-solid fa-lock text-sm"></i> </button>
-                                @endauth
-
-
+                                @if (($item->quantity ?? ($item->stock ?? 0)) > 0)
+                                    @if (auth()->check() || auth('opa')->check())
+                                        <button onclick="addToCart({{ $item->id }})"
+                                            class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED]
+                flex items-center justify-center hover:bg-[#7C3AED]
+                hover:text-white transition-all duration-300 shadow-sm">
+                                            <i class="fa-solid fa-plus text-sm"></i>
+                                        </button>
+                                    @else
+                                        <button
+                                            onclick="Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Dulu!',
+                    text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
+                    confirmButtonText: 'Login OPA',
+                    confirmButtonColor: '#7C3AED',
+                    showCancelButton: true,
+                    cancelButtonText: 'Nanti Saja'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.dispatchEvent(new CustomEvent('trigger-login-opa'));
+                    }
+                })"
+                                            class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400
+                flex items-center justify-center hover:border-[#7C3AED]
+                hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
+                                            <i class="fa-solid fa-lock text-sm"></i>
+                                        </button>
+                                    @endif
+                                @endif
 
                                 <a href="{{ route('frontend.inventory.show', $item->id) }}"
-                                    class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center text-white hover:bg-[#5e3d8e] hover:scale-110 transition-all duration-300 shadow-md group/btn"
+                                    class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center
+        text-white hover:bg-[#5e3d8e] hover:scale-110
+        transition-all duration-300 shadow-md group/btn"
                                     title="Lihat Detail">
 
                                     <i
-                                        class="fa-solid fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300"></i>
+                                        class="fa-solid fa-arrow-right -rotate-45
+            group-hover/btn:rotate-0 transition-transform duration-300"></i>
 
                                 </a>
 
                             </div>
+
                         </div>
                     </div>
 
@@ -143,6 +152,97 @@
                     </div>
                 @endforelse
             </div>
+            {{-- <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
+
+                @forelse ($items as $item)
+                    <div
+                        class="w-full bg-white border-2 border-gray-200 rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
+
+                        <div class="relative w-full h-56 bg-gray-100 overflow-hidden">
+
+                            <span
+                                class="absolute top-4 left-4 bg-black/20 backdrop-blur-sm text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
+                                {{ $item->category->name ?? 'Umum' }}
+                            </span>
+
+                            <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('frontend/images/tas.jpg') }}"
+                                alt="{{ $item->name }}"
+                                class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110">
+                        </div>
+
+                        <div class="p-5 flex justify-between items-end grow border-t border-gray-100">
+                            <div>
+                                <h3 class="text-gray-900 font-semibold text-base leading-tight mb-1 line-clamp-2">
+                                    {{ $item->name }}
+                                </h3>
+
+                                <p class="text-gray-500 text-sm font-medium">
+                                    {{ $item->quantity ?? ($item->stock ?? 0) }} Unit
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+
+                                @if (($item->quantity ?? ($item->stock ?? 0)) > 0)
+
+                                    @if (auth()->check() || auth('opa')->check())
+                                        <button onclick="addToCart({{ $item->id }})"
+                                            class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED]
+                flex items-center justify-center hover:bg-[#7C3AED]
+                hover:text-white transition-all duration-300 shadow-sm">
+                                            <i class="fa-solid fa-plus text-sm"></i>
+                                        </button>
+                                    @else
+                                        <button
+                                            onclick="Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Dulu!',
+                    text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
+                    confirmButtonText: 'Login OPA',
+                    confirmButtonColor: '#7C3AED',
+                    showCancelButton: true,
+                    cancelButtonText: 'Nanti Saja'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.dispatchEvent(new CustomEvent('trigger-login-opa'));
+                    }
+                })"
+                                            class="w-10 h-10 rounded-xl border-2 border-gray-300 text-gray-400
+                flex items-center justify-center hover:border-[#7C3AED]
+                hover:text-[#7C3AED] transition-all duration-300 shadow-sm">
+                                            <i class="fa-solid fa-lock text-sm"></i>
+                                        </button>
+                                    @endif
+                                @endif
+
+                                <a href="{{ route('frontend.inventory.show', $item->id) }}"
+                                    class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center
+        text-white hover:bg-[#5e3d8e] hover:scale-110
+        transition-all duration-300 shadow-md group/btn"
+                                    title="Lihat Detail">
+
+                                    <i
+                                        class="fa-solid fa-arrow-right -rotate-45
+            group-hover/btn:rotate-0 transition-transform duration-300"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                @empty
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                        <div
+                            class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-3xl">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Belum ada barang</h3>
+                        <p class="text-gray-500 text-sm">Inventaris saat ini masih kosong.</p>
+                    </div>
+                @endforelse
+            </div> --}}
 
             <div class="mt-12">
                 {{ $items->links('vendor.pagination.custom') }}

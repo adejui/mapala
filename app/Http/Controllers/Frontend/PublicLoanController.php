@@ -17,18 +17,52 @@ class PublicLoanController extends Controller
 
     public function pinjamanForm()
     {
+        $isProfileComplete = true;
+
+        // USER
+        if (auth('web')->check()) {
+
+            $user = auth('web')->user();
+
+            if (
+                empty($user->full_name) ||
+                empty($user->email) ||
+                empty($user->phone_number)
+            ) {
+                $isProfileComplete = false;
+            }
+        }
+
+        // OPA
+        if (auth('opa')->check()) {
+
+            $opa = auth('opa')->user();
+
+            if (
+                empty($opa->name) ||
+                empty($opa->email) ||
+                empty($opa->campus_name) ||
+                empty($opa->organization_name) ||
+                empty($opa->phone_number)
+            ) {
+                $isProfileComplete = false;
+            }
+        }
+
         $cart = session('cart', []);
 
-    // Kalau kosong, tendang balik ke inventory
-    if (empty($cart)) {
-        return redirect()->route('frontend.inventory')
-            ->with('error', 'Keranjang masih kosong! Pilih alat dulu bosku.');
+        // Kalau kosong, tendang balik ke inventory
+        if (empty($cart)) {
+            return redirect()->route('frontend.inventory')
+                ->with('error', 'Keranjang masih kosong! Pilih alat dulu bosku.');
+        }
+
+        return view('frontend.loans.create', [
+            'cartItems' => $cart,
+            'isProfileComplete' => $isProfileComplete,
+        ]);
     }
 
-    return view('frontend.loans.create', [
-        'cartItems' => $cart
-    ]);
-    }
 
     public function store(Request $request)
     {
@@ -51,7 +85,7 @@ class PublicLoanController extends Controller
             'borrow_date.required' => 'Tanggal pinjam wajib diisi.',
             'return_date.required' => 'Tanggal kembali wajib diisi.',
             'return_date.after_or_equal' => 'Tanggal kembali harus setelah atau sama dengan tanggal pinjam.',
-            'notes.required' => 'Keperluan peminjaman wajib diisi.', // Ini akan muncul sekarang
+            'notes.required' => 'Keperluan peminjaman wajib diisi.',
             'loan_document.mimes' => 'File dokumen harus berupa PDF atau DOC/DOCX.',
             'loan_document.max' => 'File dokumen maksimal 2MB.',
         ]);
@@ -62,20 +96,45 @@ class PublicLoanController extends Controller
             return redirect()->back()->with('error', 'Keranjang masih kosong!');
         }
 
-        $opa = Opa::create([
-            'name' => $request->name,
-            'organization_name' => $request->organization_name,
-            'campus_name' => $request->campus_name,
-            'phone_number' => $request->phone_number,
-            'email' => $request->email,
-        ]);
+        // ✅ Ambil user dari 2 guard
+        $opa  = auth('opa')->user();
+        $user = auth('web')->user();
+
+        $userId = null;
+        $opaId  = null;
+
+        // ✅ Jika login sebagai USER
+        if ($user) {
+            $userId = $user->id;
+        }
+
+        // ✅ Jika login sebagai OPA
+        elseif ($opa) {
+            $opaId = $opa->id;
+        }
+
+        // ✅ Jika tidak login sama sekali (guest)
+        else {
+            $opaData = Opa::updateOrCreate(
+                ['email' => $request->email],
+                [
+                    'name' => $request->name,
+                    'organization_name' => $request->organization_name,
+                    'campus_name' => $request->campus_name,
+                    'phone_number' => $request->phone_number,
+                ]
+            );
+
+            $opaId = $opaData->id;
+        }
 
         $loan = Loan::create([
-            'opa_id' => $opa->id,
+            'user_id' => $userId,
+            'opa_id'  => $opaId,
             'borrow_date' => $request->borrow_date,
             'return_date' => $request->return_date,
             'status' => 'requested',
-            'notes' => $request->notes, // <--- DISINI
+            'notes' => $request->notes,
             'loan_document' => $request->hasFile('loan_document')
                 ? $request->file('loan_document')->store('loan_documents')
                 : null,
@@ -94,10 +153,95 @@ class PublicLoanController extends Controller
         return redirect()->route('frontend.pinjaman.success');
     }
 
+
+
+
+
+
+
+
+
+
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'organization_name' => 'required|string|max:255',
+    //         'campus_name' => 'required|string|max:255',
+    //         'phone_number' => 'required|string|max:20',
+    //         'email' => 'required|email|max:255',
+    //         'borrow_date' => 'required|date',
+    //         'return_date' => 'required|date|after_or_equal:borrow_date',
+    //         'notes' => 'required|string|max:500',
+    //         'loan_document' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+    //     ], [
+    //         'name.required' => 'Nama lengkap wajib diisi.',
+    //         'organization_name.required' => 'Nama organisasi wajib diisi.',
+    //         'campus_name.required' => 'Nama kampus wajib diisi.',
+    //         'phone_number.required' => 'Nomor telepon wajib diisi.',
+    //         'email.required' => 'Email wajib diisi.',
+    //         'borrow_date.required' => 'Tanggal pinjam wajib diisi.',
+    //         'return_date.required' => 'Tanggal kembali wajib diisi.',
+    //         'return_date.after_or_equal' => 'Tanggal kembali harus setelah atau sama dengan tanggal pinjam.',
+    //         'notes.required' => 'Keperluan peminjaman wajib diisi.',
+    //         'loan_document.mimes' => 'File dokumen harus berupa PDF atau DOC/DOCX.',
+    //         'loan_document.max' => 'File dokumen maksimal 2MB.',
+    //     ]);
+
+    //     $cartItems = session('cart', []);
+
+    //     if (empty($cartItems)) {
+    //         return redirect()->back()->with('error', 'Keranjang masih kosong!');
+    //     }
+
+    //     $userId = auth()->check() ? auth()->id() : null;
+    //     $opaId  = null;
+
+    //     // JIKA TIDAK LOGIN → SIMPAN KE OPA
+    //     if (!$userId) {
+    //         $opa = Opa::updateOrCreate(
+    //             ['email' => $request->email],
+    //             [
+    //                 'name' => $request->name,
+    //                 'organization_name' => $request->organization_name,
+    //                 'campus_name' => $request->campus_name,
+    //                 'phone_number' => $request->phone_number,
+    //             ]
+    //         );
+
+    //         $opaId = $opa->id;
+    //     }
+
+    //     $loan = Loan::create([
+    //         'user_id' => $userId,   // null jika guest
+    //         'opa_id'  => $opaId,    // null jika member
+    //         'borrow_date' => $request->borrow_date,
+    //         'return_date' => $request->return_date,
+    //         'status' => 'requested',
+    //         'notes' => $request->notes,
+    //         'loan_document' => $request->hasFile('loan_document')
+    //             ? $request->file('loan_document')->store('loan_documents')
+    //             : null,
+    //     ]);
+
+    //     foreach ($cartItems as $item) {
+    //         LoanDetail::create([
+    //             'loan_id' => $loan->id,
+    //             'item_id' => $item['id'],
+    //             'quantity' => $item['qty'] ?? 1,
+    //         ]);
+    //     }
+
+    //     session()->forget('cart');
+
+    //     return redirect()->route('frontend.pinjaman.success');
+    // }
+
     public function success()
-{
-    return view('frontend.loans.success');
-}
+    {
+        return view('frontend.loans.success');
+    }
 
     // public function store(Request $request)
     // {

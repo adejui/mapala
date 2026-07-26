@@ -24,6 +24,7 @@ class LoanDetail extends Model
 
     public function item()
     {
-        return $this->belongsTo(Item::class);
+        // PENTING: withTrashed supaya item yang sudah dihapus tetap muncul di history
+        return $this->belongsTo(Item::class, 'item_id')->withTrashed();
     }
 }

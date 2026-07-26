@@ -21,7 +21,6 @@ class LoginController extends Controller
         ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
-
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
         ]);
@@ -33,20 +32,19 @@ class LoginController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
-            if ($user->role === 'admin' || $user->role === 'logistics') {
+            if (in_array($user->role, ['admin', 'logistics'])) {
                 return redirect()->intended(route('dashboard'))
-                    ->with('success', 'Selamat datang kembali, Admin!');
+                    ->with('success', 'Selamat datang kembali!');
             }
 
             return redirect()->intended(route('frontend.home'))
-                ->with('success', 'Berhasil login! Selamat datang.');
+                ->with('success', 'Berhasil login!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
+            'auth' => 'Email atau password salah.',
         ])->withInput();
     }
-
 
     public function logout(Request $request)
     {
@@ -55,6 +53,7 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Berhasil logout.');
+        return redirect('/')
+            ->with('success', 'Berhasil logout.');
     }
 }

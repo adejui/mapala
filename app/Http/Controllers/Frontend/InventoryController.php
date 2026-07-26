@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Item;
-use App\Models\Loan;
-use App\Models\LoanDetail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -15,7 +13,7 @@ class InventoryController extends Controller
     {
         $query = Item::with('category');
 
-        
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -24,7 +22,7 @@ class InventoryController extends Controller
             });
         }
 
-        
+
         if ($request->filled('category') && $request->category !== 'Semua') {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('name', $request->category);
@@ -57,14 +55,16 @@ class InventoryController extends Controller
 
     public function show($id)
     {
-        // Nanti disini logika ambil data detail barang by ID:
-        // $item = Item::findOrFail($id);
+        // Ambil data alat berdasarkan ID
+        $item = Item::findOrFail($id);
 
-        // Ambil data rekomendasi (dummy dulu buat tampilan bawah)
-        // $relatedItems = Item::where('id', '!=', $id)->take(5)->get();
+        // Ambil rekomendasi (opsional)
+        $relatedItems = Item::where('id', '!=', $id)
+            ->take(5)
+            ->get();
 
-        // Kita kirim data dummy dulu biar view-nya jalan
-        return view('frontend.inventory.show');
+        // Kirim ke view
+        return view('frontend.inventory.show', compact('item', 'relatedItems'));
     }
 
     public function addToCart($id)
@@ -94,19 +94,60 @@ class InventoryController extends Controller
         ]);
     }
 
+    // public function updateQty(Request $request)
+    // {
+    //     $id = $request->id;
+    //     $qty = $request->qty;
+
+    //     $cart = session()->get('cart', []);
+
+    //     if (isset($cart[$id])) {
+
+    //         // Kalau qty < 1, hapus item
+    //         if ($qty < 1) {
+    //             unset($cart[$id]);
+    //         } else {
+    //             $cart[$id]['qty'] = $qty;
+    //         }
+
+    //         session()->put('cart', $cart);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'total' => collect(session('cart', []))->sum('qty')
+    //     ]);
+    // }
+
     public function updateQty(Request $request)
     {
         $id = $request->id;
-        $qty = $request->qty;
+        $qty = (int) $request->qty;
 
         $cart = session()->get('cart', []);
 
+        // Ambil item dari database
+        $item = Item::find($id);
+
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item tidak ditemukan'
+            ]);
+        }
+
         if (isset($cart[$id])) {
 
-            // Kalau qty < 1, hapus item
+            // Kalau qty < 1 → hapus
             if ($qty < 1) {
                 unset($cart[$id]);
             } else {
+
+                // BATASI SESUAI STOK
+                if ($qty > $item->quantity) {
+                    $qty = $item->quantity;
+                }
+
                 $cart[$id]['qty'] = $qty;
             }
 
@@ -115,10 +156,11 @@ class InventoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'total' => collect(session('cart', []))->sum('qty')
+            'qty' => $cart[$id]['qty'] ?? 0,
+            'total' => collect(session('cart', []))->sum('qty'),
+            'message' => $qty > $item->quantity ? 'Qty melebihi stok, disesuaikan' : null
         ]);
     }
-
 
     public function updateCart(Request $request, $id)
     {

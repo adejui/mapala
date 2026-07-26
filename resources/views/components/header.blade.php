@@ -230,11 +230,30 @@
                             </li>
                         </ul>
                     @endif
+
+
+                    <ul class="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
+                        <li>
+                            <a href="{{ route('frontend.home') }}"
+                                class="group text-theme-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
+                                <div class="flex items-center gap-2">
+                                    <!-- Compass Icon -->
+                                    <svg class="w-5 h-5 fill-gray-500 group-hover:fill-gray-700" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 8.5L13 13L8.5 15.5L11 11L15.5 8.5Z" />
+                                    </svg>
+
+                                    <span>Landing Page</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a href="{{ route('logout') }}"
                             onclick="event.preventDefault(); this.closest('form').submit();"
-                            class="group text-theme-sm my-1 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
+                            class="group mt-3 text-theme-sm my-1 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
 
                             <svg class="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
                                 width="24" height="24" viewBox="0 0 24 24" fill="none"

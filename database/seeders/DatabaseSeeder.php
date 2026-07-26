@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             OpaSeeder::class,
             CategorySeeder::class,
             ItemSeeder::class,
+            ItemPhotoSeeder::class,
             LoanSeeder::class,
             LoanDetailSeeder::class,
             ActivitySeeder::class,

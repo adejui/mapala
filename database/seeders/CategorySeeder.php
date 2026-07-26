@@ -14,15 +14,11 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::insert([
-            ['name' => 'Peralatan Camping'],
-            ['name' => 'Peralatan Mendaki'],
-            ['name' => 'Peralatan Memasak'],
-            ['name' => 'Makan dan Minum'],
-            ['name' => 'Pakaian Lapangan'],
-            ['name' => 'Peralatan Navigasi'],
-            ['name' => 'Peralatan Medis'],
-            ['name' => 'Dokumentasi'],
-            ['name' => 'Lain-lain'],
+            ['id' => 1, 'name' => 'Peralatan Camping & Logistik', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'name' => 'Peralatan Memasak', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'name' => 'Navigasi & Diklat', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'name' => 'Mountaineering & RC', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'name' => 'Inventaris Sekretariat & Umum', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

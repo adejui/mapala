@@ -31,81 +31,74 @@
 
                     <!-- Dropzone -->
                     <div>
-                        <h3 class="font-semibold text-md text-[#212121] dark:text-white/90 mb-3">Foto</h3>
+                        <h3 class="font-semibold text-md text-[#212121] mb-3">Foto</h3>
 
-                        <div id="dropzone"
-                            class="border border-gray-300 rounded-xl p-4 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 transition flex flex-wrap gap-4">
+                        <div id="dropzone" class="border border-gray-300 rounded-xl p-4 flex flex-wrap gap-4">
 
-                            <!-- PREVIEW FOTO DARI DATABASE -->
+                            {{-- FOTO DARI DATABASE --}}
                             @foreach ($item->photos as $p)
-                                <div class="relative w-28 h-28 group">
+                                <div class="relative w-28 h-28 group" data-id="{{ $p->id }}">
 
                                     <img src="{{ Storage::url($p->photo_path) }}"
-                                        class="w-full h-full object-cover rounded-xl border border-gray-300">
+                                        class="w-full h-full object-cover rounded-xl border">
 
                                     <button type="button"
-                                        class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition"
-                                        onclick="event.stopPropagation(); removeExistingImage(this, '{{ $p->id }}')">
+                                        class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full text-xs opacity-0 group-hover:opacity-100"
+                                        onclick="removeExistingImage(this, {{ $p->id }})">
                                         ✕
                                     </button>
 
                                 </div>
                             @endforeach
 
-                            <!-- AREA UPLOAD -->
-                            <div class="flex flex-col items-center justify-center w-28 h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition"
-                                onclick="openFilePicker(event)">
-
-                                <div class="flex flex-col items-center justify-center space-y-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 16.5v-9m-4.5 4.5h9M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p class="text-xs text-gray-600">Upload</p>
-                                </div>
+                            {{-- UPLOAD BOX --}}
+                            <div onclick="openFilePicker(event)"
+                                class="flex items-center justify-center w-28 h-28 border-2 border-dashed rounded-xl cursor-pointer">
+                                <span>Upload</span>
                             </div>
 
-                            <!-- INPUT FILE REAL -->
-                            <input type="file" id="fileInput" name="photos[]" multiple accept="image/*" class="hidden">
+                            <input type="file" id="fileInput" name="photos[]" multiple class="hidden">
                         </div>
 
                         <input type="hidden" name="deleted_photos" id="deletedPhotosInput">
                     </div>
+
                     <script>
                         let deletedPhotos = [];
 
-                        // Fix: file picker terbuka hanya sekali
-                        function openFilePicker(event) {
-                            event.stopPropagation(); // cegah klik menyebar
+                        function openFilePicker(e) {
+                            e.stopPropagation();
                             document.getElementById('fileInput').click();
                         }
 
-                        function removeExistingImage(btn, photoId) {
-                            deletedPhotos.push(photoId);
+                        function removeExistingImage(btn, id) {
+                            deletedPhotos.push(id);
+
+                            // UPDATE INPUT (PASTI KEKIRIM)
                             document.getElementById('deletedPhotosInput').value = JSON.stringify(deletedPhotos);
-                            btn.parentElement.remove();
+
+                            // HAPUS DARI UI
+                            btn.closest('[data-id]').remove();
                         }
 
-                        // Tampilkan preview gambar baru
+                        // PREVIEW IMAGE BARU
                         document.getElementById('fileInput').addEventListener('change', function(e) {
-
                             Array.from(e.target.files).forEach(file => {
                                 const reader = new FileReader();
-                                reader.onload = function(event) {
 
+                                reader.onload = function(ev) {
                                     const div = document.createElement("div");
                                     div.className = "relative w-28 h-28";
 
                                     div.innerHTML = `
-                    <img src="${event.target.result}"
-                         class="w-full h-full object-cover rounded-xl border border-gray-300">
-                         `;
+                    <img src="${ev.target.result}"
+                        class="w-full h-full object-cover rounded-xl border">
+                `;
 
-                                    // Masukkan sebelum upload box
                                     document.getElementById('dropzone')
                                         .insertBefore(div, document.getElementById('dropzone').lastElementChild);
                                 };
+
                                 reader.readAsDataURL(file);
                             });
                         });

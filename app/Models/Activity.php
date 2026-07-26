@@ -38,4 +38,9 @@ class Activity extends Model
     {
         return $this->hasMany(Article::class);
     }
+
+    public function detail()
+    {
+        return $this->hasOne(ActivityDetail::class);
+    }
 }

@@ -52,6 +52,14 @@
                         </div>
                     </div>
 
+                    <a href="{{ route('categories.export') }}"
+                        class="bg-green-600 hover:bg-green-700 text-white
+    px-4 py-2 rounded-md text-sm font-medium
+    transition flex items-center gap-2 shadow-sm">
+
+                        Export Excel
+                    </a>
+
                     <button @click="openCreate()"
                         class="inline-flex items-center gap-2 px-4 h-10 text-sm font-medium text-white bg-[#7653afaa] transition rounded-lg shadow-theme-xs hover:bg-[#68489C]">
                         <img src="{{ asset('assets/images/icons/plus.svg') }}" alt="Tambah" class="h-4 w-4">

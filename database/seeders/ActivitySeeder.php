@@ -57,8 +57,8 @@ class ActivitySeeder extends Seeder
                 $type = $activityTypes[array_rand(array_slice($activityTypes, 0, 4))];
             }
 
-            // Acak tanggal di bulan November–Desember 2025
-            $start = Carbon::create(2025, rand(11, 12), rand(1, 25));
+            // Acak tanggal di bulan Mei–Desember 2026
+            $start = Carbon::create(2026, rand(5, 12), rand(1, 25));
             $end = (clone $start)->addDays(rand(1, 5));
 
             $data[] = [

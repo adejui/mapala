@@ -2,25 +2,39 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Opa;
-use App\Models\Item;
-use App\Models\Loan;
-use App\Models\User;
-use App\Models\Category;
-use App\Models\LoanDetail;
-use Illuminate\Http\Request;
+use App\Exports\LoanExport;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreLoanRequest;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateLoanRequest;
 use App\Mail\LoanApprovedMail;
+use App\Models\Category;
+use App\Models\Item;
+use App\Models\Loan;
+use App\Models\LoanDetail;
+use App\Models\Opa;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LoanController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export(Request $request)
+    {
+        $fileName = 'data_peminjaman_' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new LoanExport(
+                $request->status
+            ),
+            $fileName
+        );
+    }
     public function index(Request $request)
     {
         $opas = Opa::all();
@@ -58,34 +72,61 @@ class LoanController extends Controller
 
     public function accept($loan)
     {
-        // dd($loan);
-        $loan = Loan::findOrFail($loan);
+        DB::transaction(function () use ($loan) {
 
-        $loan->update(['status' => 'approved']);
+            $loan = Loan::with(['user', 'opa', 'details.item'])->findOrFail($loan);
 
-        // Siapkan data untuk email
-        $data = [
-            'name' => $loan->opa->name,
-            'id' => $loan->id,
-            'email' => optional($loan->user)->email
-                ?? optional($loan->opa)->email,
+            // 🔥 VALIDASI + KURANGI STOK
+            foreach ($loan->details as $detail) {
 
-            'name' => optional($loan->user)->full_name
-                ?? optional($loan->opa)->name,
+                $item = $detail->item;
 
-            'organization_name' => optional($loan->opa)->organization_name,
-            'campus_name' => optional($loan->opa)->campus_name,
-            'phone_number' => optional($loan->user)->phone_number ?? optional($loan->opa)->phone_number,
-            'borrow_date' => $loan->borrow_date,
-            'return_date' => $loan->return_date,
-            'quantity' => $loan->quantity,
-        ];
+                if (!$item) {
+                    throw new \Exception("Item tidak ditemukan");
+                }
 
-        // Mail::to($loan->opa->email)->send(new LoanApprovedMail($data));
-        Mail::to($data['email'])->send(new LoanApprovedMail($data));
+                if ($item->quantity < $detail->quantity) {
+                    throw new \Exception("Stok {$item->name} tidak cukup");
+                }
 
+                // kurangi stok
+                $item->decrement('quantity', $detail->quantity);
+            }
 
-        return redirect()->route('loans.index')->with('success', ' Berhasil diACC.');
+            // update status
+            $loan->update(['status' => 'approved']);
+
+            // ================= EMAIL =================
+            $user = $loan->user;
+            $opa  = $loan->opa;
+
+            $data = [
+                'id' => $loan->id,
+                'name' => optional($user)->full_name
+                    ?? optional($opa)->name
+                    ?? '-',
+
+                'email' => optional($user)->email
+                    ?? optional($opa)->email,
+
+                'organization_name' => optional($opa)->organization_name,
+                'campus_name' => optional($opa)->campus_name,
+
+                'phone_number' => optional($user)->phone_number
+                    ?? optional($opa)->phone_number,
+
+                'borrow_date' => $loan->borrow_date,
+                'return_date' => $loan->return_date,
+                'quantity' => $loan->details->sum('quantity'),
+            ];
+
+            if ($data['email']) {
+                Mail::to($data['email'])->send(new LoanApprovedMail($data));
+            }
+        });
+
+        return redirect()->route('loans.index')
+            ->with('success', 'Berhasil diACC & stok dikurangi.');
     }
     // public function accept($id)
     // {

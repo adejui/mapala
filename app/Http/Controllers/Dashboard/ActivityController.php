@@ -2,22 +2,35 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\User;
-use App\Models\Activity;
-use Illuminate\Http\Request;
-use App\Models\ActivityPhoto;
-use App\Models\ActivityMember;
-use App\Models\ActivityDocument;
+use App\Exports\ActivityExport;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
+use App\Models\Activity;
+use App\Models\ActivityDocument;
+use App\Models\ActivityMember;
+use App\Models\ActivityPhoto;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ActivityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export(Request $request)
+    {
+        $fileName = 'data_kegiatan_' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new ActivityExport(
+                $request->type
+            ),
+            $fileName
+        );
+    }
     public function getEvents()
     {
         $colorMap = [
@@ -150,6 +163,9 @@ class ActivityController extends Controller
             ->orderBy('generation', 'asc')
             ->pluck('generation');
 
+        $activity->load('detail');
+
+        $activity_detail = $activity->detail;
 
         $selectedMembers = ActivityMember::where('activity_id', $activity->id)
             ->pluck('user_id')
@@ -159,7 +175,7 @@ class ActivityController extends Controller
 
         $users = User::where('role', '!=', 'admin')->get();
 
-        return view('dashboard.admin.activities.manage', compact('users', 'activity', 'activityDocument', 'selectedMembers', 'generations'));
+        return view('dashboard.admin.activities.manage', compact('users', 'activity', 'activityDocument', 'selectedMembers', 'generations', 'activity_detail'));
     }
     /**
      * Show the form for editing the specified resource.

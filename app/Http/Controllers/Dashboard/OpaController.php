@@ -2,19 +2,38 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Opa;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Exports\BorrowersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOpaRequest;
+use App\Models\Loan;
+use App\Models\Opa;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OpaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export(Request $request)
+    {
+        return Excel::download(
+
+            new BorrowersExport(
+                $request->campus,
+                $request->organization
+            ),
+
+            'data-peminjam.xlsx_' . date('Y-m-d') . '.xlsx'
+        );
+    }
     public function index(Request $request)
     {
+        $perPage = $request->get('perPage', 5);
+
+        $search = $request->get('search');
+
         // Dropdown organizations
         $organizations = Opa::selectRaw('LOWER(organization_name) as organization_name')
             ->whereNotNull('organization_name')
@@ -29,99 +48,132 @@ class OpaController extends Controller
             ->orderBy('campus_name', 'asc')
             ->pluck('campus_name');
 
-        $perPage = $request->get('perPage', 5);
-
-        // Filter input
-        $search       = $request->get('search');
         $organization = $request->get('organization');
         $campus       = $request->get('campus');
 
-        $query = Opa::query();
+        /*
+    |--------------------------------------------------------------------------
+    | QUERY LOANS
+    |--------------------------------------------------------------------------
+    */
+        $query = Loan::with(['user', 'opa'])
+            ->where(function ($q) {
+                $q->whereNotNull('user_id')
+                    ->orWhereNotNull('opa_id');
+            });
 
-        // Search
+        /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
         if ($search) {
+
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('phone_number', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+
+                // Search user
+                $q->whereHas('user', function ($user) use ($search) {
+                    $user->where('full_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone_number', 'like', "%{$search}%");
+                })
+
+                    // Search opa
+                    ->orWhereHas('opa', function ($opa) use ($search) {
+                        $opa->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%");
+                    });
             });
         }
 
-        // Filter organization
+        /*
+    |--------------------------------------------------------------------------
+    | FILTER ORGANIZATION
+    |--------------------------------------------------------------------------
+    */
         if ($organization && $organization !== 'all') {
-            $query->whereRaw('LOWER(organization_name) = ?', [strtolower($organization)]);
+
+            $query->whereHas('opa', function ($q) use ($organization) {
+                $q->whereRaw(
+                    'LOWER(organization_name) = ?',
+                    [strtolower($organization)]
+                );
+            });
         }
 
-        // Filter campus
+        /*
+    |--------------------------------------------------------------------------
+    | FILTER CAMPUS
+    |--------------------------------------------------------------------------
+    */
         if ($campus && $campus !== 'all') {
-            $query->whereRaw('LOWER(campus_name) = ?', [strtolower($campus)]);
+
+            $query->whereHas('opa', function ($q) use ($campus) {
+                $q->whereRaw(
+                    'LOWER(campus_name) = ?',
+                    [strtolower($campus)]
+                );
+            });
         }
 
-        // ================================================
-        // GROUP BY NAME (case-insensitive), AMBIL DATA TERBARU
-        // ================================================
-        $subLatest = Opa::selectRaw("
-        LOWER(name) as name_key,
-        MAX(id) as latest_id
-    ")
-            ->groupBy('name_key');
+        $opas = $query->latest()->get()
+            ->unique(function ($loan) {
 
-        $query = $query->joinSub($subLatest, 'latest_data', function ($join) {
-            $join->on(DB::raw('LOWER(opas.name)'), '=', 'latest_data.name_key');
-        })
-            ->selectRaw("
-        MIN(opas.id) as id,
-        opas.name,
+                $borrower = $loan->user ?? $loan->opa;
 
-        (SELECT email 
-            FROM opas o1 
-            WHERE LOWER(o1.name) = LOWER(opas.name) 
-            ORDER BY id DESC 
-            LIMIT 1
-        ) as email,
+                return strtolower(
+                    ($loan->user->full_name ?? $loan->opa->name ?? '') . '|' .
+                        ($borrower->email ?? '') . '|' .
+                        ($borrower->phone_number ?? '') . '|' .
+                        ($loan->opa->campus_name ?? '') . '|' .
+                        ($loan->opa->organization_name ?? '')
+                );
+            })
+            ->values();
 
-        (SELECT phone_number 
-            FROM opas o2 
-            WHERE LOWER(o2.name) = LOWER(opas.name) 
-            ORDER BY id DESC 
-            LIMIT 1
-        ) as phone_number,
+        $collection = $query->latest()->get()
+            ->unique(function ($loan) {
 
-        (SELECT campus_name 
-            FROM opas o3 
-            WHERE LOWER(o3.name) = LOWER(opas.name) 
-            ORDER BY id DESC 
-            LIMIT 1
-        ) as campus_name,
+                $borrower = $loan->user ?? $loan->opa;
 
-        (SELECT organization_name 
-            FROM opas o4 
-            WHERE LOWER(o4.name) = LOWER(opas.name) 
-            ORDER BY id DESC 
-            LIMIT 1
-        ) as organization_name,
+                return strtolower(
+                    ($loan->user->full_name ?? $loan->opa->name ?? '') . '|' .
+                        ($borrower->email ?? '') . '|' .
+                        ($borrower->phone_number ?? '') . '|' .
+                        ($loan->opa->campus_name ?? '') . '|' .
+                        ($loan->opa->organization_name ?? '')
+                );
+            })
+            ->values();
 
-        (SELECT created_at
-            FROM opas o5
-            WHERE LOWER(o5.name) = LOWER(opas.name)
-            ORDER BY id DESC
-            LIMIT 1
-        ) as latest_created_at,
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
 
-        COUNT(*) as total_peminjaman
-    ")
-            ->groupBy('opas.name')
-            ->orderBy('latest_created_at', 'DESC');
+        $items = $collection->slice(
+            ($currentPage - 1) * $perPage,
+            $perPage
+        )->values();
 
-
-        $opas = $query->paginate($perPage)->appends($request->all());
-
+        $opas = new LengthAwarePaginator(
+            $items,
+            $collection->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
 
         if ($request->ajax()) {
             return view('dashboard.admin.opas.partials.table', compact('opas'))->render();
         }
 
-        return view('dashboard.admin.opas.index', compact('opas', 'organizations', 'campuses'));
+        return view('dashboard.admin.opas.index', compact(
+            'opas',
+            'organizations',
+            'campuses'
+        ));
     }
 
 

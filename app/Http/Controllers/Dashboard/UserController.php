@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\UserExport;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\UpdateUserRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export(Request $request)
+    {
+        $fileName = 'data_anggota_' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new UserExport(
+                $request->status,
+                $request->major,
+                $request->generation
+            ),
+            $fileName
+        );
+    }
+
     public function index(Request $request)
     {
         $generations = User::select('generation')

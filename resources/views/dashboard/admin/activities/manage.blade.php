@@ -17,85 +17,84 @@
         class="bg-white border border-[#E0E0E0] rounded-xl h-auto p-4 overflow-hidden px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6s">
         <h3 class="font-bold text-2xl text-gray-800 dark:text-white/90 mb-6">Kelola Kegiatan</h3>
 
-        <div class="rounded-2xl mb-4 border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
-            <div class="mb-6 flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
-                    Kegiatan
-                    @if ($activity->activity_type == 'meeting')
-                        Rapat
-                    @elseif($activity->activity_type == 'basic training')
-                        Diksar
-                    @elseif($activity->activity_type == 'exploration')
-                        Pengembaraan
-                    @elseif($activity->activity_type == 'anniversary')
-                        Hari Jadi
-                    @elseif($activity->activity_type == 'others')
-                        Lain-lain
-                    @else
-                        Tidak diketahui
-                    @endif
-                </h3>
-
-                <div x-data="{ openDropDown: false }" class="relative">
-                    <button @click="openDropDown = !openDropDown"
-                        :class="openDropDown ? 'text-gray-700 dark:text-white' :
-                            'text-gray-900 hover:text-gray-700 dark:hover:text-white'">
-                        <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z"
-                                fill="" />
-                        </svg>
-                    </button>
-                    <div x-show="openDropDown" @click.outside="openDropDown = false"
-                        class="absolute right-0 top-full z-40 w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
-                        <button type="button"
-                            class="flex w-full rounded-lg px-3 py-2 text-left text-theme-xs font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                            data-hs-overlay="#delete-activity-modal" @click="openDropDown = false">
-                            Hapus
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="grid sm:grid-cols-2">
-                <div>
-                    <div class="mb-5">
-                        <h3 class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">{{ $activity->title }}
-                        </h3>
-                    </div>
-
-                    <div class="flex flex-col gap-y-1 w-fit justify-center mb-5">
-                        <p class="text-theme-xs text-gray-500 dark:text-gray-400">Lokasi</p>
-                        <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
-                            {{ $activity->location }}
-                        </p>
-                    </div>
-
-                    <div class="flex flex-raw gap-7">
-                        <div class="flex flex-col gap-y-1 w-fit justify-center">
-                            <p class="text-theme-xs text-gray-500 dark:text-gray-400">Tanggal Mulai</p>
-                            <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
-                                {{ \Carbon\Carbon::parse($activity->start_date)->translatedFormat('d F Y') }}
-                            </p>
-                        </div>
-                        <div class="flex flex-col gap-y-1 w-fit justify-center">
-                            <p class="text-theme-xs text-gray-500 dark:text-gray-400">Tanggal Selesai</p>
-                            <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
-                                {{ \Carbon\Carbon::parse($activity->end_date)->translatedFormat('d F Y') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <div class="grid grid-cols-5 gap-4">
-
             <div class="col-span-2">
-                <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
+                <div
+                    class="rounded-2xl mb-4 border border-gray-300 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
+                    <div class="mb-6 flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+                            Kegiatan
+                            @if ($activity->activity_type == 'meeting')
+                                Rapat
+                            @elseif($activity->activity_type == 'basic training')
+                                Diksar
+                            @elseif($activity->activity_type == 'exploration')
+                                Pengembaraan
+                            @elseif($activity->activity_type == 'anniversary')
+                                Hari Jadi
+                            @elseif($activity->activity_type == 'others')
+                                Lain-lain
+                            @else
+                                Tidak diketahui
+                            @endif
+                        </h3>
+
+                        <div x-data="{ openDropDown: false }" class="relative">
+                            <button @click="openDropDown = !openDropDown"
+                                :class="openDropDown ? 'text-gray-700 dark:text-white' :
+                                    'text-gray-900 hover:text-gray-700 dark:hover:text-white'">
+                                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M10.2441 6C10.2441 5.0335 11.0276 4.25 11.9941 4.25H12.0041C12.9706 4.25 13.7541 5.0335 13.7541 6C13.7541 6.9665 12.9706 7.75 12.0041 7.75H11.9941C11.0276 7.75 10.2441 6.9665 10.2441 6ZM10.2441 18C10.2441 17.0335 11.0276 16.25 11.9941 16.25H12.0041C12.9706 16.25 13.7541 17.0335 13.7541 18C13.7541 18.9665 12.9706 19.75 12.0041 19.75H11.9941C11.0276 19.75 10.2441 18.9665 10.2441 18ZM11.9941 10.25C11.0276 10.25 10.2441 11.0335 10.2441 12C10.2441 12.9665 11.0276 13.75 11.9941 13.75H12.0041C12.9706 13.75 13.7541 12.9665 13.7541 12C13.7541 11.0335 12.9706 10.25 12.0041 10.25H11.9941Z"
+                                        fill="" />
+                                </svg>
+                            </button>
+                            <div x-show="openDropDown" @click.outside="openDropDown = false"
+                                class="absolute right-0 top-full z-40 w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+                                <button type="button"
+                                    class="flex w-full rounded-lg px-3 py-2 text-left text-theme-xs font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                                    data-hs-overlay="#delete-activity-modal" @click="openDropDown = false">
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-1">
+                        <div>
+                            <div class="mb-5">
+                                <h3 class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
+                                    {{ $activity->title }}
+                                </h3>
+                            </div>
+
+                            <div class="flex flex-col gap-y-1 w-fit justify-center mb-5">
+                                <p class="text-theme-xs text-gray-500 dark:text-gray-400">Lokasi</p>
+                                <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
+                                    {{ $activity->location }}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-raw gap-7">
+                                <div class="flex flex-col gap-y-1 w-fit justify-center">
+                                    <p class="text-theme-xs text-gray-500 dark:text-gray-400">Tanggal Mulai</p>
+                                    <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
+                                        {{ \Carbon\Carbon::parse($activity->start_date)->translatedFormat('d F Y') }}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col gap-y-1 w-fit justify-center">
+                                    <p class="text-theme-xs text-gray-500 dark:text-gray-400">Tanggal Selesai</p>
+                                    <p class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
+                                        {{ \Carbon\Carbon::parse($activity->end_date)->translatedFormat('d F Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-gray-300 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
 
                     <div class="mb-6 flex items-center justify-between">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -223,7 +222,6 @@
 
                                     </div>
 
-
                                     <!-- LIST USER -->
                                     <div class="flex h-[350px] flex-col mt-3">
                                         <div class="custom-scrollbar flex h-auto flex-col overflow-y-auto pr-3">
@@ -272,17 +270,266 @@
                     </div>
 
                 </div>
+
             </div>
 
-
             <div class="col-span-3">
-                <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
+                <div class="rounded-2xl border border-gray-300 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
+                    <div class="mb-6 flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+                            Detail Pelaksanaan
+                        </h3>
+                    </div>
+
+
+                    <form id="requirements-form" action="{{ route('activity-details.store') }}" method="POST">
+                        @csrf
+
+                        <input type="hidden" name="participant_requirements" id="participant_requirements">
+                        <input type="hidden" name="activity_id" value="{{ $activity->id }}">
+
+                        <div class="flex flex-row gap-4 w-full">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+
+                                <!-- WAKTU MULAI -->
+                                <div class="w-full">
+                                    <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                        Waktu Mulai
+                                    </label>
+
+                                    <input type="time" name="start_time"
+                                        value="{{ old('start_time', $activity_detail->start_time ?? '') }}"
+                                        class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('start_time') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                    @error('start_time')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- WAKTU SELESAI -->
+                                <div class="w-full">
+                                    <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                        Waktu Selesai
+                                    </label>
+
+                                    <input type="time" name="end_time"
+                                        value="{{ old('end_time', $activity_detail->end_time ?? '') }}"
+                                        class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('end_time') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                    @error('end_time')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-3">
+
+                            <!-- LOKASI KUMPUL -->
+                            <div class="w-full">
+                                <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                    Lokasi Kumpul
+                                </label>
+
+                                <input type="text" name="location_detail"
+                                    value="{{ old('location_detail', $activity_detail->location_detail ?? '') }}"
+                                    placeholder="Masukkan lokasi kumpul"
+                                    class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('location_detail') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                @error('location_detail')
+                                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- LINK MAP -->
+                            <div class="w-full">
+                                <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                    Link Map Kumpul
+                                </label>
+
+                                <input type="text" name="map_link"
+                                    value="{{ old('map_link', $activity_detail->map_link ?? '') }}"
+                                    placeholder="Masukkan link Google Maps"
+                                    class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('map_link') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                @error('map_link')
+                                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                        </div>
+
+                        <!-- NAMA KONTAK (FULL) -->
+                        <div class="w-full mt-3">
+                            <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                Nama Kontak
+                            </label>
+
+                            <input type="text" name="contact_name"
+                                value="{{ old('contact_name', $activity_detail->contact_name ?? '') }}"
+                                placeholder="Masukkan nama kontak"
+                                class="w-full h-11 px-4 rounded-lg border text-sm
+        @error('contact_name') border-red-500 
+        @else border-gray-300 dark:border-gray-700 @enderror
+        dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                            @error('contact_name')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- TELEPON & ROLE (2 KOLOM) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-3">
+
+                            <!-- TELEPON -->
+                            <div class="w-full">
+                                <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                    No. Telepon
+                                </label>
+
+                                <input type="text" name="contact_phone"
+                                    value="{{ old('contact_phone', $activity_detail->contact_phone ?? '') }}"
+                                    placeholder="Masukkan nomor telepon"
+                                    class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('contact_phone') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                @error('contact_phone')
+                                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- ROLE -->
+                            <div class="w-full">
+                                <label class="text-[#616161] font-medium text-xs mb-2 block dark:text-gray-400">
+                                    Peran Kontak
+                                </label>
+
+                                <input type="text" name="contact_role"
+                                    value="{{ old('contact_role', $activity_detail->contact_role ?? '') }}"
+                                    placeholder="Contoh: Korlap"
+                                    class="w-full h-11 px-4 rounded-lg border text-sm
+            @error('contact_role') border-red-500 
+            @else border-gray-300 dark:border-gray-700 @enderror
+            dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                                @error('contact_role')
+                                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                        </div>
+
+
+                        <div class="w-full mt-3">
+                            <div class="w-full">
+                                <label class="text-[#616161] font-medium text-xs mb-2 block text-md dark:text-gray-400">
+                                    Persyaratan
+                                </label>
+
+                                <div id="editor-wrapper">
+                                    <div id="editor"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <button type="submit"
+                            class="mt-5 py-1.5 px-4 border-2 text-theme-xs border-[#7753AF] bg-[#7753AF] rounded-lg text-white text-center hover:bg-[#67419B] transition">
+                            Simpan
+                        </button>
+
+                    </form>
+
+                    <style>
+                        #editor-wrapper .ql-container {
+                            height: 200px;
+                        }
+
+                        #editor-wrapper .ql-editor {
+                            min-height: 200px;
+                        }
+                    </style>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+
+                            var quill = new Quill('#editor', {
+                                theme: 'snow'
+                            });
+
+                            let participant_requirements = `{!! $activity_detail->participant_requirements ?? '' !!}`;
+                            quill.root.innerHTML = participant_requirements;
+
+                            document.querySelector('#requirements-form').addEventListener('submit', function() {
+                                let isi = quill.root.innerHTML;
+
+                                console.log("ISI QUILL:", isi); // DEBUG
+
+                                document.querySelector('#participant_requirements').value = isi;
+                            });
+
+                        });
+                    </script>
+
+
+                    <script>
+                        let deletedPhotos = [];
+
+                        function openFilePicker(event) {
+                            event.stopPropagation();
+                            document.getElementById('fileInput').click();
+                        }
+
+                        function removeExistingImage(btn, photoId) {
+                            deletedPhotos.push(photoId);
+                            document.getElementById('deletedPhotosInput').value = JSON.stringify(deletedPhotos);
+                            btn.parentElement.remove();
+                        }
+
+                        document.getElementById('fileInput').addEventListener('change', function(e) {
+                            Array.from(e.target.files).forEach(file => {
+                                const reader = new FileReader();
+                                reader.onload = function(event) {
+                                    const div = document.createElement("div");
+                                    div.className = "relative w-28 h-28";
+
+                                    div.innerHTML = `
+                    <img src="${event.target.result}"
+                        class="w-full h-full object-cover rounded-xl border border-gray-300">
+                `;
+
+                                    // Masukkan sebelum upload box
+                                    document.getElementById('dropzone')
+                                        .insertBefore(div, document.getElementById('dropzone').lastElementChild);
+                                };
+                                reader.readAsDataURL(file);
+                            });
+                        });
+                    </script>
+                </div>
+
+                <div
+                    class="rounded-2xl mt-4 border border-gray-300 bg-white p-5 dark:border-gray-800 dark:bg-white/3 sm:p-6">
                     <div class="mb-6 flex items-center justify-between">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
                             Dokumentasi Kegiatan
                         </h3>
                     </div>
-
 
                     <form action="{{ route('activity-documents.store') }}" method="POST">
                         @csrf
@@ -416,7 +663,9 @@
                     </script>
                 </div>
             </div>
+
         </div>
+
     </div>
 
     <div id="delete-activity-modal"
@@ -427,7 +676,7 @@
             class="hs-overlay-animation-target hs-overlay-open:scale-100 hs-overlay-open:opacity-100 scale-95 opacity-0 ease-in-out transition-all duration-200 sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-56px)] flex items-center justify-center pointer-events-auto">
 
             <div
-                class="w-[390px] flex flex-col px-4 py-6 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-gray-700/70">
+                class="w-[390px] flex flex-col px-4 py-6 bg-white border border-gray-300 shadow-2xs rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-gray-700/70">
 
                 <div class="flex flex-col justify-center items-center">
                     <img src="{{ asset('assets/images/icons/circle-alert.svg') }}" alt="Success" class="w-12 h-12">
@@ -451,7 +700,7 @@
 
                     <div class="flex justify-center items-center gap-x-2">
                         <button type="button"
-                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
                             data-hs-overlay="#delete-activity-modal">
                             Batal
                         </button>

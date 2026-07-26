@@ -36,7 +36,7 @@
                         <div class="grid sm:grid-cols-2 gap-2 mb-4">
                             <div>
                                 <label class="text-[#616161] font-medium text-xs mb-2 block text-md dark:text-gray-400">
-                                    Nama OPA
+                                    Nama Anggota Eksternal
                                 </label>
 
                                 <div x-data="{ isOptionSelected: {{ old('opa_id', $loan->opa_id ?? null) ? 'true' : 'false' }} }" class="relative z-20 bg-transparent">

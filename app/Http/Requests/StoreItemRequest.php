@@ -27,7 +27,7 @@ class StoreItemRequest extends FormRequest
             'quantity' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:items,code',
             'description' => 'nullable|string',
-            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 

@@ -2,18 +2,27 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Exports\CategoryExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export()
+    {
+        return Excel::download(
+
+            new CategoryExport,
+            'data_kategori_' . date('Y-m-d') . '.xlsx'
+        );
+    }
     public function index(Request $request)
     {
         $perPage = $request->get('perPage', 5);

@@ -46,8 +46,10 @@ class PublicActivityController extends Controller
         return view('frontend.activities.index', compact('events', 'upcomingActivities'));
     }
 
-    public function show()
+    public function show($id)
     {
-        return view('frontend.activities.show');
+        $activity = Activity::where('id', $id)->firstOrFail();
+
+        return view('frontend.activities.show', compact('activity'));
     }
 }

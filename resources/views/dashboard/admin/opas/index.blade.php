@@ -170,6 +170,13 @@
                         <span class="text-gray-700 dark:text-gray-400">Reset</span>
                     </button>
 
+                    <a href="#" id="exportBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white
+    px-4 py-2 rounded-md text-sm font-medium
+    transition flex items-center gap-2 shadow-sm">
+                        Export Excel
+                    </a>
+
                 </div>
             </div>
 
@@ -345,28 +352,64 @@
             const searchInput = document.querySelector("#search-input");
             const tableContainer = document.querySelector("#opa-table");
             const perPageSelect = document.querySelector("#perPageSelect");
+
             const campusButtons = document.querySelectorAll(".campus-option");
             const campusBtnLabel = document.querySelector("#campusDropdownBtn");
+
             const organizationButtons = document.querySelectorAll(".organization-option");
             const organizationBtnLabel = document.querySelector("#organizationDropdownBtn");
+
             const resetBtn = document.querySelector("#resetFiltersBtn");
+
+            const exportBtn = document.querySelector("#exportBtn");
 
             let searchTimeout = null;
 
             let currentCampus = "{{ request('campus', 'all') }}";
             let currentOrganization = "{{ request('organization', 'all') }}";
 
-            // SVG untuk dropdown
+            // SVG dropdown
             const dropdownIcon = `
-        <svg class='hs-dropdown-open:rotate-180 size-4' xmlns='http://www.w3.org/2000/svg'
-            viewBox='0 0 24 24' fill='none' stroke='currentColor'
-            stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+        <svg class='hs-dropdown-open:rotate-180 size-4'
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            stroke-width='2'
+            stroke-linecap='round'
+            stroke-linejoin='round'>
             <path d='m6 9 6 6 6-6'/>
         </svg>
     `;
 
+            // =========================
+            // UPDATE EXPORT URL
+            // =========================
+            function updateExportUrl() {
+
+                const params = new URLSearchParams();
+
+                if (searchInput.value) {
+                    params.set("search", searchInput.value);
+                }
+
+                if (currentCampus !== "all") {
+                    params.set("campus", currentCampus);
+                }
+
+                if (currentOrganization !== "all") {
+                    params.set("organization", currentOrganization);
+                }
+
+                exportBtn.href =
+                    `{{ route('borrowers.export') }}?${params.toString()}`;
+            }
+
+            // =========================
             // FETCH DATA
+            // =========================
             async function fetchData(url = "{{ route('opas.index') }}") {
+
                 const params = new URLSearchParams({
                     search: searchInput.value,
                     perPage: perPageSelect.value,
@@ -375,8 +418,12 @@
                 });
 
                 if (url.includes("?")) {
+
                     const baseUrl = url.split("?")[0];
-                    const existingParams = new URLSearchParams(url.split("?")[1]);
+
+                    const existingParams = new URLSearchParams(
+                        url.split("?")[1]
+                    );
 
                     existingParams.set("search", searchInput.value);
                     existingParams.set("perPage", perPageSelect.value);
@@ -384,7 +431,9 @@
                     existingParams.set("organization", currentOrganization);
 
                     url = `${baseUrl}?${existingParams.toString()}`;
+
                 } else {
+
                     url = `${url}?${params.toString()}`;
                 }
 
@@ -395,80 +444,134 @@
                 });
 
                 const html = await response.text();
+
                 tableContainer.innerHTML = html;
 
-                // Re-init components after AJAX update
+                // Re-init components
                 if (window.HSStaticMethods) {
                     window.HSStaticMethods.autoInit();
                 }
 
                 initDeleteForms();
+
+                // Update export URL
+                updateExportUrl();
             }
 
-            // DELETE FORM CONFIRMATION
+            // =========================
+            // DELETE CONFIRM
+            // =========================
             function initDeleteForms() {
-                document.querySelectorAll("form.btn-delete").forEach(form => {
-                    form.addEventListener("submit", function(e) {
-                        if (!confirm("Yakin ingin menghapus data ini?")) {
-                            e.preventDefault();
-                        }
+
+                document.querySelectorAll("form.btn-delete")
+                    .forEach(form => {
+
+                        form.addEventListener("submit", function(e) {
+
+                            if (!confirm(
+                                    "Yakin ingin menghapus data ini?"
+                                )) {
+
+                                e.preventDefault();
+                            }
+                        });
                     });
-                });
             }
 
             initDeleteForms();
 
+            // =========================
             // SEARCH
+            // =========================
             searchInput.addEventListener("input", function() {
+
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => fetchData(), 300);
+
+                searchTimeout = setTimeout(() => {
+
+                    fetchData();
+
+                }, 300);
             });
 
+            // =========================
             // PER PAGE
+            // =========================
             perPageSelect.addEventListener("change", function() {
+
                 fetchData();
             });
 
+            // =========================
             // FILTER CAMPUS
+            // =========================
             campusButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentCampus = this.dataset.value;
-                    campusBtnLabel.innerHTML = `${this.textContent} ${dropdownIcon}`;
+
+                    campusBtnLabel.innerHTML =
+                        `${this.textContent} ${dropdownIcon}`;
+
                     fetchData();
                 });
             });
 
+            // =========================
             // FILTER ORGANIZATION
+            // =========================
             organizationButtons.forEach(btn => {
+
                 btn.addEventListener("click", function() {
+
                     currentOrganization = this.dataset.value;
-                    organizationBtnLabel.innerHTML = `${this.textContent} ${dropdownIcon}`;
+
+                    organizationBtnLabel.innerHTML =
+                        `${this.textContent} ${dropdownIcon}`;
+
                     fetchData();
                 });
             });
 
+            // =========================
             // PAGINATION AJAX
+            // =========================
             document.addEventListener("click", function(e) {
+
                 const link = e.target.closest(".pagination a");
+
                 if (link) {
+
                     e.preventDefault();
+
                     fetchData(link.getAttribute("href"));
                 }
             });
 
-            // RESET FILTERS
+            // =========================
+            // RESET FILTER
+            // =========================
             resetBtn.addEventListener("click", function() {
 
                 currentCampus = "all";
                 currentOrganization = "all";
+
                 searchInput.value = "";
 
-                // Reset label tombol
-                campusBtnLabel.innerHTML = `Semua Kampus ${dropdownIcon}`;
-                organizationBtnLabel.innerHTML = `Semua Organisasi ${dropdownIcon}`;
+                campusBtnLabel.innerHTML =
+                    `Semua Kampus ${dropdownIcon}`;
+
+                organizationBtnLabel.innerHTML =
+                    `Semua Organisasi ${dropdownIcon}`;
 
                 fetchData();
             });
+
+            // =========================
+            // INIT EXPORT URL
+            // =========================
+            updateExportUrl();
 
         });
     </script>

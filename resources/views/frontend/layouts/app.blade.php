@@ -15,14 +15,28 @@
         [x-cloak] {
             display: none !important;
         }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            /* font-family: 'IBM Plex Sans', sans-serif; */
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    {{-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap"
+        rel="stylesheet"> --}}
 </head>
 
-<body x-data="{ loginOpen: false }" @open-login-modal.window="loginOpen = true" class="text-white m-0 p-0 overflow-x-hidden antialiased">
+<body x-data="{ loginOpen: false }" @open-login-modal.window="loginOpen = true"
+    class="text-white m-0 p-0 overflow-x-hidden antialiased">
     <div id="preloader"
         class="fixed inset-0 z-[9999] bg-gray-900 flex items-center justify-center transition-opacity duration-500">
         <div class="flex flex-col items-center gap-4">
@@ -75,13 +89,13 @@
             });
         }
 
-        
+
         const navbar = document.getElementById("navbar");
         const btn = document.getElementById("mobile-menu-btn");
         const menu = document.getElementById("mobile-menu");
         const icon = btn ? btn.querySelector("i") : null;
 
-        const isHomePage = {{ Request::routeIs('frontend.home') ? 'true' : 'false' }}; 
+        const isHomePage = {{ Request::routeIs('frontend.home') ? 'true' : 'false' }};
 
         function updateNavbar() {
 
@@ -89,10 +103,10 @@
                 navbar.classList.add("bg-[#1c1c1c]", "shadow-lg", "py-3");
                 navbar.classList.remove("bg-transparent", "py-4", "border-white/10");
                 if (btn) btn.classList.add("text-white");
-                return; 
+                return;
             }
 
-            
+
             const isScrolled = window.scrollY > 50;
             const isMenuOpen = menu && !menu.classList.contains("hidden");
 

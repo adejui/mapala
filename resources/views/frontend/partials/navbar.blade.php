@@ -50,7 +50,11 @@
         </div>
 
         <div class="hidden md:flex items-center gap-4">
-            @guest
+
+            {{-- @auth
+                @if (!in_array(auth()->user()->role, ['member', 'logistics', 'admin']))
+                @endif
+            @else
                 <div class="relative group">
                     <input type="text" placeholder="Cari alat, artikel..."
                         class="bg-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-white/20 focus:outline-none focus:border-[#7C3AED] focus:bg-white/20 focus:w-64 placeholder-gray-400 w-48 transition-all duration-300">
@@ -62,117 +66,72 @@
                     class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
                     Sign In
                 </a>
-            @endguest
+            @endauth --}}
 
-
-            @auth
-                <div x-data="{ openNotif: false }" class="relative mr-2">
-
-                    <button @click="openNotif = !openNotif" @click.away="openNotif = false"
-                        class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-[#7C3AED] hover:text-white transition-all duration-300 relative">
-
-                        <i class="fa-regular fa-bell text-lg"></i>
-
-                        @if ($latestActivities->count() > 0)
-                            <span
-                                class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#1c1c1c]"></span>
-                        @endif
-
-                    </button>
-
-                    <div x-show="openNotif" x-transition.opacity.duration.150ms x-cloak
-                        class="absolute right-0 mt-2 w-80 bg-white text-gray-800 rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
-
-                        <p class="px-4 py-2 text-xl font-semibold text-[#7c56b5] border-b">Notifikasi</p>
-
-                        <div class="max-h-60 overflow-y-auto">
-
-                            @forelse ($latestActivities as $activity)
-                                <a href="{{ route('frontend.kegiatan') }}"
-                                    class="block px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition">
-
-                                    <p class="text-sm font-semibold text-gray-800 truncate">
-                                        {{ $activity->title }}
-                                    </p>
-                                    <p class="text-xs text-gray-600 mt-0.5">
-                                        @if ($activity->activity_type == 'meeting')
-                                            Rapat
-                                        @elseif($activity->activity_type == 'basic training')
-                                            Diksar
-                                        @elseif($activity->activity_type == 'exploration')
-                                            Pengembaraan
-                                        @elseif($activity->activity_type == 'anniversary')
-                                            Hari Jadi
-                                        @elseif($activity->activity_type == 'others')
-                                            Lain-lain
-                                        @else
-                                            Tidak diketahui
-                                        @endif
-                                    </p>
-                                    <p class="text-xs text-gray-500 mt-1">
-                                        {{ $activity->created_at->diffForHumans() }}
-                                    </p>
-                                </a>
-                            @empty
-                                <p class="px-4 py-3 text-sm text-gray-500">Belum ada kegiatan terbaru.</p>
-                            @endforelse
-
-                        </div>
-
-                    </div>
+            @if (!Auth::guard('web')->check() && !Auth::guard('opa')->check())
+                <div class="relative group">
+                    <input type="text" placeholder="Cari alat, artikel..."
+                        class="bg-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-white/20 focus:outline-none focus:border-[#7C3AED] focus:bg-white/20 focus:w-64 placeholder-gray-400 w-48 transition-all duration-300">
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 group-hover:text-white transition-colors text-xs"></i>
                 </div>
 
+                <a href="javascript:void(0)" @click="loginOpen = true"
+                    class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
+                   Login
+                </a>
+            @endif
 
-                <div x-data="{ userDropdown: false }" class="relative">
-                    <button @click="userDropdown = !userDropdown" @click.away="userDropdown = false"
-                        class="flex items-center gap-3 focus:outline-none group text-left">
 
-                        <div
-                            class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-white/10 transition-all border border-transparent hover:border-white/10">
-                            <div class="hidden lg:flex flex-col items-end leading-tight">
-                                <span class="font-bold text-sm text-white group-hover:text-[#7C3AED] transition-colors">
-                                    {{ Auth::user()->full_name }}
-                                </span>
-                                <span class="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-                                    {{ Auth::user()->role ?? 'ANGGOTA' }}
-                                </span>
-                            </div>
-                            <div
-                                class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-500 group-hover:border-[#7C3AED] transition-all shadow-md">
-                                <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('frontend/images/user-default.jpeg') }}"
-                                    alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
-                            </div>
-                            <i class="fa-solid fa-chevron-down text-gray-500 text-[10px] transition-transform duration-300 group-hover:text-white mr-2"
-                                :class="{ 'rotate-180': userDropdown }"></i>
-                        </div>
+            {{-- @guest
+                <div class="relative group">
+                    <input type="text" placeholder="Cari alat, artikel..."
+                        class="bg-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-white/20 focus:outline-none focus:border-[#7C3AED] focus:bg-white/20 focus:w-64 placeholder-gray-400 w-48 transition-all duration-300">
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 group-hover:text-white transition-colors text-xs"></i>
+                </div>
+
+                <a href="javascript:void(0)" @click="loginOpen = true"
+                    class="px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#7C3AED] text-white border-2 border-[#7C3AED] hover:bg-[#6D28D9] hover:border-[#6D28D9] shadow-lg hover:scale-105">
+                    Sign In
+                </a>
+            @endguest --}}
+
+            @auth('opa')
+                <div x-data="{ open: false }" class="relative">
+                    <!-- Trigger -->
+                    <button @click="open = !open" @click.outside="open = false"
+                        class="flex items-center gap-3 focus:outline-none">
+
+                        <span class="text-white text-sm">
+                            Halo, <span class="font-semibold">{{ Auth::guard('opa')->user()->name }}</span>
+                        </span>
+
+                        @php
+                            $opa = auth('opa')->user();
+                        @endphp
+
+                        <img src="{{ $opa && $opa->photo ? asset('storage/' . $opa->photo) : asset('storage/imgUsers/default-image.png') }}"
+                            class="w-8 h-8 rounded-full border border-white/30" alt="User Avatar">
                     </button>
 
-                    <div x-show="userDropdown" x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0 translate-y-2"
-                        x-transition:enter-end="opacity-100 translate-y-0" x-cloak
-                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 text-gray-800 z-50 overflow-hidden border border-gray-100 origin-top-right ring-1 ring-black ring-opacity-5">
-
-                        <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 lg:hidden">
-                            <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
-                        </div>
-                        <div class="py-1">
-                            <a href="#"
-                                class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
-                                <i
-                                    class="fa-regular fa-user w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
-                                Profile Saya
-                            </a>
-                            @if (Auth::user()->role === 'admin')
-                                <a href="{{ route('dashboard') }}"
-                                    class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
-                                    <i
-                                        class="fa-solid fa-gauge-high w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
-                                    Dashboard
-                                </a>
-                            @endif
-                        </div>
+                    <!-- Dropdown -->
+                    <div x-show="open" x-transition
+                        class="absolute right-0 mt-3 w-auto py-1 bg-white rounded-xl shadow-xl overflow-hidden z-50">
+                        <a href="{{ route('frontend.opa.profile') }}"
+                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                            <i
+                                class="fa-regular fa-user w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                            Profile Saya
+                        </a>
+                        <a href="{{ route('frontend.history') }}"
+                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                            <i
+                                class="fa-solid fa-clipboard-list w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                            Riwayat Peminjaman
+                        </a>
                         <div class="border-t border-gray-100 my-1"></div>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('opa.logout') }}">
                             @csrf
                             <button type="submit"
                                 class="w-full group flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
@@ -183,6 +142,152 @@
                         </form>
                     </div>
                 </div>
+            @endauth
+
+            @auth
+                @php
+                    $opa = auth('opa')->user();
+                    $user = auth('web')->user();
+                @endphp
+                @if ($user)
+                    <div x-data="{ openNotif: false }" class="relative mr-2">
+
+                        <button @click="openNotif = !openNotif" @click.away="openNotif = false"
+                            class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-[#7C3AED] hover:text-white transition-all duration-300 relative">
+
+                            <i class="fa-regular fa-bell text-lg"></i>
+
+                            @if ($latestActivities->count() > 0)
+                                <span
+                                    class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#1c1c1c]"></span>
+                            @endif
+
+                        </button>
+
+                        @php
+                            $opa = auth('opa')->user();
+                            $user = auth('web')->user();
+                        @endphp
+
+                        <div x-show="openNotif" x-transition.opacity.duration.150ms x-cloak
+                            class="absolute right-0 mt-2 w-80 bg-white text-gray-800 rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
+
+                            <p class="px-4 py-2 text-xl font-semibold text-[#7c56b5] border-b">Notifikasi</p>
+
+                            <div class="max-h-60 overflow-y-auto">
+
+                                @forelse ($latestActivities as $activity)
+                                    <a href="{{ route('frontend.kegiatan') }}"
+                                        class="block px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition">
+
+                                        <p class="text-sm font-semibold text-gray-800 truncate">
+                                            {{ $activity->title }}
+                                        </p>
+                                        <p class="text-xs text-gray-600 mt-0.5">
+                                            @if ($activity->activity_type == 'meeting')
+                                                Rapat
+                                            @elseif($activity->activity_type == 'basic training')
+                                                Diksar
+                                            @elseif($activity->activity_type == 'exploration')
+                                                Pengembaraan
+                                            @elseif($activity->activity_type == 'anniversary')
+                                                Hari Jadi
+                                            @elseif($activity->activity_type == 'others')
+                                                Lain-lain
+                                            @else
+                                                Tidak diketahui
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ $activity->created_at->diffForHumans() }}
+                                        </p>
+                                    </a>
+                                @empty
+                                    <p class="px-4 py-3 text-sm text-gray-500">Belum ada kegiatan terbaru.</p>
+                                @endforelse
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    @php
+                        $opa = auth('opa')->user();
+                        $user = auth('web')->user();
+                    @endphp
+                    @if ($user)
+                        <div x-data="{ userDropdown: false }" class="relative">
+                            <button @click="userDropdown = !userDropdown" @click.away="userDropdown = false"
+                                class="flex items-center gap-3 focus:outline-none group text-left">
+
+                                <div
+                                    class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-white/10 transition-all border border-transparent hover:border-white/10">
+                                    <div class="hidden lg:flex flex-col items-end leading-tight">
+                                        <span
+                                            class="font-bold text-sm text-white group-hover:text-[#7C3AED] transition-colors">
+                                            {{ Auth::user()->full_name }}
+                                        </span>
+                                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
+                                            {{ Auth::user()->role ?? 'ANGGOTA' }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-500 group-hover:border-[#7C3AED] transition-all shadow-md">
+                                        <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('frontend/images/user-default.jpeg') }}"
+                                            alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down text-gray-500 text-[10px] transition-transform duration-300 group-hover:text-white mr-2"
+                                        :class="{ 'rotate-180': userDropdown }"></i>
+                                </div>
+                            </button>
+
+                            <div x-show="userDropdown" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0" x-cloak
+                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 text-gray-800 z-50 overflow-hidden border border-gray-100 origin-top-right ring-1 ring-black ring-opacity-5">
+
+                                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50/50 lg:hidden">
+                                    <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                                </div>
+                                <div class="py-1">
+                                    <a href="{{ route('frontend.user.profile') }}"
+                                        class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                                        <i
+                                            class="fa-regular fa-user w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                        Profile Saya
+                                    </a>
+
+                                    @if (Auth::check() && (Auth::user()->role === 'member' || Auth::user()->role === 'opa'))
+                                        <a href="{{ route('frontend.history') }}"
+                                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                                            <i
+                                                class="fa-solid fa-clipboard-list w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                            Riwayat Peminjaman
+                                        </a>
+                                    @endif
+                                    @if (Auth::user()->role === 'admin' || Auth::user()->role === 'logistics')
+                                        <a href="{{ route('dashboard') }}"
+                                            class="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#7C3AED] transition-colors">
+                                            <i
+                                                class="fa-solid fa-gauge-high w-5 text-gray-400 group-hover:text-[#7C3AED] transition-colors"></i>
+                                            Dashboard
+                                        </a>
+                                    @endif
+                                </div>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full group flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                                        <i
+                                            class="fa-solid fa-right-from-bracket w-5 text-red-400 group-hover:text-red-600 transition-colors"></i>
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
+                @endif
             @endauth
         </div>
     </div>
@@ -280,7 +385,7 @@
                 </div>
             @endauth
 
-            @guest
+            {{-- @guest
                 <div class="border-t border-white/10 pt-6 flex flex-col gap-4 mt-4">
                     <a href="javascript:void(0)"
                         @click="loginOpen = true; document.getElementById('mobile-menu').classList.add('hidden')"
@@ -288,7 +393,7 @@
                         Sign In
                     </a>
                 </div>
-            @endguest
+            @endguest --}}
 
             <div class="mt-8 pt-6 border-t border-white/10">
                 <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-4">Hubungi Kami</p>

@@ -29,12 +29,6 @@ class Loan extends Model
     {
         return $this->belongsTo(Opa::class);
     }
-
-    // public function details()
-    // {
-    //     return $this->hasMany(LoanDetail::class);
-    // }
-
     public function details()
     {
         return $this->hasMany(LoanDetail::class, 'loan_id');

@@ -7,6 +7,7 @@ use App\Models\Activity;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -53,10 +54,9 @@ class ArticleController extends Controller
         $request->validate([
             'activity_id' => ['required', 'exists:activities,id'],
             'title'       => ['required', 'string', 'max:255'],
-            'slug'        => ['required', 'string', 'max:255', 'unique:your_table_name,slug'],
             'content'     => ['required'],
             'status'      => ['required', 'in:draft,published'],
-            'file_path'   => ['nullable', 'file', 'mimes:png,jpg,jpeg,pdf,doc,docx', 'max:2048'],
+            'file_path'   => ['required', 'file', 'mimes:png,jpg,jpeg,pdf,doc,docx', 'max:5120'],
         ], [
             // Pesan validasi
             'activity_id.required' => 'Activity wajib dipilih.',
@@ -64,10 +64,6 @@ class ArticleController extends Controller
 
             'title.required' => 'Judul wajib diisi.',
             'title.max'      => 'Judul terlalu panjang.',
-
-            'slug.required' => 'Slug wajib diisi.',
-            'slug.unique'   => 'Slug sudah digunakan.',
-            'slug.max'      => 'Slug terlalu panjang.',
 
             'content.required' => 'Konten wajib diisi.',
 
@@ -77,7 +73,7 @@ class ArticleController extends Controller
             'file_path.required' => 'File wajib diunggah.',
             'file_path.file'     => 'Format file tidak valid.',
             'file_path.mimes'    => 'File harus berupa png, jpg, jpeg, pdf, doc, atau docx.',
-            'file_path.max'      => 'Ukuran file maksimal 2MB.',
+            'file_path.max'      => 'Ukuran file maksimal 5MB.',
         ]);
 
 
@@ -91,7 +87,12 @@ class ArticleController extends Controller
         $filePath = null;
 
         if ($request->hasFile('file_path')) {
-            $filePath = $request->file('file_path')->store('thumbnails', 'public');
+            $file = $request->file('file_path');
+
+            // optional: kasih nama unik
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $filePath = $file->storeAs('thumbnails', $filename, 'public');
         }
 
         Article::create([
@@ -110,25 +111,79 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Article $article)
     {
-        //
+        return view('dashboard.admin.articles.detail', compact('article'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Article $article)
     {
-        //
+        $activities = Activity::all();
+
+        return view('dashboard.admin.articles.edit', compact('article', 'activities'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Article $article)
     {
-        //
+        // Validasi
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'activity_id' => 'required|exists:activities,id',
+            'status' => 'required|in:draft,published',
+            'content' => 'required',
+            'file_path' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ], [
+            // Pesan validasi
+            'activity_id.required' => 'Activity wajib dipilih.',
+            'activity_id.exists'   => 'Activity tidak valid.',
+
+            'title.required' => 'Judul wajib diisi.',
+            'title.max'      => 'Judul terlalu panjang.',
+
+            'content.required' => 'Konten wajib diisi.',
+
+            'status.required' => 'Status wajib dipilih.',
+            'status.in'       => 'Status harus draft atau published.',
+
+            'file_path.required' => 'File wajib diunggah.',
+            'file_path.file'     => 'Format file tidak valid.',
+            'file_path.mimes'    => 'File harus berupa png, jpg, jpeg, pdf, doc, atau docx.',
+            'file_path.max'      => 'Ukuran file maksimal 5MB.',
+        ]);
+
+        // Default pakai gambar lama
+        $filePath = $article->file_path;
+
+        // Kalau ada upload gambar baru
+        if ($request->hasFile('file_path')) {
+
+            // Hapus gambar lama
+            if ($article->file_path && Storage::disk('public')->exists($article->file_path)) {
+                Storage::disk('public')->delete($article->file_path);
+            }
+
+            // Simpan gambar baru
+            $filePath = $request->file('file_path')->store('thumbnails', 'public');
+        }
+
+        // Update data
+        $article->update([
+            'title' => $request->title,
+            'activity_id' => $request->activity_id,
+            'status' => $request->status,
+            'content' => $request->content,
+            'file_path' => $filePath,
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Artikel berhasil diupdate');
     }
 
     /**
@@ -136,6 +191,12 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        // Hapus file jika ada
+        if ($article->file_path && Storage::disk('public')->exists($article->file_path)) {
+            Storage::disk('public')->delete($article->file_path);
+        }
+
+        // Hapus data dari database
         $article->delete();
 
         return redirect()->route('articles.index')

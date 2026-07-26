@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Article;
 use Illuminate\Http\Request;
 
@@ -8,24 +9,42 @@ class PublicArticleController extends Controller
 {
     public function index()
     {
-        // 1. Ambil Artikel Utama (Kiri) - Pagination 5 per halaman
-        // $articles = Article::with('author') // Asumsi ada relasi author
-        //             ->latest()
-        //             ->paginate(5);
+        $articles = Article::latest()->paginate(5);
 
-        // 2. Ambil Artikel Terbaru untuk Sidebar (Kanan) - Limit 5
-        // Kita exclude artikel yang sedang tampil di halaman 1 agar tidak duplikat (opsional)
-        // $recentArticles = Article::latest()->take(5)->get();
+        $popular_articles = Article::where('status', 'published')
+            ->where('id', '!=', $article->id ?? null)
+            ->orderByDesc('views')
+            ->take(4)
+            ->get();
 
-        return view('frontend.articles.index'); // compact('articles', 'recentArticles')
+        return view('frontend.articles.index', compact('articles', 'popular_articles'));
     }
 
-    // public function show($slug)
-    // {
-    //     // Untuk halaman detail nanti (Single Page)
-    //     $article = Article::where('slug', $slug)->firstOrFail();
-    //     $recentArticles = Article::latest()->take(5)->get();
+    public function show($slug)
+    {
 
-    //     return view('frontend.articles.show', compact('article', 'recentArticles'));
-    // }
+        $article = Article::where('slug', $slug)->firstOrFail();
+
+        // tambah view
+        $article->increment('views');
+
+        // Ambil related berdasarkan activity_type
+        $related_articles = Article::whereHas('activity', function ($query) use ($article) {
+            $query->where('activity_type', $article->activity->activity_type);
+        })
+            ->where('id', '!=', $article->id) // biar tidak termasuk artikel yang sama
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Kalau tidak ada related, ambil terbaru umum
+        if ($related_articles->count() < 1) {
+            $related_articles = Article::where('id', '!=', $article->id)
+                ->latest()
+                ->take(4)
+                ->get();
+        }
+
+        return view('frontend.articles.detail', compact('article', 'related_articles'));
+    }
 }

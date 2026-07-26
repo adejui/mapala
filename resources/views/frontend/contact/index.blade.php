@@ -1,17 +1,19 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-    <div class="fixed inset-0 z-[-1] bg-gray-50 opacity-60"
+    {{-- Background pola titik - statis, tidak fixed (fixed background bikin browser terus repaint saat scroll di mobile) --}}
+    <div class="absolute inset-0 -z-10 bg-gray-50 opacity-60"
         style="background-image: radial-gradient(#7C3AED 0.5px, transparent 0.5px), radial-gradient(#7C3AED 0.5px, #f9fafb 0.5px); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
     </div>
 
-    <div class="min-h-screen pt-32 pb-20 px-6 md:px-16 relative overflow-hidden">
+    <div class="min-h-screen pt-32 pb-20 px-6 md:px-16 relative">
 
-        <div
-            class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-purple-200 rounded-full filter blur-3xl opacity-30 animate-pulse-slow">
+        {{-- Blob dekorasi: statis, tanpa blur-3xl & tanpa animasi.
+             Ini titik terberat di versi lama (blur besar + animate-pulse-slow = repaint terus-menerus). --}}
+        <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-purple-200/30 rounded-full pointer-events-none">
         </div>
-        <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-blue-100 rounded-full filter blur-3xl opacity-30 animate-pulse-slow"
-            style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-blue-100/30 rounded-full pointer-events-none">
+        </div>
 
         <div class="max-w-7xl mx-auto relative z-10">
 
@@ -27,8 +29,9 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-20 items-start">
 
+                {{-- Card info kontak: backdrop-blur diganti solid bg putih -> visual mirip, jauh lebih ringan --}}
                 <div
-                    class="lg:col-span-1 bg-white/80 backdrop-blur-lg rounded-[2.5rem] p-8 shadow-xl shadow-purple-100/50 border border-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    class="lg:col-span-1 bg-white rounded-[2.5rem] p-8 shadow-lg shadow-purple-100/50 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                     <h3 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
                         <i class="fa-solid fa-circle-info text-[#7C3AED]"></i> Informasi Kontak
                     </h3>
@@ -37,7 +40,7 @@
 
                         <div class="flex items-start gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-purple-50 text-[#7C3AED] rounded-2xl shadow-sm group-hover:bg-[#7C3AED] group-hover:text-white transition-all duration-300">
+                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-purple-50 text-[#7C3AED] rounded-2xl group-hover:bg-[#7C3AED] group-hover:text-white transition-colors duration-300">
                                 <i class="fa-solid fa-location-dot text-2xl fa-fw"></i>
                             </div>
                             <div>
@@ -51,7 +54,7 @@
 
                         <div class="flex items-start gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                                 <i class="fa-solid fa-phone text-xl fa-fw"></i>
                             </div>
                             <div>
@@ -64,7 +67,7 @@
 
                         <div class="flex items-start gap-5 group">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-green-50 text-green-600 rounded-2xl shadow-sm group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
                                 <i class="fa-solid fa-envelope text-xl fa-fw"></i>
                             </div>
                             <div>
@@ -78,7 +81,7 @@
 
                         <div class="flex items-start gap-5 group border-t border-gray-100 pt-8 mt-2">
                             <div
-                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-orange-50 text-orange-600 rounded-2xl shadow-sm group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                                class="w-14 h-14 shrink-0 flex items-center justify-center bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
                                 <i class="fa-solid fa-clock text-xl fa-fw"></i>
                             </div>
                             <div>
@@ -109,18 +112,26 @@
                     </div>
                 </div>
 
+                {{-- Card form: backdrop-blur & blob blur dihapus, ganti solid --}}
                 <div
-                    class="lg:col-span-2 bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-purple-100/50 border border-white relative overflow-hidden">
+                    class="lg:col-span-2 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-lg shadow-purple-100/50 border border-gray-100 relative overflow-hidden">
 
-                    <div
-                        class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-purple-100 rounded-full filter blur-2xl opacity-50">
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8 relative z-10 flex items-center justify-between">
 
-                    <h3 class="text-2xl font-bold text-gray-900 mb-8 relative z-10 flex items-center gap-3">
-                        <i class="fa-regular fa-paper-plane text-[#7C3AED]"></i> Kirim Pesan Kepada Kami
+                        <div class="flex items-center gap-3">
+                            <i class="fa-regular fa-paper-plane text-[#7C3AED]"></i>
+                            Kirim Pesan Kepada Kami
+                        </div>
+
+                        @if (session('success'))
+                            <div class="text-green-500">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
                     </h3>
 
-                    <form action="#" method="POST" class="space-y-6 relative z-10">
+                    <form action="{{ route('frontend.contact.send') }}" method="POST" class="space-y-6 relative z-10">
                         @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
@@ -131,7 +142,7 @@
                                             class="fa-regular fa-user"></i></span>
                                     <input type="text" id="name" name="name" placeholder="Masukkan nama Anda"
                                         required
-                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-gray-800 placeholder-gray-400 shadow-sm font-medium">
+                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
                                 </div>
                             </div>
                             <div class="space-y-2">
@@ -142,7 +153,7 @@
                                             class="fa-regular fa-envelope"></i></span>
                                     <input type="email" id="email" name="email" placeholder="contoh@email.com"
                                         required
-                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-gray-800 placeholder-gray-400 shadow-sm font-medium">
+                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
                                 </div>
                             </div>
                         </div>
@@ -154,7 +165,7 @@
                                         class="fa-regular fa-comment-dots"></i></span>
                                 <input type="text" id="subject" name="subject" placeholder="Apa tujuan pesan Anda?"
                                     required
-                                    class="w-full py-3.5 pl-11 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-gray-800 placeholder-gray-400 shadow-sm font-medium">
+                                    class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
                             </div>
                         </div>
                         <div class="space-y-2">
@@ -162,25 +173,23 @@
                                     class="text-red-500">*</span></label>
                             <div class="relative">
                                 <textarea id="message" name="message" rows="6" placeholder="Tuliskan pesan lengkap Anda di sini..." required
-                                    class="w-full py-3.5 px-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-gray-800 placeholder-gray-400 shadow-sm resize-none font-medium leading-relaxed"></textarea>
+                                    class="w-full py-3.5 px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 resize-none font-medium leading-relaxed"></textarea>
                             </div>
                         </div>
 
                         <button type="submit"
-                            class="group w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#7C3AED] text-white font-bold rounded-xl shadow-lg shadow-purple-200 hover:bg-[#6D28D9] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                            <span class="relative z-10">Kirim Pesan Sekarang</span>
-                            <i
-                                class="fa-solid fa-paper-plane relative z-10 group-hover:translate-x-1 transition-transform"></i>
-                            <div
-                                class="absolute inset-0 h-full w-full scale-0 rounded-xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/10">
-                            </div>
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#7C3AED] text-white font-bold rounded-xl shadow-md hover:bg-[#6D28D9] transition-colors duration-300">
+                            <span>Kirim Pesan Sekarang</span>
+                            <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </form>
                 </div>
 
             </div>
 
-            <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-200/50 border border-white group">
+            {{-- Peta: dimuat otomatis. loading="lazy" tetap dipakai supaya browser
+                 menunda request sampai elemen mendekati viewport (native lazy-load) --}}
+            <div class="relative rounded-[2.5rem] overflow-hidden shadow-xl border border-gray-100">
                 <div
                     class="absolute top-0 left-0 right-0 bg-gradient-to-b from-white/90 to-transparent p-8 z-10 pointer-events-none">
                     <h3 class="text-2xl font-bold text-gray-900 text-center flex items-center justify-center gap-3">
@@ -189,36 +198,11 @@
                 </div>
 
                 <iframe src="https://maps.google.com/maps?q=-7.801948,110.326779&z=15&output=embed" width="100%"
-                    height="500" style="border:0; filter: grayscale(20%) contrast(1.1);" allowfullscreen=""
-                    loading="lazy"
-                    class="group-hover:filter-none transition-all duration-700 scale-105 group-hover:scale-100">
+                    height="500" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
-
-                <div
-                    class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none">
-                </div>
             </div>
 
         </div>
     </div>
-
-    <style>
-        @keyframes pulse-slow {
-
-            0%,
-            100% {
-                opacity: 0.3;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(1.1);
-            }
-        }
-
-        .animate-pulse-slow {
-            animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-    </style>
 @endsection

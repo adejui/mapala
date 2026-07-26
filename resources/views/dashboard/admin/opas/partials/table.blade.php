@@ -55,63 +55,73 @@
      <!-- table header end -->
 
      <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-         @forelse ($opas as $opa)
+         @forelse ($opas as $loan)
+             @php
+                 $borrower = $loan->user ?? $loan->opa;
+
+                 $name = $loan->user->full_name ?? ($loan->opa->name ?? '-');
+
+                 $email = $borrower->email ?? '-';
+
+                 $phone = $borrower->phone_number ?? '-';
+
+                 $campus = $loan->opa->campus_name ?? '-';
+
+                 $organization = $loan->opa->organization_name ?? '-';
+             @endphp
+
              <tr>
                  <td class="py-3 relative">
                      <div class="flex items-center">
                          <div class="flex items-center gap-3">
+
                              <div class="relative">
 
                                  <!-- Nama -->
                                  <p class="font-medium text-[#2E2E2E] text-theme-sm dark:text-white/90 inline-block">
-                                     {{ $opa->name }}
+                                     {{ $name }}
                                  </p>
-
-                                 <!-- Total peminjaman kecil di pojok kanan atas -->
-                                 <span class="absolute -top-1 text-[12px]  text-black px-1.5 rounded-full">
-                                     {{ $opa->total_peminjaman }}
-                                 </span>
 
                                  <!-- Email -->
                                  <span class="block text-[#2E2E2E] text-theme-xs dark:text-gray-400 mt-0.5">
-                                     {{ $opa->email }}
+                                     {{ $email }}
                                  </span>
 
                              </div>
+
                          </div>
                      </div>
                  </td>
 
                  <td class="py-3 hidden lg:table-cell">
                      <p class="text-[#2E2E2E] text-theme-sm dark:text-gray-400">
-                         {{ $opa->phone_number }}
+                         {{ $phone }}
                      </p>
                  </td>
+
                  <td class="py-3 hidden lg:table-cell">
                      <p class="text-[#2E2E2E] text-theme-sm dark:text-gray-400">
-                         {{ $opa->campus_name }}
+                         {{ $campus }}
                      </p>
                  </td>
+
                  <td class="py-3 hidden lg:table-cell">
                      <p class="text-[#2E2E2E] text-theme-sm dark:text-gray-400">
-                         {{ $opa->organization_name }}
+                         {{ $organization }}
                      </p>
                  </td>
-                 {{-- <td class="py-3 hidden lg:table-cell">
-                     <p class="text-[#2E2E2E] text-theme-sm dark:text-gray-400">
-                         {{ $opa->total_peminjaman }} kali
-                     </p>
-                 </td> --}}
+
                  <td class="py-3">
                      <div class="flex items-center justify-center">
-                         <p class="text-[#2E2E2E] text-theme-sm dark:text-gray-400">
                          <div class="flex justify-center items-center gap-2">
-                             <x-modal-confirm-delete :id="'delete-opa-' . $opa->id" :action="route('opas.destroy', $opa->id)" :item="$opa->name" />
+
+                             <x-modal-confirm-delete :id="'delete-loan-' . $loan->id" :action="route('opas.destroy', $loan->id)" :item="$name" />
+
                          </div>
-                         </p>
                      </div>
                  </td>
              </tr>
+
          @empty
              <tr>
                  <td colspan="5" class="px-3 py-6 text-center text-gray-500 dark:text-gray-400">

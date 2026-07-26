@@ -32,8 +32,13 @@
 
                         <button onclick="accessRapat()"
                             class="px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300
-                {{ request('type') == 'meeting' ? 'bg-[#7753AF] text-white shadow-sm' : 'text-gray-500 hover:text-[#7753AF] hover:bg-white' }}">
-                            Jadwal Rapat <i class="fa-solid fa-lock ml-1 text-xs opacity-70"></i>
+    {{ request('type') == 'meeting' ? 'bg-[#7753AF] text-white shadow-sm' : 'text-gray-500 hover:text-[#7753AF] hover:bg-white' }}">
+
+                            Jadwal Rapat
+
+                            @if (!auth()->check() || !in_array(auth()->user()->role, ['member', 'logistik', 'admin']))
+                                <i class="fa-solid fa-lock ml-1 text-xs opacity-70"></i>
+                            @endif
                         </button>
                     </div>
 
@@ -80,25 +85,28 @@
                                 <div class="flex -space-x-2">
                                     <img src="https://ui-avatars.com/api/?name={{ urlencode($activity->title) }}&background=random&color=fff"
                                         class="w-8 h-8 rounded-full border-2 border-white">
+
                                     <div
                                         class="w-8 h-8 rounded-full bg-[#7753AF] text-white text-[10px] flex items-center justify-center border-2 border-white font-bold">
-                                        ...</div>
+                                        ...
+                                    </div>
                                 </div>
                             </div>
 
                             <div>
-                                <h3
-                                    class="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#7C3AED] transition-colors leading-snug">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2 transition-colors leading-snug">
                                     {{ $activity->title }}
                                 </h3>
+
                                 <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
                                     {{ $activity->description ?? 'Tidak ada deskripsi untuk kegiatan ini.' }}
                                 </p>
 
-                                <span class="inline-flex items-center gap-2 text-[#7C3AED] font-bold text-sm">
-                                    Lihat Detail <i
-                                        class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                                </span>
+                                <a href="{{ route('frontend.kegiatan.show', $activity->id) }}"
+                                    class="inline-flex items-center gap-2 text-[#7C3AED] font-bold text-sm hover:underline">
+                                    Lihat Detail
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </a>
                             </div>
                         </div>
                     @empty

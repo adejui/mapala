@@ -27,7 +27,7 @@ class UpdateItemRequest extends FormRequest
             'code' => 'nullable|string|max:50|unique:items,code,' . $this->item->id,
             'quantity' => 'required|string',
             'description' => 'nullable|string',
-            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 

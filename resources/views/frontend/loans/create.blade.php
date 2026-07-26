@@ -39,13 +39,52 @@
                 </nav>
             </div>
 
-            <form action="{{ route('frontend.pinjaman.store') }}" method="POST" enctype="multipart/form-data">
+
+
+
+            @php
+
+                $showCompleteProfileModal = false;
+
+                // USER LOGIN
+                if (auth('web')->check()) {
+                    $user = auth('web')->user();
+
+                    if (empty($user->full_name) || empty($user->email) || empty($user->phone_number)) {
+                        $showCompleteProfileModal = true;
+                    }
+                }
+
+                // OPA LOGIN
+                if (auth('opa')->check()) {
+                    $opa = auth('opa')->user();
+
+                    if (
+                        empty($opa->name) ||
+                        empty($opa->email) ||
+                        empty($opa->campus_name) ||
+                        empty($opa->organization_name) ||
+                        empty($opa->phone_number)
+                    ) {
+                        $showCompleteProfileModal = true;
+                    }
+                }
+
+            @endphp
+
+
+
+
+
+
+            <form id="loanForm" action="{{ route('frontend.pinjaman.store') }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="cart_items" id="cart_items_input" value="{{ json_encode($cartItems) }}">
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    <div class="lg:col-span-2 space-y-8">
+                    <div class="lg:col-span-2 space-y-4">
 
                         <div class="bg-white rounded-4xl border border-gray-100 p-8 shadow-sm">
                             <h3 class="text-lg font-bold text-gray-900 mb-6">Data Peminjam</h3>
@@ -53,70 +92,88 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                                 <div class="md:col-span-2">
-                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Nama
-                                        Lengkap <span class="text-red-500">*</span></label>
-                                    <input type="text" name="name" value="{{ old('name', auth()->user()->full_name ?? '') }}"
-                                        class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
-                                        @error('name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
+                                        Nama Lengkap
+                                    </label>
+
+                                    <input type="text" name="name" readonly
+                                        value="{{ old(
+                                            'name',
+                                            auth('opa')->check() ? auth('opa')->user()->name : (auth()->check() ? auth()->user()->full_name : ''),
+                                        ) }}"
+                                        class="w-full bg-gray-200 border rounded-xl px-4 py-3.5
+               focus:outline-none transition-all text-sm font-medium text-gray-900 placeholder-gray-400"
                                         placeholder="Masukkan nama lengkap sesuai KTP...">
 
-                                    @error('name')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
+
 
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Kampus
-                                        Asal <span class="text-red-500">*</span></label>
-                                    <input type="text" name="campus_name" value="{{ old('campus_name', auth()->check() ? 'Universitas Bina Sarana Informatika Yogyakarta' : '') }}"
-                                        class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
-                                        @error('campus_name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
+                                        Asal</label>
+                                    <input type="text" name="campus_name"
+                                        value="{{ old('campus_name', auth('opa')->check() ? auth('opa')->user()->campus_name ?? '' : 'UBSI Yogyakarta') }}"
+                                        readonly
+                                        class="w-full bg-gray-200 border rounded-xl px-4 py-3.5 focus:outline-none transition-all text-sm font-medium text-gray-900 placeholder-gray-400"
                                         placeholder="Contoh: UBSI Yogyakarta">
 
-                                    @error('campus_name')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
                                 <div>
                                     <label
                                         class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Organisasi
-                                        <span class="text-red-500">*</span></label>
-                                    <input type="text" name="organization_name" value="{{ old('organization_name', auth()->check() ? 'Tarantula Adventure' : '') }}"
-                                        class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
-                                        @error('organization_name') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
+                                    </label>
+                                    <input type="text" name="organization_name"
+                                        value="{{ old('organization_name', auth('opa')->check() ? auth('opa')->user()->organization_name ?? '' : 'Mapala Tarantula') }}"
+                                        readonly
+                                        class="w-full bg-gray-200 border rounded-xl px-4 py-3.5 focus:outline-none transition-all text-sm font-medium text-gray-900 placeholder-gray-400"
                                         placeholder="Mapala / UKM / Umum">
 
-                                    @error('organization_name')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">No
-                                        WhatsApp <span class="text-red-500">*</span></label>
-                                    <input type="number" name="phone_number" value="{{ old('phone_number', auth()->user()->phone ?? '') }}"
-                                        class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
-                                        @error('phone_number') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
+                                        No WhatsApp
+                                    </label>
+
+                                    <input type="number" name="phone_number"
+                                        value="{{ old(
+                                            'phone_number',
+                                            auth('opa')->check() ? auth('opa')->user()->phone_number ?? '' : auth('web')->user()->phone_number ?? '',
+                                        ) }}"
+                                        readonly
+                                        class="w-full bg-gray-200 border rounded-xl px-4 py-3.5
+               focus:outline-none
+               transition-all text-sm font-medium text-gray-900 placeholder-gray-400"
                                         placeholder="08xxxxxxxxxx">
 
-                                    @error('phone_number')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
                                 </div>
+
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Email
-                                        <span class="text-red-500">*</span></label>
-                                    <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}"
-                                        class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
-                                        @error('email') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
-                                        placeholder="email@domain.com">
+                                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
+                                        Email
+                                    </label>
 
-                                    @error('email')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <input type="email" name="email"
+                                        value="{{ old(
+                                            'email',
+                                            auth('opa')->check() ? auth('opa')->user()->email : (auth()->check() ? auth()->user()->email : ''),
+                                        ) }}"
+                                        class="w-full bg-gray-200 border rounded-xl px-4 py-3.5
+               focus:outline-none
+               transition-all text-sm font-medium text-gray-900 placeholder-gray-400"
+                                        placeholder="email@domain.com" readonly>
+
                                 </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="bg-white rounded-4xl border border-gray-100 p-8 shadow-sm">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
@@ -163,9 +220,10 @@
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
-                            </div>
-                        </div>
 
+                            </div>
+
+                        </div>
 
 
                     </div>
@@ -180,8 +238,8 @@
                                         class="flex gap-4 p-3 border border-gray-100 rounded-2xl bg-white hover:border-purple-100 transition-colors group">
                                         <div
                                             class="h-20 w-20 shrink-0 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center border border-gray-100">
-                                            <img src="{{ $item['photo'] ? asset('storage/items/' . $item['photo']) : asset('frontend/images/tas.jpg') }}"
-                                                class="h-full w-full object-contain p-2 mix-blend-multiply group-hover:scale-110 transition-transform">
+                                            <img src="{{ $item['photo'] ? asset('storage/' . $item['photo']) : asset('frontend/images/tas.jpg') }}"
+                                                class="h-full w-full object-contain p-0 mix-blend-multiply group-hover:scale-110 transition-transform">
                                         </div>
                                         <div class="flex flex-col justify-center">
                                             <h4 class="font-bold text-gray-900 text-sm line-clamp-2 leading-tight">
@@ -214,18 +272,174 @@
         </div>
     </div>
 
+
+    <div id="completeProfileModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md px-8 py-5 relative">
+
+            <!-- Tombol Close -->
+            <button type="button"
+                class="closeCompleteProfileModal absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mt-2">
+
+                <!-- Icon -->
+                <div class="flex items-center justify-center mb-3">
+                    <div class="w-22 h-22 rounded-full bg-purple-100 flex items-center justify-center">
+
+                        <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center shadow-md">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-3.314 0-6 2.686-6 6h12c0-3.314-2.686-6-6-6z" />
+                            </svg>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-tarantulaPurple text-xl font-bold dark:text-white">
+                    Lengkapi Profile
+                </h2>
+
+                <!-- Description -->
+                <div class="text-sm text-gray-500 dark:text-gray-300 mt-2 leading-relaxed">
+
+                    <p>Lengkapi profilmu dulu agar bisa meminjam barang.</p>
+                    <p>Hanya butuh <span class="text-tarantulaPurple font-semibold">1 menit</span> untuk melengkapi</p>
+                    <p>data
+                        yang
+                        diperlukan.</p>
+                </div>
+
+                <!-- Button -->
+                <div class="mt-6">
+
+                    @if (auth()->guard('web')->check())
+                        <a href="{{ route('frontend.user.profile') }}"
+                            class="inline-flex items-center justify-center w-full px-6 py-2 text-md text-white font-light rounded-xl bg-purple-600 hover:bg-purple-700 transition duration-300 shadow-md">
+
+                            Ke Halaman Profile
+                            <span class="ml-2">→</span>
+                        </a>
+                    @elseif(auth()->guard('opa')->check())
+                        <a href="{{ route('frontend.opa.profile') }}"
+                            class="inline-flex items-center justify-center w-full px-6 py-2 text-md text-white font-light rounded-xl bg-purple-600 hover:bg-purple-700 transition duration-300 shadow-md">
+
+                            Ke Halaman Profile
+                            <span class="ml-2">→</span>
+                        </a>
+                    @endif
+
+                    <!-- Nanti saja -->
+                    <div class="text-center mt-2">
+
+                        <button type="button"
+                            class="closeCompleteProfileModal text-gray-700 font-light hover:text-gray-600 transition duration-300">
+
+                            Nanti Saja
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const form = document.getElementById("loanForm");
+
+            const modal = document.getElementById("completeProfileModal");
+
+            const closeButtons = document.querySelectorAll(
+                ".closeCompleteProfileModal"
+            );
+
+            const isProfileComplete = @json($isProfileComplete);
+
+            // Submit form
+            form.addEventListener("submit", function(e) {
+
+                if (!isProfileComplete) {
+
+                    e.preventDefault();
+
+                    modal.classList.remove("hidden");
+                    modal.classList.add("flex");
+                }
+
+            });
+
+            // Semua tombol close
+            closeButtons.forEach(button => {
+
+                button.addEventListener("click", function() {
+
+                    modal.classList.add("hidden");
+                    modal.classList.remove("flex");
+
+                });
+
+            });
+
+        });
+    </script>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const borrowInput = document.getElementById('borrow_date');
             const returnInput = document.getElementById('return_date');
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            const todayFormatted = today.toISOString().split('T')[0];
 
-            borrowInput.setAttribute('min', today);
-            returnInput.setAttribute('min', today); 
+            // Max borrow = hari ini + 14 hari
+            const maxBorrow = new Date();
+            maxBorrow.setDate(today.getDate() + 14);
+            const maxBorrowFormatted = maxBorrow.toISOString().split('T')[0];
+
+            // Set min & max borrow
+            borrowInput.setAttribute('min', todayFormatted);
+            borrowInput.setAttribute('max', maxBorrowFormatted);
+
+            // Default return min
+            returnInput.setAttribute('min', todayFormatted);
 
             borrowInput.addEventListener('change', function() {
+                const borrowDate = new Date(this.value);
+
+                // Min return = borrow date
                 returnInput.setAttribute('min', this.value);
+
+                // Max return = borrow + 14 hari
+                const maxReturn = new Date(borrowDate);
+                maxReturn.setDate(maxReturn.getDate() + 14);
+                const maxReturnFormatted = maxReturn.toISOString().split('T')[0];
+
+                returnInput.setAttribute('max', maxReturnFormatted);
+
+                // Validasi isi return
+                if (returnInput.value > maxReturnFormatted) {
+                    returnInput.value = maxReturnFormatted;
+                }
 
                 if (returnInput.value && returnInput.value < this.value) {
                     returnInput.value = this.value;

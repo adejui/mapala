@@ -70,7 +70,8 @@
                 </table>
 
                 <p style="color: #4b5563; font-size: 16px; line-height: 24px;">
-                    Silakan datang ke sekretariat untuk pengambilan alat dengan membawa <strong>KTM / KTP Asli</strong>
+                    Silakan datang ke sekretariat H-1 tanggal pinjam untuk pengambilan alat dengan membawa <strong>KTM /
+                        KTP Asli</strong>
                     sebagai jaminan.
                 </p>
 

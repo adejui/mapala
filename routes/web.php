@@ -1,29 +1,32 @@
 <?php
 
 // --- CONTROLLERS FRONTEND ---
-use App\Mail\LoanApprovedMail;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Route;
 
-// --- CONTROLLERS BACKEND ---
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Dashboard\OpaController;
-use App\Http\Controllers\Frontend\HomeController;
-use App\Http\Controllers\PublicArticleController;
+use App\Http\Controllers\Dashboard\ActivityController;
+use App\Http\Controllers\Dashboard\ActivityDetailController;
+use App\Http\Controllers\Dashboard\ActivityDocumentController;
+use App\Http\Controllers\Dashboard\ActivityMemberController;
+use App\Http\Controllers\Dashboard\ActivityPhotoController;
+use App\Http\Controllers\Dashboard\ArticleController;
+use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\ItemController;
 use App\Http\Controllers\Dashboard\LoanController;
-use App\Http\Controllers\Dashboard\UserController;
-use App\Http\Controllers\Dashboard\ArticleController;
-use App\Http\Controllers\Dashboard\ActivityController;
-use App\Http\Controllers\Dashboard\CategoryController;
-use App\Http\Controllers\Frontend\InventoryController;
-use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Frontend\PublicLoanController;
 use App\Http\Controllers\Dashboard\LoanDetailController;
-use App\Http\Controllers\Dashboard\ActivityPhotoController;
+use App\Http\Controllers\Dashboard\OpaController;
+use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Frontend\HistoryController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\InventoryController;
+use App\Http\Controllers\Frontend\ProfilOpaController;
+use App\Http\Controllers\Frontend\ProfilUserController;
 use App\Http\Controllers\Frontend\PublicActivityController;
-use App\Http\Controllers\Dashboard\ActivityMemberController;
-use App\Http\Controllers\Dashboard\ActivityDocumentController;
+use App\Http\Controllers\Frontend\PublicLoanController;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\PublicArticleController;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
 // Route::get('/test-mail', function () {
 //     $loan = App\Models\Loan::first(); // contoh
@@ -42,18 +45,37 @@ Route::get('/test-email', function () {
 // --- FRONTEND ---
 Route::name('frontend.')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+
     Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+    Route::post('/contact-send', [HomeController::class, 'send'])->name('contact.send');
+
+    Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('about');
+
+    Route::get('/user/profile', [ProfilUserController::class, 'index'])->name('user.profile');
+
+    Route::get('/opa/profile', [ProfilOpaController::class, 'index'])->name('opa.profile');
+    Route::post('/opa/profile/update', [ProfilOpaController::class, 'update'])->name('opa.profile.update');
+    Route::post('/opa/update-photo', [ProfilOpaController::class, 'updatePhotoOpa'])->name('opa.update-photo');
+    Route::delete('/opa/delete-photo', [ProfilOpaController::class, 'deletePhotoOpa'])
+        ->name('opa.delete-photo');
+
+    // Route::post('/user/profile/passsword', [ProfilUserController::class, 'updatePassword'])->name('user.update.password');
+    Route::post('/user/profile/update', [ProfilUserController::class, 'update'])->name('user.profile.update');
+    Route::post('/user/profile/password', [ProfilUserController::class, 'updatePassword'])
+        ->name('user.update.password');
+    Route::post('/user/update-photo', [ProfilUserController::class, 'updatePhoto'])->name('user.update-photo');
+    Route::delete('/user/delete-photo', [ProfilUserController::class, 'deletePhoto'])
+        ->name('user.delete-photo');
 
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory');
     Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
 
     Route::get('/kegiatan', [PublicActivityController::class, 'index'])->name('kegiatan');
-    Route::get('/kegiatan/show', [PublicActivityController::class, 'show'])->name('kegiatan.show');
+    Route::get('/kegiatan/{id}', [PublicActivityController::class, 'show'])->name('kegiatan.show');
 
     Route::post('/inventory/cart/add/{id}', [InventoryController::class, 'addToCart'])->name('inventory.cart.add');
     Route::post('/inventory/cart/update-qty', [InventoryController::class, 'updateQty'])
         ->name('inventory.cart.updateQty');
-
 
     Route::post('/inventory/cart/update/{id}', [InventoryController::class, 'updateCart'])->name('inventory.cart.update');
     Route::post('/inventory/cart/remove/{id}', [InventoryController::class, 'removeFromCart'])->name('inventory.cart.remove');
@@ -62,21 +84,38 @@ Route::name('frontend.')->group(function () {
     Route::post('/pinjaman/store', [PublicLoanController::class, 'store'])->name('pinjaman.store');
     Route::get('/pinjaman/sukses', [PublicLoanController::class, 'success'])->name('pinjaman.success');
 
+    Route::get('/history', [HistoryController::class, 'history'])->name('history');
+
     Route::get('/artikel', [PublicArticleController::class, 'index'])->name('artikel');
+    Route::get('/artikel/{slug}', [PublicArticleController::class, 'show'])->name('artikel.show');
     // Route::get('/artikel/{slug}', [ArticleController::class, 'show'])->name('frontend.articles.show');
 });
 
+/* ===== GOOGLE LOGIN ===== */
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+    ->name('google.redirect');
 
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+    ->name('google.callback');
 
-// --- Login ---
+Route::middleware('auth:opa')->group(function () {
+    Route::post('/logoutt', [GoogleAuthController::class, 'logout'])->name('opa.logout');
+
+    // Route::get('/opa/history', [HistoryController::class, 'opaHistory'])
+    //     ->name('history.opa');
+});
+
+/* ===== LOGIN MANUAL ===== */
 Route::middleware('guest')->group(function () {
-
-    // Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
 });
 
+/* ===== LOGOUT ===== */
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Route::get('/history', [HistoryController::class, 'userHistory'])
+    //     ->name('history.user');
 });
 
 
@@ -103,6 +142,18 @@ Route::middleware(['auth', 'role:admin,logistics'])->group(function () {
 
     Route::resource('loan-details', LoanDetailController::class);
     Route::post('/loans/{loan}/details', [LoanDetailController::class, 'store'])->name('loan-details.store');
+
+    // Export
+    Route::get(
+        '/categories-export',
+        [CategoryController::class, 'export']
+    )->name('categories.export');
+    Route::get('/items-export', [ItemController::class, 'export'])
+        ->name('items.export');
+    Route::get('/loans-export', [LoanController::class, 'export'])
+        ->name('loans.export');
+    Route::get('/borrowers-export', [OpaController::class, 'export'])
+        ->name('borrowers.export');
 });
 
 // --- Role: Admin ---
@@ -119,10 +170,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/activity-lists', [ActivityController::class, 'listActivity'])->name('list.activity');
     Route::get('/activities/manage/{activity}', [ActivityController::class, 'manage'])->name('manage.activity');
 
+    Route::resource('activity-details', ActivityDetailController::class);
     Route::resource('activity-members', ActivityMemberController::class);
     Route::resource('activity-documents', ActivityDocumentController::class);
     Route::resource('activity-photos', ActivityPhotoController::class);
     Route::resource('articles', ArticleController::class);
+
+    // Export
+    Route::get('/users-export', [UserController::class, 'export'])->name('users.export');
+    Route::get('/activities-export', [ActivityController::class, 'export'])
+        ->name('activities.export');
 });
 
 

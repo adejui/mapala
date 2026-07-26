@@ -2,20 +2,33 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Item;
-use App\Models\Category;
-use App\Models\ItemPhoto;
-use Illuminate\Http\Request;
+use App\Exports\ItemExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreItemRequest;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateItemRequest;
+use App\Models\Category;
+use App\Models\Item;
+use App\Models\ItemPhoto;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export(Request $request)
+    {
+        $fileName = 'data_barang_' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(
+            new ItemExport(
+                $request->category
+            ),
+            $fileName
+        );
+    }
     public function index(Request $request)
     {
         $categories = Category::all();
@@ -138,23 +151,76 @@ class ItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // public function update(UpdateItemRequest $request, Item $item)
+    // {
+    //     // dd($request->all());
+
+    //     $validated = $request->validated();
+
+    //     // Cek apakah kategori berubah
+    //     $categoryChanged = $item->category_id != $validated['category_id'];
+
+    //     // Generate code baru jika kategori berubah
+    //     if ($categoryChanged) {
+    //         $validated['code'] = $this->generateCode($validated['category_id']);
+    //     } else {
+    //         $validated['code'] = $item->code;
+    //     }
+
+    //     // Update item basic data
+    //     $item->update([
+    //         'name' => $validated['name'],
+    //         'category_id' => $validated['category_id'],
+    //         'code' => $validated['code'],
+    //         'quantity' => $validated['quantity'],
+    //         'description' => $validated['description'],
+    //     ]);
+
+    //     // Hapus Foto
+    //     if (!empty($validated['deleted_photos'])) {
+    //         $deletedIds = json_decode($validated['deleted_photos'], true);
+
+    //         foreach ($deletedIds as $photoId) {
+    //             $photo = ItemPhoto::find($photoId);
+    //             if ($photo) {
+    //                 Storage::disk('public')->delete($photo->photo_path);
+    //                 $photo->delete();
+    //             }
+    //         }
+    //     }
+
+    //     // Upload Foto Baru
+    //     if ($request->hasFile('photos')) {
+    //         foreach ($request->file('photos') as $photo) {
+    //             if ($photo === null) continue; // skip null
+    //             $path = $photo->store('items', 'public');
+
+    //             ItemPhoto::create([
+    //                 'item_id' => $item->id,
+    //                 'photo_path' => $path,
+    //             ]);
+    //         }
+    //     }
+
+    //     return redirect()->back()->with('success', 'Item berhasil diperbarui!');
+    // }
+
     public function update(UpdateItemRequest $request, Item $item)
     {
-        // dd($request->all());
-
         $validated = $request->validated();
 
-        // Cek apakah kategori berubah
+        // =========================
+        // CEK PERUBAHAN KATEGORI
+        // =========================
         $categoryChanged = $item->category_id != $validated['category_id'];
 
-        // Generate code baru jika kategori berubah
-        if ($categoryChanged) {
-            $validated['code'] = $this->generateCode($validated['category_id']);
-        } else {
-            $validated['code'] = $item->code;
-        }
+        $validated['code'] = $categoryChanged
+            ? $this->generateCode($validated['category_id'])
+            : $item->code;
 
-        // Update item basic data
+        // =========================
+        // UPDATE DATA ITEM
+        // =========================
         $item->update([
             'name' => $validated['name'],
             'category_id' => $validated['category_id'],
@@ -163,24 +229,41 @@ class ItemController extends Controller
             'description' => $validated['description'],
         ]);
 
-        // Hapus Foto
-        if (!empty($validated['deleted_photos'])) {
-            $deletedIds = json_decode($validated['deleted_photos'], true);
+        // =========================
+        // HAPUS FOTO (FIX UTAMA)
+        // =========================
+        if ($request->filled('deleted_photos')) {
 
-            foreach ($deletedIds as $photoId) {
-                $photo = ItemPhoto::find($photoId);
-                if ($photo) {
-                    Storage::disk('public')->delete($photo->photo_path);
-                    $photo->delete();
+            $deletedIds = json_decode($request->deleted_photos, true);
+
+            if (is_array($deletedIds)) {
+                foreach ($deletedIds as $photoId) {
+
+                    $photo = ItemPhoto::where('id', $photoId)
+                        ->where('item_id', $item->id) // 🔥 penting biar aman
+                        ->first();
+
+                    if ($photo) {
+                        // hapus file
+                        Storage::disk('public')->delete($photo->photo_path);
+
+                        // hapus database
+                        $photo->delete();
+                    }
                 }
             }
         }
 
-        // Upload Foto Baru
+        // =========================
+        // UPLOAD FOTO BARU
+        // =========================
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                if ($photo === null) continue; // skip null
-                $path = $photo->store('items', 'public');
+
+            foreach ($request->file('photos') as $file) {
+
+                if (!$file) continue;
+
+                $path = $file->store('items', 'public');
 
                 ItemPhoto::create([
                     'item_id' => $item->id,
@@ -189,7 +272,7 @@ class ItemController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Item berhasil diperbarui!');
+        return back()->with('success', 'Item berhasil diperbarui!');
     }
 
 

@@ -7,11 +7,11 @@
         class="bg-white border border-[#E0E0E0] rounded-xl items-start h-auto p-8 overflow-visibles  dark:border-gray-800 dark:bg-white/3 sm:px-6s">
         <h3 class="font-bold text-2xl text-gray-800 dark:text-white/90 mb-6">Tambah Artikel</h3>
 
-        <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data" class="w-full">
+        <form id="article-form" action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data"
+            class="w-full">
             @csrf
 
-            <input type="hidden" name="content" id="content-input">
-
+            <input type="hidden" name="content" id="content">
 
             <div class="grid sm:grid-cols-2 gap-5">
 
@@ -138,39 +138,54 @@
                 </div>
 
                 <div>
-                    <label class="text-[#616161] font-medium text-xs mb-2 block text-md dark:text-gray-400">
-                        Isi
-                    </label>
+                    <div>
+                        <label class="text-[#616161] font-medium text-xs mb-2 block text-md dark:text-gray-400">
+                            Isi
+                        </label>
 
-                    <div id="editor-wrapper">
-                        <div id="editor"></div>
+                        <div id="editor-wrapper">
+                            <div id="editor"></div>
+                        </div>
                     </div>
-
-                    <script>
-                        var quill = new Quill('#editor', {
-                            theme: 'snow'
-                        });
-                    </script>
                 </div>
 
-
-
             </div>
+
             <div class="flex justify-end items-center w-auto mt-8">
                 <div class="flex gap-5 justify-end items-center">
+
                     <!-- Tombol Batal -->
-                    <a href="{{ route('articles.index') }}" title="Hapus"
-                        class="p-2 border-2 text-sm border-[#7753AF] bg-transparent rounded-lg text-[#7753AF] text-center hover:bg-[#F3E8FF] transition">
+                    <a href="{{ route('articles.index') }}"
+                        class="p-2 border-2 text-sm border-[#7753AF] bg-transparent rounded-lg text-[#7753AF] hover:bg-[#F3E8FF] transition">
                         Batal
                     </a>
 
                     <!-- Tombol Simpan -->
                     <button type="submit"
-                        class="p-2 border-2 text-sm border-[#7753AF] bg-[#7753AF] rounded-lg text-white text-center hover:bg-[#67419B] transition">
+                        class="p-2 border-2 text-sm border-[#7753AF] bg-[#7753AF] rounded-lg text-white hover:bg-[#67419B] transition">
                         Simpan
                     </button>
+
                 </div>
             </div>
         </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                var quill = new Quill('#editor', {
+                    theme: 'snow'
+                });
+
+                document.querySelector('#article-form').addEventListener('submit', function() {
+                    let isi = quill.root.innerHTML;
+
+                    console.log("ISI QUILL:", isi); // DEBUG
+
+                    document.querySelector('#content').value = isi;
+                });
+
+            });
+        </script>
     </div>
 @endsection
