@@ -34,8 +34,8 @@ class UserSeeder extends Seeder
 
         User::insert([
             [
-                'full_name' => 'Andi Pratama',
-                'email' => 'andi.pratama@example.com',
+                'full_name' => 'AnggotaInternal',
+                'email' => 'anggota.internal@gmail.com',
                 'phone_number' => '081234567891',
                 'nrp' => 'TA.XI.23.075',
                 'password' => Hash::make('password'),
