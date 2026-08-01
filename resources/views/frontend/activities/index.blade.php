@@ -132,12 +132,12 @@
             } else {
                 Swal.fire({
                     title: 'Akses Terbatas!',
-                    text: "Jadwal Rapat hanya dapat diakses oleh anggota yang sudah login.",
+                    text: "Jadwal Rapat hanya dapat diakses oleh anggota internal yang sudah login.",
                     icon: 'lock',
                     showCancelButton: true,
                     confirmButtonColor: '#7C3AED',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Login Sekarang',
+                    confirmButtonText: 'Login',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {

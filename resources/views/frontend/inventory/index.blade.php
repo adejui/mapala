@@ -109,11 +109,11 @@
                                             onclick="Swal.fire({
                     icon: 'warning',
                     title: 'Login Dulu!',
-                    text: 'Untuk peminjam luar (OPA), silakan login menggunakan Google.',
-                    confirmButtonText: 'Login OPA',
+                    text: 'Untuk melakukan peminjaman alat, silakan login terlebih dahulu melalui portal yang sesuai.',
+                    confirmButtonText: 'Login',
                     confirmButtonColor: '#7C3AED',
                     showCancelButton: true,
-                    cancelButtonText: 'Nanti Saja'
+                    cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.dispatchEvent(new CustomEvent('trigger-login-opa'));

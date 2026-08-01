@@ -192,7 +192,7 @@
                     confirmButtonText: 'Login',
                     confirmButtonColor: '#7C3AED',
                     showCancelButton: true,
-                    cancelButtonText: 'Nanti Saja'
+                    cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.dispatchEvent(new CustomEvent('trigger-login-opa'));
