@@ -45,7 +45,7 @@
 
                     <div>
 
-                        <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                        <img src="{{ asset('frontend/images/hero-section.jpeg') }}"
                             class="w-full rounded-2xl h-56 md:h-72 lg:max-h-80 object-cover transition-transform duration-500 group-hover:scale-110">
 
                     </div>
@@ -131,44 +131,34 @@
                         <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">Galeri</h3>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
 
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-1.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
 
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-6.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
 
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-3.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
 
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-4.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
-                                class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
-                        </div>
-
-                        <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-5.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
 
                         <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
-                                class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
-                        </div>
-
-                        <div class="group overflow-hidden rounded-2xl">
-                            <img src="{{ asset('assets/images/articles/default-image.png') }}"
+                            <img src="{{ asset('frontend/images/artikel-2.jpeg') }}"
                                 class="w-full h-36 sm:h-48 md:h-60 object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
 

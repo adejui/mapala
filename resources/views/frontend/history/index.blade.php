@@ -1,146 +1,286 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-    <div class="bg-white min-h-screen pt-32 pb-20 px-6 md:px-16">
+    <div class="bg-gray-50 min-h-screen pt-32 pb-20 px-4 sm:px-6 md:px-16">
+        <div class="max-w-7xl mx-auto">
 
-        <div class="bg-gray-50 min-h-screen pt-0 pb-20 px-6 md:px-16">
-            <div class="max-w-7xl mx-auto">
-
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Riwayat Peminjaman</h1>
-                        <p class="text-gray-500 mt-1 text-sm">Lihat semua aktivitas peminjaman barang kamu</p>
-                    </div>
-                    <nav class="flex text-sm font-medium text-gray-500">
-                        <a href="{{ route('frontend.home') }}" class="hover:text-[#7C3AED] transition-colors">Home</a>
-                        <span class="mx-2">/</span>
-                        <span class="text-[#7C3AED]">Riwayat Peminjaman</span>
-                    </nav>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Riwayat Peminjaman</h1>
+                    <p class="text-gray-500 mt-1 text-sm">Lihat semua aktivitas peminjaman barang kamu</p>
                 </div>
+                <nav class="flex text-sm font-medium text-gray-500">
+                    <a href="{{ route('frontend.home') }}" class="hover:text-[#7C3AED] transition-colors">Home</a>
+                    <span class="mx-2">/</span>
+                    <span class="text-[#7C3AED]">Riwayat Peminjaman</span>
+                </nav>
             </div>
-            @forelse ($histories as $history)
-                <div class="bg-white rounded-2xl border mb-2 border-gray-300 px-8 py-5">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-gray-900">
-                            Id Peminjaman
-                        </h3>
 
+            <div class="space-y-4">
+                @forelse ($histories as $history)
+                    @php
+                        $totalItem = $history->details->sum('quantity');
+                        $itemsPayload = $history->details->map(function ($d) {
+                            return [
+                                'name' => $d->item->name ?? '-',
+                                'code' => $d->item->code ?? '-',
+                                'qty' => $d->quantity,
+                                'photo' => $d->item->photo ?? null,
+                            ];
+                        });
+                    @endphp
 
+                    <div
+                        class="bg-white rounded-3xl border border-gray-200 px-5 sm:px-8 py-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                            <h3 class="text-base sm:text-lg font-bold text-gray-900">
+                                Peminjaman <span class="text-[#7C3AED]">#{{ $history->id }}</span>
+                            </h3>
+                            <x-status-badge :status="$history->status" />
+                        </div>
+
+                        <div
+                            class="grid grid-cols-2 sm:grid-cols-4 gap-y-5 gap-x-4 text-gray-900 border-t border-gray-100 pt-5">
+
+                            <div>
+                                <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                                    Tanggal Pinjam
+                                </div>
+                                <div class="text-sm font-semibold">
+                                    {{ \Carbon\Carbon::parse($history->borrow_date)->format('d M Y') }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                                    Tanggal Kembali
+                                </div>
+                                <div class="text-sm font-semibold">
+                                    {{ \Carbon\Carbon::parse($history->return_date)->format('d M Y') }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                                    Total Item
+                                </div>
+                                <div class="text-sm font-semibold">{{ $totalItem }} Unit</div>
+                            </div>
+
+                            <div class="flex sm:justify-end items-end">
+                                <button type="button"
+                                    class="detail-btn w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#7C3AED]/20 text-[#7C3AED] font-semibold text-sm bg-purple-50 hover:bg-[#7C3AED] hover:text-white transition-all duration-200"
+                                    data-id="{{ $history->id }}"
+                                    data-borrow="{{ \Carbon\Carbon::parse($history->borrow_date)->format('d M Y') }}"
+                                    data-return="{{ \Carbon\Carbon::parse($history->return_date)->format('d M Y') }}"
+                                    data-status="{{ $history->status }}" data-notes="{{ $history->notes ?? '-' }}"
+                                    data-total="{{ $totalItem }}" data-items='@json($itemsPayload)'>
+                                    Lihat Detail
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
-
-                    <div class="grid grid-cols-5 text-gray-900 text-md font-semibold">
-                        <div>
-                            <div class="font-semibold mb-1 text-md">Tanggal Pinjam</div>
-                            <div class="font-light text-sm">
-                                {{ \Carbon\Carbon::parse($history->borrow_date)->format('d M Y') }}
-                            </div>
-                        </div>
-                        <div>
-                            <div class="font-semibold mb-1 text-md text-center">Tanggal Kembali</div>
-                            <div class="font-light text-sm text-center">
-                                {{ \Carbon\Carbon::parse($history->return_date)->format('d M Y') }}
-                            </div>
-                        </div>
-                        <div>
-                            <div class="font-semibold mb-1 text-md text-center">Total Item</div>
-                            <div class="font-light text-sm text-center">{{ $history->details->sum('quantity') }}</div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="font-semibold text-md text-center">Status</div>
-                            <div class="w-fit mt-1">
-                                <x-status-badge :status="$history->status" />
-                            </div>
-                        </div>
-                        <div class="flex justify-end">
-                            <button
-                                class="px-4 py-0 rounded-xl border border-gray-300 text-gray-500 font-medium bg-gray-100 hover:bg-gray-200 transition-all duration-200">
-                                Lihat Detail
-                            </button>
-                        </div>
+                @empty
+                    <div class="text-center py-16 bg-white rounded-3xl border border-gray-100">
+                        <p class="text-gray-400 font-medium">Belum ada riwayat peminjaman.</p>
                     </div>
-                </div>
-            @empty
-                <div class="text-center py-10 bg-gray-50 rounded-3xl border border-gray-100">
-                    <p class="text-gray-400 font-medium">Belum ada riwayat peminjaman.</p>
-                </div>
-            @endforelse
+                @endforelse
+            </div>
 
-            <div class="pt-0">
+            <div class="pt-6">
                 {{ $histories->links('vendor.pagination.tailwind-history') }}
             </div>
 
         </div>
     </div>
 
+    <!-- Modal Detail Peminjaman -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-lg max-h-[85vh] overflow-hidden relative flex flex-col">
 
+            <div class="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Detail Peminjaman <span id="modalId" class="text-[#7C3AED]"></span>
+                    </h3>
+                    <div id="modalStatusWrapper" class="mt-1"></div>
+                </div>
+                <button type="button" id="closeDetailModal" class="text-gray-400 hover:text-gray-600 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
+            <div class="px-6 sm:px-8 py-5 overflow-y-auto custom-scrollbar">
 
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class="max-w-5xl mx-auto">
-
-        <h3 class="text-xl font-semibold mb-6 text-black">History Peminjaman</h3>
-
-        @forelse ($histories as $history)
-            <div class="mb-6 p-4 border rounded-lg shadow-sm">
-
-                {{-- Info utama --}}
-                <div class="mb-3 text-sm text-gray-600 space-y-1">
-                    <p>
-                        <span class="font-medium">Tanggal Pinjam:</span>
-                        {{ \Carbon\Carbon::parse($history->borrow_date)->format('d M Y') }}
-                    </p>
-
-                    <p>
-                        <span class="font-medium">Tanggal Kembali:</span>
-                        {{ \Carbon\Carbon::parse($history->return_date)->format('d M Y') }}
-                    </p>
-
-                    <p>
-                        <span class="font-medium">Status:</span>
-                        <span class="capitalize">{{ $history->status }}</span>
-                    </p>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-50 rounded-2xl p-4">
+                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Tanggal Pinjam
+                        </div>
+                        <div id="modalBorrowDate" class="text-sm font-semibold text-gray-900"></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-4">
+                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Tanggal Kembali
+                        </div>
+                        <div id="modalReturnDate" class="text-sm font-semibold text-gray-900"></div>
+                    </div>
                 </div>
 
-                {{-- Daftar item --}}
-                <div class="pl-4 border-l">
-                    <p class="text-sm font-medium mb-2">Item Dipinjam:</p>
-
-                    @forelse ($history->details as $detail)
-                        <p class="text-sm text-black">
-                            • {{ $detail->item->name ?? '-' }}
-                            <span class="text-gray-500">
-                                ({{ $detail->quantity }} unit)
-                            </span>
-                        </p>
-                    @empty
-                        <p class="text-sm text-gray-500">Tidak ada item</p>
-                    @endforelse
+                <div class="mb-6">
+                    <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Keperluan Peminjaman
+                    </div>
+                    <p id="modalNotes" class="text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-2xl p-4"></p>
                 </div>
 
-                {{-- Catatan --}}
-                @if (!empty($history->notes))
-                    <p class="mt-3 text-sm text-gray-600">
-                        <span class="font-medium">Catatan:</span>
-                        {{ $history->notes }}
-                    </p>
-                @endif
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400">Barang Dipinjam</div>
+                        <div class="text-xs font-bold text-[#7C3AED]" id="modalTotal"></div>
+                    </div>
+                    <div id="modalItems" class="space-y-3"></div>
+                </div>
 
             </div>
-        @empty
-            <p class="text-sm text-gray-500">Belum ada history peminjaman</p>
-        @endforelse
 
+            <div class="px-6 sm:px-8 py-4 border-t border-gray-100">
+                <button type="button" id="closeDetailModalBottom"
+                    class="w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
     </div>
-    </div>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('detailModal');
+            const closeButtons = [
+                document.getElementById('closeDetailModal'),
+                document.getElementById('closeDetailModalBottom'),
+            ];
+
+            const statusStyles = {
+                pending: {
+                    label: 'Menunggu Persetujuan',
+                    class: 'bg-yellow-100 text-yellow-700'
+                },
+                approved: {
+                    label: 'Disetujui',
+                    class: 'bg-blue-100 text-blue-700'
+                },
+                borrowed: {
+                    label: 'Sedang Dipinjam',
+                    class: 'bg-purple-100 text-purple-700'
+                },
+                returned: {
+                    label: 'Sudah Dikembalikan',
+                    class: 'bg-green-100 text-green-700'
+                },
+                rejected: {
+                    label: 'Ditolak',
+                    class: 'bg-red-100 text-red-700'
+                },
+            };
+
+            function openModal(btn) {
+                const id = btn.dataset.id;
+                const borrow = btn.dataset.borrow;
+                const ret = btn.dataset.return;
+                const status = btn.dataset.status;
+                const notes = btn.dataset.notes;
+                const total = btn.dataset.total;
+
+                let items = [];
+                try {
+                    items = JSON.parse(btn.dataset.items || '[]');
+                } catch (e) {
+                    items = [];
+                }
+
+                document.getElementById('modalId').textContent = '#' + id;
+                document.getElementById('modalBorrowDate').textContent = borrow;
+                document.getElementById('modalReturnDate').textContent = ret;
+                document.getElementById('modalNotes').textContent = notes && notes.trim() !== '' ? notes : '-';
+                document.getElementById('modalTotal').textContent = total + ' Unit';
+
+                const statusInfo = statusStyles[status] || {
+                    label: status,
+                    class: 'bg-gray-100 text-gray-600'
+                };
+                document.getElementById('modalStatusWrapper').innerHTML =
+                    `<span class="inline-block text-xs font-semibold px-3 py-1 rounded-full ${statusInfo.class}">${statusInfo.label}</span>`;
+
+                const itemsContainer = document.getElementById('modalItems');
+                itemsContainer.innerHTML = '';
+
+                if (items.length === 0) {
+                    itemsContainer.innerHTML =
+                        '<p class="text-sm text-gray-400 text-center py-4">Tidak ada data barang.</p>';
+                } else {
+                    items.forEach(function(item) {
+                        const photoUrl = item.photo ?
+                            '/storage/' + item.photo :
+                            '/frontend/images/tas.jpg';
+
+                        const row = document.createElement('div');
+                        row.className =
+                            'flex items-center gap-4 border border-gray-100 rounded-2xl p-3';
+                        row.innerHTML = `
+                            <div class="h-14 w-14 shrink-0 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center border border-gray-100">
+                                <img src="${photoUrl}" class="h-full w-full object-contain mix-blend-multiply">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-bold text-gray-900 truncate">${item.name}</div>
+                                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-mono">#${item.code}</span>
+                            </div>
+                            <div class="text-sm font-bold text-[#7C3AED] shrink-0">${item.qty} Unit</div>
+                        `;
+                        itemsContainer.appendChild(row);
+                    });
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            document.querySelectorAll('.detail-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openModal(btn);
+                });
+            });
+
+            closeButtons.forEach(function(btn) {
+                if (btn) btn.addEventListener('click', closeModal);
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+            });
+        });
+    </script>
 @endsection
