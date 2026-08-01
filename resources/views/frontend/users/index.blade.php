@@ -46,7 +46,7 @@
 
                                         <!-- FOTO -->
                                         <div class="relative">
-                                            <img src="{{ $user && $user->photo ? asset('storage/' . $user->photo) : asset('storage/imgUsers/default-image.png') }}"
+                                            <img src="{{ $user && $user->photo ? asset('storage/' . $user->photo) : asset('frontend/images/user-default.jpeg') }}"
                                                 class="w-20 h-20 rounded-full object-cover bg-gray-200">
 
                                             <!-- ICON -->

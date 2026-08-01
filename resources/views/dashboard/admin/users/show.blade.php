@@ -16,7 +16,7 @@
                         <img src="{{ Storage::url($user->photo) }}" alt="Foto {{ $user->full_name }}"
                             class="h-full w-full object-cover rounded-3xl" />
                     @else
-                        <img src="{{ asset('storage/imgUsers/default-image.png') }}" alt="Foto Default"
+                        <img src="{{ asset('frontend/images/user-default.jpeg') }}" alt="Foto Default"
                             class="h-full w-full object-cover rounded-3xl" />
                     @endif
                 </div>

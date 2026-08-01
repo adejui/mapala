@@ -56,7 +56,7 @@
 
                                     <!-- Foto Profil -->
                                     <div class="w-fit flex justify-center">
-                                        <img src="{{ $opa && $opa->photo ? asset('storage/' . $opa->photo) : asset('storage/imgUsers/default-image.png') }}"
+                                        <img src="{{ $opa && $opa->photo ? asset('storage/' . $opa->photo) : asset('frontend/images/user-default.jpeg') }}"
                                             alt="Foto Profil" class="h-44 w-44 object-cover rounded-full border-2">
                                     </div>
 

@@ -53,7 +53,7 @@
                     <div class="flex items-center">
                         <div class="flex items-center gap-3">
                             <div class="h-11 w-11">
-                                <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('storage/imgUsers/default-image.png') }}"
+                                <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('frontend/images/user-default.jpeg') }}"
                                     alt="Foto Profil" class="h-full w-full object-cover rounded-3xl">
                             </div>
                             <div>

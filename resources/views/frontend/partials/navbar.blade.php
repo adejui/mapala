@@ -79,7 +79,7 @@
                             $opa = auth('opa')->user();
                         @endphp
 
-                        <img src="{{ $opa && $opa->photo ? asset('storage/' . $opa->photo) : asset('storage/imgUsers/default-image.png') }}"
+                        <img src="{{ $opa && $opa->photo ? asset('storage/' . $opa->photo) : asset('frontend/images/user-default.jpeg') }}"
                             class="w-8 h-8 rounded-full border border-white/30" alt="User Avatar">
                     </button>
 
@@ -284,7 +284,7 @@
                 @endphp
                 <div class="flex items-center gap-4 pb-6 border-b border-white/10">
                     <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#7C3AED]">
-                        <img src="{{ $opaMobile && $opaMobile->photo ? asset('storage/' . $opaMobile->photo) : asset('storage/imgUsers/default-image.png') }}"
+                        <img src="{{ $opaMobile && $opaMobile->photo ? asset('storage/' . $opaMobile->photo) : asset('frontend/images/user-default.jpeg') }}"
                             alt="{{ $opaMobile->name }}" class="w-full h-full object-cover">
                     </div>
                     <div>

@@ -96,7 +96,7 @@
                                 class="flex items-center justify-between border-b border-gray-200 pb-4 pt-4 first:pt-0 last:border-b-0 last:pb-0 dark:border-gray-800">
                                 <div class="flex items-center gap-3">
                                     <div class="h-10 w-10">
-                                        <img src="{{ $activity_member->user->photo ? asset('storage/' . $activity_member->user->photo) : asset('storage/imgUsers/default-image.png') }}"
+                                        <img src="{{ $activity_member->user->photo ? asset('storage/' . $activity_member->user->photo) : asset('frontend/images/user-default.jpeg') }}"
                                             alt="Foto Profil" class="h-full w-full object-cover rounded-3xl">
                                     </div>
 

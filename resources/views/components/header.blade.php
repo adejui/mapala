@@ -124,10 +124,10 @@
                                             @if ($notif->user_id)
                                                 <img src="{{ $notif->user && $notif->user->photo
                                                     ? asset('storage/' . $notif->user->photo)
-                                                    : asset('storage/imgUsers/default-image.png') }}"
+                                                    : asset('frontend/images/user-default.jpeg') }}"
                                                     alt="Foto User" class="h-full w-full object-cover rounded-3xl">
                                             @else
-                                                <img src="{{ asset('storage/imgUsers/default-image.png') }}"
+                                                <img src="{{ asset('frontend/images/user-default.jpeg') }}"
                                                     alt="Foto OPA" class="h-full w-full object-cover rounded-3xl">
                                             @endif
                                             <span
@@ -174,7 +174,7 @@
                 <a class="flex items-center text-gray-700 dark:text-gray-400" href="#"
                     @click.prevent="dropdownOpen = ! dropdownOpen">
                     <span class="mr-3 h-10 w-10 overflow-hidden rounded-full">
-                        <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : asset('storage/imgUsers/default-image.png') }}"
+                        <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : asset('frontend/images/user-default.jpeg') }}"
                             alt="Foto Profil" class="h-full w-full object-cover rounded-3xl">
                     </span>
 

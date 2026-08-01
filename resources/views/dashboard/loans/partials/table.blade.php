@@ -57,10 +57,10 @@
                                 @if ($loan->user_id)
                                     <img src="{{ $loan->user && $loan->user->photo
                                         ? asset('storage/' . $loan->user->photo)
-                                        : asset('storage/imgUsers/default-image.png') }}"
+                                        : asset('frontend/images/user-default.jpeg') }}"
                                         alt="Foto User" class="h-full w-full object-cover rounded-full">
                                 @else
-                                    <img src="{{ asset('storage/imgUsers/default-image.png') }}" alt="Foto OPA"
+                                    <img src="{{ asset('frontend/images/user-default.jpeg') }}" alt="Foto OPA"
                                         class="h-full w-full object-cover rounded-full">
                                 @endif
 
