@@ -101,7 +101,7 @@
 
 
 
-                                <div class="text-black font-bold mt-2">TA.XI.23.075</div>
+                                {{-- <div class="text-black font-bold mt-2">TA.XI.23.075</div> --}}
 
                                 <div
                                     class="flex px-4 pt-0.5 pb-1.5 mt-2 mb-10 items-center justify-center text-sm text-gray-700 border border-gray-300 rounded-full bg-gray-100">

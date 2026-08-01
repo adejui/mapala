@@ -339,8 +339,7 @@
                                             </div>
 
                                             <a href="{{ route('frontend.kegiatan.show', $activity->activity->id) }}"
-                                                class="text-[#7C3AED] text-sm font-semibold">View Event
-                                                Details</a>
+                                                class="text-[#7C3AED] text-sm font-semibold">Lihat Detail Kegiatan</a>
                                         </div>
                                     </div>
                                 @empty
