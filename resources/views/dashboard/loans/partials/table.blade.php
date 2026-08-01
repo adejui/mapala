@@ -74,15 +74,14 @@
                             <!-- NAMA + NRP -->
                             <div class="flex flex-col">
                                 <p class="font-medium text-[#2E2E2E] text-theme-sm dark:text-white/90">
-                                    @if (!empty($loan->user_id))
+                                    @if (!empty($loan->user_id) && $loan->user)
                                         {{ $loan->user->full_name }}
-                                    @else
+                                    @elseif (!empty($loan->opa_id) && $loan->opa)
                                         {{ $loan->opa->name }}
+                                    @else
+                                        <span class="text-gray-400 italic">Data tidak tersedia</span>
                                     @endif
                                 </p>
-                                <span class="text-[#2E2E2E] text-theme-xs dark:text-gray-400">
-                                    {{ $loan->nrp }}
-                                </span>
                             </div>
                         </div>
 
@@ -123,8 +122,8 @@
                                 <x-action-button type="detail" :url="route('loans.show', $loan->id)" title="Detail" />
                                 <x-action-button type="manage" :url="route('loans.manage', $loan->id)" title="loan" />
                             @elseif ($loan->status === 'borrowed')
-                                <x-loan-action type="borrowed" id="borrowed-loan-{{ $loan->id }}"
-                                    :item="$loan->user_id ? $loan->user->full_name : $loan->opa->name" :action="route('loans.borrowed', $loan->id)" />
+                                <x-loan-action type="borrowed" id="borrowed-loan-{{ $loan->id }}" :item="$loan->user_id ? $loan->user->full_name : $loan->opa->name"
+                                    :action="route('loans.borrowed', $loan->id)" />
                                 <x-action-button type="detail" :url="route('loans.show', $loan->id)" title="Detail" />
                                 <x-action-button type="manage" :url="route('loans.manage', $loan->id)" title="loan" />
                             @else

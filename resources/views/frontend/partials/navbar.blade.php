@@ -253,6 +253,7 @@
 
         <div class="flex flex-col px-6 py-8 space-y-6 text-gray-200 font-medium">
 
+            {{-- HEADER USER (guard web) --}}
             @auth
                 <div class="flex items-center justify-between pb-6 border-b border-white/10">
                     <div class="flex items-center gap-4">
@@ -273,6 +274,23 @@
                         <span
                             class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#1c1c1c]"></span>
                     </button>
+                </div>
+            @endauth
+
+            {{-- HEADER USER (guard opa) --}}
+            @auth('opa')
+                @php
+                    $opaMobile = Auth::guard('opa')->user();
+                @endphp
+                <div class="flex items-center gap-4 pb-6 border-b border-white/10">
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-[#7C3AED]">
+                        <img src="{{ $opaMobile && $opaMobile->photo ? asset('storage/' . $opaMobile->photo) : asset('storage/imgUsers/default-image.png') }}"
+                            alt="{{ $opaMobile->name }}" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-lg">{{ $opaMobile->name }}</p>
+                        <p class="text-gray-400 text-xs uppercase tracking-wide">OPA</p>
+                    </div>
                 </div>
             @endauth
 
@@ -313,14 +331,15 @@
                 <i class="fa-solid fa-phone w-6 text-center"></i> Contact Us
             </a>
 
+            {{-- AKUN SAYA — guard web --}}
             @auth
                 <div class="border-t border-white/10 pt-6 flex flex-col gap-4">
                     <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Akun Saya</p>
 
-                    @if (Auth::user()->role === 'admin')
+                    @if (Auth::user()->role === 'admin' || Auth::user()->role === 'logistics')
                         <a href="{{ route('dashboard') }}"
                             class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
-                            <i class="fa-solid fa-gauge-high w-6 text-center"></i> Dashboard Admin
+                            <i class="fa-solid fa-gauge-high w-6 text-center"></i> Dashboard
                         </a>
                     @endif
 
@@ -328,6 +347,13 @@
                         class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
                         <i class="fa-regular fa-user w-6 text-center"></i> Profile Saya
                     </a>
+
+                    @if (Auth::user()->role === 'member' || Auth::user()->role === 'opa')
+                        <a href="{{ route('frontend.history') }}"
+                            class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
+                            <i class="fa-solid fa-clipboard-list w-6 text-center"></i> Riwayat Peminjaman
+                        </a>
+                    @endif
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -339,7 +365,32 @@
                 </div>
             @endauth
 
-            {{-- TOMBOL LOGIN UNTUK MOBILE (GUEST) — INI YANG SEBELUMNYA HILANG KARENA DI-COMMENT --}}
+            {{-- AKUN SAYA — guard opa (INI YANG SEBELUMNYA HILANG DI MOBILE) --}}
+            @auth('opa')
+                <div class="border-t border-white/10 pt-6 flex flex-col gap-4">
+                    <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Akun Saya</p>
+
+                    <a href="{{ route('frontend.opa.profile') }}"
+                        class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
+                        <i class="fa-regular fa-user w-6 text-center"></i> Profile Saya
+                    </a>
+
+                    <a href="{{ route('frontend.history') }}"
+                        class="flex items-center gap-4 text-base hover:text-[#7C3AED] transition-colors">
+                        <i class="fa-solid fa-clipboard-list w-6 text-center"></i> Riwayat Peminjaman
+                    </a>
+
+                    <form method="POST" action="{{ route('opa.logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="w-full flex items-center gap-4 text-base text-red-400 hover:text-red-500 transition-colors mt-2">
+                            <i class="fa-solid fa-right-from-bracket w-6 text-center"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            @endauth
+
+            {{-- TOMBOL LOGIN UNTUK MOBILE (GUEST) --}}
             @if (!Auth::guard('web')->check() && !Auth::guard('opa')->check())
                 <div class="border-t border-white/10 pt-6 flex flex-col gap-4 mt-4">
                     <a href="javascript:void(0)"

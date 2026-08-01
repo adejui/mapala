@@ -23,7 +23,7 @@
 
                 <div class="flex justify-between items-center my-2">
                     {{-- Search --}}
-                    <div class="hidden lg:max-w-[430px] md:block">
+                    <div class="hidden md:flex items-center gap-3">
                         <div class="relative">
                             <span class="absolute top-1/2 left-4 -translate-y-1/2">
                                 <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
@@ -35,6 +35,27 @@
                             <input type="text" placeholder="Search" id="search-input"
                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-[#7653afaa] focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-sm rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30" />
                         </div>
+
+                        <a href="#" id="exportBtn"
+                            class="inline-flex h-11 items-center gap-2
+                            rounded-xl border-2 border-[#7EE2A8]
+                            bg-white px-5
+                            text-sm font-medium text-[#22C55E]
+                            shadow-sm
+                            transition-all duration-300
+                            hover:bg-[#F0FFF5] hover:shadow-md
+
+                            dark:border-[#22C55E]
+                            dark:bg-gray-900
+                            dark:text-[#4ADE80]
+                            dark:hover:bg-gray-800
+                            dark:hover:shadow-lg">
+
+                            <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="Excel" class="h-4 w-4">
+
+                            <span>Export</span>
+                        </a>
+
                     </div>
 
                     {{-- Filter & Tambah --}}
@@ -97,8 +118,8 @@
                             <button id="campusDropdownBtn" type="button"
                                 class="hs-dropdown-toggle py-3 w-72 px-4 inline-flex items-center justify-between gap-x-2 text-sm font-normal rounded-lg border border-gray-300 bg-white text-gray-800 shadow-2xs focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200 dark:focus:bg-gray-800"
                                 aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                                {{ ucfirst(request('campus', 'Semua Kampus')) }}
-                                <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg"
+                                <span class="truncate">{{ ucfirst(request('campus', 'Semua Kampus')) }}</span>
+                                <svg class="hs-dropdown-open:rotate-180 size-4 shrink-0" xmlns="http://www.w3.org/2000/svg"
                                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m6 9 6 6 6-6" />
@@ -106,17 +127,17 @@
                             </button>
                         </div>
 
-                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden z-50 w-max max-w-xs bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full max-h-72 overflow-y-auto"
                             role="menu" aria-orientation="vertical" aria-labelledby="campusDropdownBtn">
                             <div class="p-1 space-y-0.5">
                                 <button type="button" data-value="all"
-                                    class="campus-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                    class="campus-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 whitespace-nowrap text-left">
                                     Semua Kampus
                                 </button>
 
                                 @foreach ($campuses as $campus)
                                     <button type="button" data-value="{{ ucfirst($campus) }}"
-                                        class="campus-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                        class="campus-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 whitespace-nowrap text-left">
                                         {{ ucwords($campus) }}
                                     </button>
                                 @endforeach
@@ -125,34 +146,33 @@
                     </div>
 
 
-
                     <div class="hs-dropdown [--auto-close:inside] relative">
                         <div class="flex flex-col">
                             <span class="font-medium text-sm mb-1 dark:text-white">Organisasi</span>
                             <button id="organizationDropdownBtn" type="button"
                                 class="hs-dropdown-toggle py-3 w-72 px-4 inline-flex items-center justify-between gap-x-2 text-sm font-normal rounded-lg border border-gray-300 bg-white text-gray-800 shadow-2xs focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200 dark:focus:bg-gray-800"
                                 aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                                {{ ucfirst(request('organization', 'Semua Organisasi')) }}
-                                <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                <span class="truncate">{{ ucfirst(request('organization', 'Semua Organisasi')) }}</span>
+                                <svg class="hs-dropdown-open:rotate-180 size-4 shrink-0"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
                         </div>
 
-                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden z-50 w-max max-w-xs bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full max-h-72 overflow-y-auto"
                             role="menu" aria-orientation="vertical" aria-labelledby="organizationDropdownBtn">
                             <div class="p-1 space-y-0.5">
                                 <button type="button" data-value="all"
-                                    class="organization-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                    class="organization-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 whitespace-nowrap text-left">
                                     Semua Organisasi
                                 </button>
 
                                 @foreach ($organizations as $organization)
                                     <button type="button" data-value="{{ ucfirst($organization) }}"
-                                        class="organization-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                        class="organization-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 whitespace-nowrap text-left">
                                         {{ ucwords($organization) }}
                                     </button>
                                 @endforeach
@@ -170,12 +190,12 @@
                         <span class="text-gray-700 dark:text-gray-400">Reset</span>
                     </button>
 
-                    <a href="#" id="exportBtn"
+                    {{-- <a href="#" id="exportBtn"
                         class="bg-green-600 hover:bg-green-700 text-white
     px-4 py-2 rounded-md text-sm font-medium
     transition flex items-center gap-2 shadow-sm">
-                        Export Excel
-                    </a>
+                        Export
+                    </a> --}}
 
                 </div>
             </div>

@@ -59,7 +59,10 @@ class InventoryController extends Controller
         $item = Item::findOrFail($id);
 
         // Ambil rekomendasi (opsional)
-        $relatedItems = Item::where('id', '!=', $id)
+        $relatedItems = Item::with(['photos', 'category'])
+            ->where('id', '!=', $id)
+            ->where('category_id', $item->category_id)
+            ->orderByDesc('quantity') // yang stoknya banyak duluan
             ->take(5)
             ->get();
 

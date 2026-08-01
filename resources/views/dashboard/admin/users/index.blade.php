@@ -54,12 +54,13 @@
 
                         <!-- Export -->
                         <a href="#" id="exportBtn"
-                            class="inline-flex items-center gap-2 border-2 border-[#7EE2A8] text-[#22C55E] bg-white hover:bg-[#F0FFF5] px-5 h-11 rounded-xl text-sm font-medium transition-all duration-300 shadow-sm whitespace-nowrap">
+                            class="inline-flex items-center gap-2 border-2 border-[#7EE2A8] text-[#22C55E] bg-white hover:bg-[#F0FFF5]
+           dark:bg-gray-800 dark:border-green-500 dark:text-green-400 dark:hover:bg-gray-700
+           px-5 h-11 rounded-xl text-sm font-medium transition-all duration-300 shadow-sm whitespace-nowrap">
 
                             <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="excel" class="w-4 h-4">
 
                             Export
-
                         </a>
 
                     </div>

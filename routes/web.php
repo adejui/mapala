@@ -16,6 +16,7 @@ use App\Http\Controllers\Dashboard\LoanController;
 use App\Http\Controllers\Dashboard\LoanDetailController;
 use App\Http\Controllers\Dashboard\OpaController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HistoryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\InventoryController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\PublicArticleController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dashboard\ContactMessageController;
 
 // Route::get('/test-mail', function () {
 //     $loan = App\Models\Loan::first(); // contoh
@@ -34,17 +36,28 @@ use Illuminate\Support\Facades\Route;
 //     return "Email dikirim!";
 // });
 
-Route::get('/test-email', function () {
-    Mail::raw('Test Mailtrap', function ($msg) {
-        $msg->to('chestnuthealer@gmail.com')->subject('Testing Mailtrap');
-    });
 
-    return 'Email sudah dikirim';
+Route::get('/test-email', function () {
+    try {
+        Mail::raw('Halo, ini email testing dari Laravel.', function ($message) {
+            $message->to('chestnuthealer@gmail.com')
+                ->subject('Testing Laravel Gmail SMTP');
+        });
+
+        return '<h2>BERHASIL</h2><p>Email berhasil diproses oleh Laravel.</p>';
+    } catch (\Throwable $e) {
+        return '<h2>GAGAL</h2><pre>' .
+            $e->getMessage() .
+            '</pre>';
+    }
 });
 
 // --- FRONTEND ---
 Route::name('frontend.')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+
+    Route::post('/contact', [ContactController::class, 'store'])
+        ->name('contact.store');
 
     Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
     Route::post('/contact-send', [HomeController::class, 'send'])->name('contact.send');
@@ -125,7 +138,7 @@ Route::middleware(['auth', 'role:admin,logistics'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('opas', OpaController::class);
+
 
     Route::resource('items', ItemController::class);
     Route::get('/items/generate-code/{category}', [ItemController::class, 'generateCode']);
@@ -165,6 +178,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/generate-nrp-password', [UserController::class, 'generateNrpPassword'])->name('generate.nrp.password');
 
+    Route::resource('opas', OpaController::class);
+
     Route::get('/activities/events', [ActivityController::class, 'getEvents']);
     Route::resource('activities', ActivityController::class);
     Route::get('/activity-lists', [ActivityController::class, 'listActivity'])->name('list.activity');
@@ -180,6 +195,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/users-export', [UserController::class, 'export'])->name('users.export');
     Route::get('/activities-export', [ActivityController::class, 'export'])
         ->name('activities.export');
+
+    Route::prefix('dashboard')->name('messages.')->group(function () {
+        Route::get('messages', [ContactMessageController::class, 'index'])->name('index');
+        Route::get('messages/export', [ContactMessageController::class, 'export'])->name('export');
+        Route::get('messages/{contactMessage}', [ContactMessageController::class, 'show'])->name('show');
+        Route::patch('messages/{contactMessage}/mark-as-read', [ContactMessageController::class, 'markAsRead'])->name('markAsRead');
+        Route::delete('messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('destroy');
+    });
 });
 
 

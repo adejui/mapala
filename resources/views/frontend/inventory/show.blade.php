@@ -232,79 +232,108 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-100 pt-16">
+            <div class="border-t border-gray-100 pt-12 sm:pt-16">
 
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 sm:mb-8 gap-3">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Inventaris Peralatan</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Inventaris Peralatan</h2>
                         <p class="text-gray-500 text-sm mt-1">Pastikan setiap item siap untuk ekspedisi Anda berikutnya.</p>
                     </div>
                     <a href="{{ route('frontend.inventory') }}"
-                        class="hidden md:inline-block bg-[#7753AF] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#5e3d8e] transition">
+                        class="inline-block bg-[#7753AF] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#5e3d8e] transition text-center">
                         Lihat Semua
                     </a>
                 </div>
 
                 {{-- card --}}
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
-
-
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6 mb-12">
 
                     @forelse ($relatedItems as $item)
+                        @php
+                            $itemPhoto = $item->photos->first();
+                        @endphp
                         <div
-                            class="w-full bg-white border-2 border-gray-200 rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
+                            class="w-full bg-white border-2 border-gray-200 rounded-2xl sm:rounded-3xl flex flex-col hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group h-full">
 
-                            <div class="relative w-full h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
+                            <a href="{{ route('frontend.inventory.show', $item->id) }}"
+                                class="relative w-full h-36 sm:h-48 md:h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
 
                                 <span
-                                    class="absolute top-4 left-4 bg-black/20 backdrop-blur-sm text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide z-10">
-                                    {{ $item->category->name }}
+                                    class="absolute top-2 left-2 sm:top-4 sm:left-4 bg-black/20 backdrop-blur-sm text-black text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full uppercase tracking-wide z-10">
+                                    {{ $item->category->name ?? 'Umum' }}
                                 </span>
 
-                                <img src="{{ asset('frontend/images/tas.jpg') }}" alt="tas jpg"
-                                    class="w-full h-full object-contain p-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
-                            </div>
+                                <img src="{{ $itemPhoto ? asset('storage/' . $itemPhoto->photo_path) : asset('frontend/images/tas.jpg') }}"
+                                    alt="{{ $item->name }}"
+                                    class="w-full h-full object-contain pt-8 sm:pt-11 px-4 sm:px-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110">
+                            </a>
 
-                            <div class="p-5 flex justify-between items-end flex-grow border-t border-gray-100">
-                                <div>
-                                    <h3 class="text-gray-900 font-semibold text-base leading-tight mb-1 line-clamp-2">
+                            <div class="p-3 sm:p-5 flex justify-between items-end gap-2 grow border-t border-gray-100">
+                                <div class="min-w-0">
+                                    <h3
+                                        class="text-gray-900 font-semibold text-sm sm:text-base leading-tight mb-1 line-clamp-2">
                                         {{ $item->name }}
                                     </h3>
-                                    <p class="text-gray-500 text-sm font-medium">
-                                        {{ $item->quantity }}
+
+                                    <p class="text-gray-500 text-xs sm:text-sm font-medium">
+                                        @if ($item->quantity > 0)
+                                            Tersedia {{ $item->quantity }} Unit
+                                        @else
+                                            Stok Habis
+                                        @endif
                                     </p>
                                 </div>
 
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
-                                    <button
-                                        class="w-10 h-10 rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm group/cart"
-                                        title="Tambah ke Keranjang">
-                                        <i
-                                            class="fa-solid fa-plus text-sm group-hover/cart:rotate-90 transition-transform duration-300"></i>
-                                    </button>
+                                    @if ($item->quantity > 0 && (auth()->check() || auth('opa')->check()))
+                                        <button type="button" onclick="addToCart({{ $item->id }})"
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 border-[#7C3AED] text-[#7C3AED] flex items-center justify-center hover:bg-[#7C3AED] hover:text-white transition-all duration-300 shadow-sm group/cart"
+                                            title="Tambah ke Keranjang">
+                                            <i
+                                                class="fa-solid fa-plus text-xs sm:text-sm group-hover/cart:rotate-90 transition-transform duration-300"></i>
+                                        </button>
+                                    @elseif ($item->quantity > 0)
+                                        <button type="button"
+                                            onclick="Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Login Dulu!',
+                                    text: 'Untuk menggunakan fitur keranjang, silakan login terlebih dahulu.',
+                                    confirmButtonText: 'Login',
+                                    confirmButtonColor: '#7C3AED',
+                                    showCancelButton: true,
+                                    cancelButtonText: 'Nanti Saja'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.dispatchEvent(new CustomEvent('trigger-login-opa'));
+                                    }
+                                })"
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 border-gray-300 text-gray-400 flex items-center justify-center hover:border-[#7C3AED] hover:text-[#7C3AED] transition-all duration-300 shadow-sm"
+                                            title="Tambah ke Keranjang">
+                                            <i class="fa-solid fa-plus text-xs sm:text-sm"></i>
+                                        </button>
+                                    @endif
 
-                                    <button
-                                        class="w-10 h-10 bg-[#7753AF] rounded-xl flex items-center justify-center text-white hover:bg-[#5e3d8e] hover:scale-110 transition-all duration-300 shadow-md group/btn"
+                                    <a href="{{ route('frontend.inventory.show', $item->id) }}"
+                                        class="w-8 h-8 sm:w-10 sm:h-10 bg-[#7753AF] rounded-lg sm:rounded-xl flex items-center justify-center text-white hover:bg-[#5e3d8e] hover:scale-110 transition-all duration-300 shadow-md group/btn"
                                         title="Lihat Detail">
                                         <i
-                                            class="fa-solid fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300"></i>
-                                    </button>
+                                            class="fa-solid fa-arrow-right -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300 text-xs sm:text-base"></i>
+                                    </a>
 
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <h3 class="text-lg font-semibold text-gray-900">Belum ada barang terkait.</h3>
+                        <div class="col-span-full flex flex-col items-center justify-center py-12 sm:py-16 text-center">
+                            <div
+                                class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-2xl sm:text-3xl">
+                                <i class="fa-solid fa-box-open"></i>
+                            </div>
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900">Belum ada barang terkait</h3>
+                            <p class="text-gray-500 text-sm">Inventaris saat ini masih kosong.</p>
+                        </div>
                     @endforelse
-                    {{-- <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                      <div
-                          class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400 text-3xl">
-                          <i class="fa-solid fa-box-open"></i>
-                      </div>
-                      <h3 class="text-lg font-semibold text-gray-900">Belum ada barang</h3>
-                      <p class="text-gray-500 text-sm">Inventaris saat ini masih kosong.</p>
-                  </div> --}}
 
                 </div>
             </div>

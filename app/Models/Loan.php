@@ -27,7 +27,7 @@ class Loan extends Model
 
     public function opa()
     {
-        return $this->belongsTo(Opa::class);
+        return $this->belongsTo(Opa::class)->withTrashed();
     }
     public function details()
     {

@@ -17,8 +17,8 @@
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            /* font-family: 'IBM Plex Sans', sans-serif; */
+            /* font-family: 'Space Grotesk', sans-serif; */
+            font-family: 'IBM Plex Sans', sans-serif;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -29,10 +29,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    {{-- <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap"
-        rel="stylesheet"> --}}
+        rel="stylesheet">
 </head>
 
 <body x-data="{ loginOpen: false }" @open-login-modal.window="loginOpen = true"

@@ -1,0 +1,96 @@
+@extends('dashboard.layouts.app')
+
+@section('content')
+    <x-breadcrumb :items="[['label' => 'Peminjam', 'url' => route('opas.index')], ['label' => 'Detail Peminjam']]" />
+
+    <div
+        class="bg-white border border-[#E0E0E0] rounded-xl h-auto p-4 overflow-hidden px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6s">
+        <h3 class="font-bold text-2xl text-gray-800 dark:text-white/90 mb-6">Detail Peminjam</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+            <!-- FOTO PROFIL -->
+            <div
+                class="border border-[#E0E0E0] rounded-xl dark:border-gray-700 h-fit dark:bg-white/5 p-6 flex flex-col items-center">
+                <div class="w-full">
+                    @if ($opa->photo)
+                        <img src="{{ Storage::url($opa->photo) }}" alt="Foto {{ $opa->name }}"
+                            class="h-full w-full object-cover rounded-3xl" />
+                    @else
+                        <img src="{{ asset('storage/imgUsers/default-image.png') }}" alt="Foto Default"
+                            class="h-full w-full object-cover rounded-3xl" />
+                    @endif
+                </div>
+            </div>
+
+            <!-- INFORMASI -->
+            <div class="md:col-span-3 flex flex-col gap-5">
+                <!-- INFORMASI PRIBADI -->
+                <div class="p-4 border border-[#E0E0E0] rounded-xl dark:border-gray-700 dark:bg-white/5">
+                    <h3 class="font-semibold text-md text-[#212121] dark:text-white/90">Informasi Pribadi</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Nama Lengkap</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">{{ $opa->name }}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Email</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">{{ $opa->email }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMASI KONTAK -->
+                <div class="p-4 border border-[#E0E0E0] rounded-xl dark:border-gray-700 dark:bg-white/5">
+                    <h3 class="font-semibold text-md text-[#212121] dark:text-white/90">Informasi Kontak</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">No Telp</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">
+                                {{ $opa->phone_number ?? '-' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMASI ASAL -->
+                <div class="p-4 border border-[#E0E0E0] rounded-xl dark:border-gray-700 dark:bg-white/5">
+                    <h3 class="font-semibold text-md text-[#212121] dark:text-white/90">Informasi Asal</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Kampus</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">
+                                {{ $opa->campus_name ?? '-' }}
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Organisasi</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">
+                                {{ $opa->organization_name ?? '-' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMASI AKUN -->
+                <div class="p-4 border border-[#E0E0E0] rounded-xl dark:border-gray-700 dark:bg-white/5">
+                    <h3 class="font-semibold text-md text-[#212121] dark:text-white/90">Informasi Akun</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Terdaftar Sejak</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">
+                                {{ \Carbon\Carbon::parse($opa->created_at)->translatedFormat('d F Y') }}
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="text-[#9E9E9E] font-medium text-xs mb-2">Login via</h4>
+                            <p class="text-[#212121] font-normal text-xs dark:text-white/90">
+                                {{ $opa->google_id ? 'Google' : 'Manual' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+@endsection

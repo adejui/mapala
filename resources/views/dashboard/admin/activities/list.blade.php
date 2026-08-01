@@ -79,69 +79,89 @@
 
         <!-- Filter Section -->
         <div x-show="showFilter" x-transition
-            class="bg-white border border-[#E0E0E0] rounded-xl h-auto mt-2 p-4 overflow-hidden px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6s">
-            <div class="flex justify-start items-center my-2 gap-x-5">
+            class="mt-2 overflow-hidden rounded-xl border border-[#E0E0E0] bg-white p-4 dark:border-gray-800 dark:bg-white/5 sm:px-6">
 
-                <div class="hs-dropdown [--auto-close:inside] relative">
+            <div class="flex flex-wrap items-end gap-5">
+
+                <!-- Jenis Kegiatan -->
+                <div class="hs-dropdown relative [--auto-close:inside]">
                     <div class="flex flex-col">
-                        <span class="font-medium text-sm mb-1 dark:text-white">Jenis Kegiatan</span>
+                        <span class="mb-1 text-sm font-medium dark:text-white">
+                            Jenis Kegiatan
+                        </span>
+
                         <button id="typeDropdownBtn" type="button"
-                            class="hs-dropdown-toggle py-3 w-64 px-4 inline-flex items-center justify-between gap-x-2 text-sm font-normal rounded-lg border border-gray-300 bg-white text-gray-800 shadow-2xs focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200 dark:focus:bg-gray-800"
+                            class="hs-dropdown-toggle inline-flex w-64 items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-normal text-gray-800 shadow-2xs transition focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
                             aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+
                             {{ ucfirst(request('type', 'Semua Jenis Kegiatan')) }}
-                            <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg"
-                                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m6 9 6 6 6-6" />
+
+                            <svg class="size-4 hs-dropdown-open:rotate-180" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
                             </svg>
                         </button>
                     </div>
 
-                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                    <div class="hs-dropdown-menu mt-2 hidden min-w-60 rounded-lg bg-white opacity-0 shadow-md transition-[opacity,margin] duration-200 hs-dropdown-open:opacity-100 dark:divide-gray-700 dark:border dark:border-gray-700 dark:bg-gray-800"
                         role="menu" aria-orientation="vertical" aria-labelledby="typeDropdownBtn">
-                        <div class="p-1 space-y-0.5">
+
+                        <div class="space-y-0.5 p-1">
+
                             <button type="button" data-value="all"
-                                class="type-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Semua Jenis Kegiatan
                             </button>
+
                             <button type="button" data-value="meeting"
-                                class="type-option flex items-center w-full gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Rapat
                             </button>
+
                             <button type="button" data-value="basic training"
-                                class="type-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Diksar
                             </button>
+
                             <button type="button" data-value="exploration"
-                                class="type-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Pengembaraan
                             </button>
+
                             <button type="button" data-value="anniversary"
-                                class="type-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Hari Jadi
                             </button>
+
                             <button type="button" data-value="others"
-                                class="type-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+                                class="type-option flex w-full items-center rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
                                 Lain-lain
                             </button>
+
                         </div>
                     </div>
                 </div>
 
+                <!-- Reset -->
                 <button id="resetFiltersBtn"
-                    class="px-3 mt-6 py-3 border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium flex items-center gap-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors">
-                    <img src="{{ asset('assets/images/icons/rotate-cw.svg') }}" alt="reset light"
-                        class="w-4 h-4 opacity-70 block dark:hidden">
-                    <img src="{{ asset('assets/images/icons/rotate-cw-dark.svg') }}" alt="reset dark"
-                        class="w-4 h-4 opacity-80 hidden dark:block">
-                    <span class="text-gray-700 dark:text-gray-400">Reset</span>
+                    class="inline-flex h-11 items-center gap-2 rounded-xl border border-gray-300 bg-gray-100 px-5 text-sm font-medium text-gray-700 shadow-sm transition-all duration-300 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+
+                    <img src="{{ asset('assets/images/icons/rotate-cw.svg') }}" alt="Reset"
+                        class="block h-4 w-4 dark:hidden">
+
+                    <img src="{{ asset('assets/images/icons/rotate-cw-dark.svg') }}" alt="Reset"
+                        class="hidden h-4 w-4 dark:block">
+
+                    <span>Reset</span>
                 </button>
 
+                <!-- Export -->
                 <a href="#" id="exportBtn"
-                    class="bg-green-600 hover:bg-green-700 text-white
-    px-4 py-2 rounded-md text-sm font-medium
-    transition flex items-center gap-2 shadow-sm">
-                    Export Excel
+                    class="inline-flex h-11 items-center gap-2 rounded-xl border-2 border-[#7EE2A8] bg-white px-5 text-sm font-medium text-[#22C55E] shadow-sm transition-all duration-300 hover:bg-[#F0FFF5] dark:border-green-500 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700">
+
+                    <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="Excel" class="h-4 w-4">
+
+                    <span>Export</span>
                 </a>
 
             </div>

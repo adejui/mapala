@@ -1,6 +1,12 @@
 @extends('frontend.layouts.app')
 
 @section('content')
+    <div class="flex justify-end">
+        @if (session('success'))
+            <x-alert-success title="Berhasil!" :message="session('success')" />
+        @endif
+    </div>
+
     {{-- Background pola titik - statis, tidak fixed (fixed background bikin browser terus repaint saat scroll di mobile) --}}
     <div class="absolute inset-0 -z-10 bg-gray-50 opacity-60"
         style="background-image: radial-gradient(#7C3AED 0.5px, transparent 0.5px), radial-gradient(#7C3AED 0.5px, #f9fafb 0.5px); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
@@ -119,73 +125,121 @@
                 <div
                     class="lg:col-span-2 w-full bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 md:p-12 shadow-lg shadow-purple-100/50 border border-gray-100 relative overflow-hidden">
 
-                    <div
-                        class="mb-6 sm:mb-8 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="mb-8">
                         <h3 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
                             <i class="fa-regular fa-paper-plane text-[#7C3AED]"></i>
                             Kirim Pesan Kepada Kami
                         </h3>
-
-                        @if (session('success'))
-                            <div class="text-green-600 text-sm sm:text-base font-medium">
-                                {{ session('success') }}
-                            </div>
-                        @endif
                     </div>
 
-                    <form action="{{ route('frontend.contact.send') }}" method="POST"
-                        class="space-y-5 sm:space-y-6 relative z-10">
+                    {{-- Validation Errors --}}
+                    @if ($errors->any())
+                        <div class="mb-6 rounded-xl bg-red-100 border border-red-300 px-4 py-3 text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('frontend.contact.store') }}" method="POST" class="space-y-6">
                         @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-                            <div class="space-y-2">
-                                <label for="name" class="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap
-                                    <span class="text-red-500">*</span></label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            {{-- Nama --}}
+                            <div>
+                                <label for="name" class="block mb-2 text-sm font-bold text-gray-700">
+                                    Nama Lengkap <span class="text-red-500">*</span>
+                                </label>
+
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i
-                                            class="fa-regular fa-user"></i></span>
-                                    <input type="text" id="name" name="name" placeholder="Masukkan nama Anda"
-                                        required
-                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                                        <i class="fa-regular fa-user"></i>
+                                    </span>
+
+                                    <input type="text" id="name" name="name" value="{{ old('name') }}"
+                                        placeholder="Masukkan nama Anda" required
+                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 text-gray-900 placeholder-gray-400 border {{ $errors->has('name') ? 'border-red-500' : 'border-gray-200' }} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white">
+
                                 </div>
+
+                                @error('name')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div class="space-y-2">
-                                <label for="email" class="text-sm font-bold text-gray-700 tracking-wide">Alamat Email
-                                    <span class="text-red-500">*</span></label>
+
+                            {{-- Email --}}
+                            <div>
+                                <label for="email" class="block mb-2 text-sm font-bold text-gray-700">
+                                    Alamat Email <span class="text-red-500">*</span>
+                                </label>
+
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i
-                                            class="fa-regular fa-envelope"></i></span>
-                                    <input type="email" id="email" name="email" placeholder="contoh@email.com"
-                                        required
-                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                                        <i class="fa-regular fa-envelope"></i>
+                                    </span>
+
+                                    <input type="email" id="email" name="email" value="{{ old('email') }}"
+                                        placeholder="contoh@email.com" required
+                                        class="w-full py-3.5 pl-11 pr-4 bg-gray-50 text-gray-900 placeholder-gray-400 border {{ $errors->has('email') ? 'border-red-500' : 'border-gray-200' }} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white">
+
                                 </div>
+
+                                @error('email')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
+
                         </div>
-                        <div class="space-y-2">
-                            <label for="subject" class="text-sm font-bold text-gray-700 tracking-wide">Subjek Pesan <span
-                                    class="text-red-500">*</span></label>
+
+                        {{-- Subject --}}
+                        <div>
+                            <label for="subject" class="block mb-2 text-sm font-bold text-gray-700">
+                                Subjek Pesan <span class="text-red-500">*</span>
+                            </label>
+
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400"><i
-                                        class="fa-regular fa-comment-dots"></i></span>
-                                <input type="text" id="subject" name="subject" placeholder="Apa tujuan pesan Anda?"
-                                    required
-                                    class="w-full py-3.5 pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 font-medium">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                                    <i class="fa-regular fa-comment-dots"></i>
+                                </span>
+
+                                <input type="text" id="subject" name="subject" value="{{ old('subject') }}"
+                                    placeholder="Apa tujuan pesan Anda?" required
+                                    class="w-full py-3.5 pl-11 pr-4 bg-gray-50 text-gray-900 placeholder-gray-400 border {{ $errors->has('subject') ? 'border-red-500' : 'border-gray-200' }} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white">
+
                             </div>
+
+                            @error('subject')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <div class="space-y-2">
-                            <label for="message" class="text-sm font-bold text-gray-700 tracking-wide">Isi Pesan <span
-                                    class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <textarea id="message" name="message" rows="5" placeholder="Tuliskan pesan lengkap Anda di sini..." required
-                                    class="w-full py-3.5 px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-colors text-gray-800 placeholder-gray-400 resize-none font-medium leading-relaxed sm:rows-6"></textarea>
-                            </div>
+
+                        {{-- Message --}}
+                        <div>
+                            <label for="message" class="block mb-2 text-sm font-bold text-gray-700">
+                                Isi Pesan <span class="text-red-500">*</span>
+                            </label>
+
+                            <textarea id="message" name="message" rows="6" placeholder="Tuliskan pesan lengkap Anda di sini..." required
+                                class="w-full py-3.5 px-4 bg-gray-50 text-gray-900 placeholder-gray-400 border {{ $errors->has('message') ? 'border-red-500' : 'border-gray-200' }} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white resize-none">{{ old('message') }}</textarea>
+
+                            @error('message')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <button type="submit"
-                            class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#7C3AED] text-white font-bold rounded-xl shadow-md hover:bg-[#6D28D9] transition-colors duration-300">
+                            class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#7C3AED] text-white font-bold rounded-xl shadow-md hover:bg-[#6D28D9] transition duration-300">
+
                             <span>Kirim Pesan Sekarang</span>
                             <i class="fa-solid fa-paper-plane"></i>
+
                         </button>
+
                     </form>
+
                 </div>
 
             </div>

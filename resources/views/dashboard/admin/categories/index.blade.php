@@ -14,59 +14,107 @@
 
     <div x-data="formHandler()">
         <div
-            class="bg-white border border-[#E0E0E0] rounded-xl h-auto p-4 overflow-hidden px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/3 sm:px-6s">
-            <h3 class="font-bold text-2xl text-gray-800 dark:text-white/90 mb-6">Daftar Kategori</h3>
+            class="bg-white border border-[#E0E0E0] rounded-xl p-5 overflow-hidden
+           dark:bg-gray-900 dark:border-gray-700 dark:shadow-xl">
 
-            <div class="flex justify-between items-center my-2">
-                {{-- Search --}}
-                <div class="hidden lg:max-w-[430px] md:block">
-                    <div class="relative">
-                        <span class="absolute top-1/2 left-4 -translate-y-1/2">
-                            <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20" viewBox="0 0 20 20"
-                                fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z" />
-                            </svg>
-                        </span>
-                        <input type="text" placeholder="Search" id="search-input"
-                            class="dark:bg-dark-900 shadow-theme-xs focus:border-[#7653afaa] focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-sm rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30" />
+            <h3 class="mb-6 text-2xl font-bold text-gray-800 dark:text-gray-100">
+                Daftar Kategori
+            </h3>
+
+            <div class="flex flex-wrap items-center justify-between gap-4">
+
+                <!-- KIRI -->
+                <div class="flex items-center gap-3">
+
+                    <!-- Search -->
+                    <div class="hidden md:block">
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2">
+                                <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
+                                    viewBox="0 0 20 20" fill="none">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z" />
+                                </svg>
+                            </span>
+
+                            <input type="text" id="search-input" placeholder="Search"
+                                class="h-11 w-80 rounded-xl border-2 border-gray-300 bg-white
+                               pl-12 pr-4 text-sm text-gray-700
+                               placeholder:text-gray-400
+                               focus:border-[#7653AF] focus:outline-none
+
+                               dark:border-gray-700
+                               dark:bg-gray-800
+                               dark:text-gray-100
+                               dark:placeholder:text-gray-500">
+                        </div>
                     </div>
+
+                    <!-- Export -->
+                    <a href="{{ route('categories.export') }}"
+                        class="inline-flex h-11 items-center gap-2 rounded-xl
+                       border-2 border-[#7EE2A8]
+                       bg-white px-5
+                       text-sm font-medium text-[#22C55E]
+                       shadow-sm transition-all duration-300
+                       hover:bg-[#F0FFF5] hover:shadow-md
+
+                       dark:border-[#22C55E]
+                       dark:bg-gray-900
+                       dark:text-[#4ADE80]
+                       dark:hover:bg-gray-800">
+
+                        <img src="{{ asset('assets/images/icons/logo-excel.png') }}" class="h-4 w-4" alt="Excel">
+
+                        <span>Export</span>
+                    </a>
+
                 </div>
 
-                {{-- Filter & Tambah --}}
+                <!-- KANAN -->
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="dark:text-white">Showing</span>
+
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-gray-600 dark:text-gray-300">
+                            Showing
+                        </span>
 
                         <div class="relative">
                             <select id="perPageSelect"
-                                class="appearance-none border border-gray-300 rounded-lg ps-3 pe-8 py-2.5 focus:outline-hidden dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200 dark:focus:bg-gray-800 text-sm">
+                                class="h-11 appearance-none rounded-xl border border-gray-300
+                               bg-white ps-3 pe-8 text-sm
+                               dark:border-gray-700
+                               dark:bg-gray-800
+                               dark:text-white">
+
                                 <option value="5" {{ request('perPage') == 5 ? 'selected' : '' }}>5</option>
                                 <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
                                 <option value="25" {{ request('perPage') == 25 ? 'selected' : '' }}>25</option>
                             </select>
-                            <img src="{{ asset('assets/images/icons/chevron-down.svg') }}" alt="arrow light"
-                                class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 opacity-70 block dark:hidden">
-                            <img src="{{ asset('assets/images/icons/chevron-down-dark.svg') }}" alt="arrow dark"
-                                class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 opacity-80 hidden dark:block">
+
+                            <img src="{{ asset('assets/images/icons/chevron-down.svg') }}"
+                                class="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 block dark:hidden">
+
+                            <img src="{{ asset('assets/images/icons/chevron-down-dark.svg') }}"
+                                class="pointer-events-none absolute right-2 top-1/2 hidden h-4 w-4 -translate-y-1/2 dark:block">
                         </div>
                     </div>
 
-                    <a href="{{ route('categories.export') }}"
-                        class="bg-green-600 hover:bg-green-700 text-white
-    px-4 py-2 rounded-md text-sm font-medium
-    transition flex items-center gap-2 shadow-sm">
-
-                        Export Excel
-                    </a>
-
                     <button @click="openCreate()"
-                        class="inline-flex items-center gap-2 px-4 h-10 text-sm font-medium text-white bg-[#7653afaa] transition rounded-lg shadow-theme-xs hover:bg-[#68489C]">
-                        <img src="{{ asset('assets/images/icons/plus.svg') }}" alt="Tambah" class="h-4 w-4">
+                        class="inline-flex h-11 items-center gap-2 rounded-xl
+                       bg-[#7653AF] px-5 text-sm font-medium text-white
+                       shadow-sm transition-all duration-300
+                       hover:bg-[#68489C]">
+
+                        <img src="{{ asset('assets/images/icons/plus.svg') }}" class="h-4 w-4" alt="Tambah">
+
                         Tambah
                     </button>
+
                 </div>
+
             </div>
+
         </div>
 
         <div

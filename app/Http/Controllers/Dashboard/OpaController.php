@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Dashboard;
 use App\Exports\BorrowersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOpaRequest;
-use App\Models\Loan;
+use Illuminate\Validation\Rule;
 use App\Models\Opa;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OpaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Export data peminjam.
      */
     public function export(Request $request)
     {
@@ -28,11 +27,18 @@ class OpaController extends Controller
             'data-peminjam.xlsx_' . date('Y-m-d') . '.xlsx'
         );
     }
+
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $perPage = $request->get('perPage', 5);
 
         $search = $request->get('search');
+
+        $organization = $request->get('organization');
+        $campus       = $request->get('campus');
 
         // Dropdown organizations
         $organizations = Opa::selectRaw('LOWER(organization_name) as organization_name')
@@ -48,122 +54,39 @@ class OpaController extends Controller
             ->orderBy('campus_name', 'asc')
             ->pluck('campus_name');
 
-        $organization = $request->get('organization');
-        $campus       = $request->get('campus');
-
         /*
-    |--------------------------------------------------------------------------
-    | QUERY LOANS
-    |--------------------------------------------------------------------------
-    */
-        $query = Loan::with(['user', 'opa'])
-            ->where(function ($q) {
-                $q->whereNotNull('user_id')
-                    ->orWhereNotNull('opa_id');
-            });
+        |--------------------------------------------------------------------------
+        | QUERY OPAS
+        |--------------------------------------------------------------------------
+        */
+        $query = Opa::query();
 
-        /*
-    |--------------------------------------------------------------------------
-    | SEARCH
-    |--------------------------------------------------------------------------
-    */
+        // SEARCH
         if ($search) {
-
             $query->where(function ($q) use ($search) {
-
-                // Search user
-                $q->whereHas('user', function ($user) use ($search) {
-                    $user->where('full_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone_number', 'like', "%{$search}%");
-                })
-
-                    // Search opa
-                    ->orWhereHas('opa', function ($opa) use ($search) {
-                        $opa->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%")
-                            ->orWhere('phone_number', 'like', "%{$search}%");
-                    });
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
             });
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | FILTER ORGANIZATION
-    |--------------------------------------------------------------------------
-    */
+        // FILTER ORGANIZATION
         if ($organization && $organization !== 'all') {
-
-            $query->whereHas('opa', function ($q) use ($organization) {
-                $q->whereRaw(
-                    'LOWER(organization_name) = ?',
-                    [strtolower($organization)]
-                );
-            });
+            $query->whereRaw(
+                'LOWER(organization_name) = ?',
+                [strtolower($organization)]
+            );
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | FILTER CAMPUS
-    |--------------------------------------------------------------------------
-    */
+        // FILTER CAMPUS
         if ($campus && $campus !== 'all') {
-
-            $query->whereHas('opa', function ($q) use ($campus) {
-                $q->whereRaw(
-                    'LOWER(campus_name) = ?',
-                    [strtolower($campus)]
-                );
-            });
+            $query->whereRaw(
+                'LOWER(campus_name) = ?',
+                [strtolower($campus)]
+            );
         }
 
-        $opas = $query->latest()->get()
-            ->unique(function ($loan) {
-
-                $borrower = $loan->user ?? $loan->opa;
-
-                return strtolower(
-                    ($loan->user->full_name ?? $loan->opa->name ?? '') . '|' .
-                        ($borrower->email ?? '') . '|' .
-                        ($borrower->phone_number ?? '') . '|' .
-                        ($loan->opa->campus_name ?? '') . '|' .
-                        ($loan->opa->organization_name ?? '')
-                );
-            })
-            ->values();
-
-        $collection = $query->latest()->get()
-            ->unique(function ($loan) {
-
-                $borrower = $loan->user ?? $loan->opa;
-
-                return strtolower(
-                    ($loan->user->full_name ?? $loan->opa->name ?? '') . '|' .
-                        ($borrower->email ?? '') . '|' .
-                        ($borrower->phone_number ?? '') . '|' .
-                        ($loan->opa->campus_name ?? '') . '|' .
-                        ($loan->opa->organization_name ?? '')
-                );
-            })
-            ->values();
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-
-        $items = $collection->slice(
-            ($currentPage - 1) * $perPage,
-            $perPage
-        )->values();
-
-        $opas = new LengthAwarePaginator(
-            $items,
-            $collection->count(),
-            $perPage,
-            $currentPage,
-            [
-                'path' => request()->url(),
-                'query' => request()->query(),
-            ]
-        );
+        $opas = $query->latest()->paginate($perPage)->appends($request->query());
 
         if ($request->ajax()) {
             return view('dashboard.admin.opas.partials.table', compact('opas'))->render();
@@ -175,12 +98,6 @@ class OpaController extends Controller
             'campuses'
         ));
     }
-
-
-
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -195,8 +112,6 @@ class OpaController extends Controller
      */
     public function store(StoreOpaRequest $request)
     {
-        // dd($request->all());
-
         $validated = $request->validated();
 
         Opa::create($validated);
@@ -209,7 +124,9 @@ class OpaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $opa = Opa::findOrFail($id);
+
+        return view('dashboard.admin.opas.show', compact('opa'));
     }
 
     /**
@@ -217,7 +134,9 @@ class OpaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $opa = Opa::findOrFail($id);
+
+        return view('dashboard.admin.opas.edit', compact('opa'));
     }
 
     /**
@@ -225,7 +144,26 @@ class OpaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $opa = Opa::findOrFail($id);
+
+        $validated = $request->validate([
+            'name'              => 'required|string|max:255',
+            'email'             => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('opas', 'email')->ignore($opa->id),
+            ],
+            'phone_number'      => 'nullable|string|max:20',
+            'campus_name'       => 'nullable|string|max:255',
+            'organization_name' => 'nullable|string|max:255',
+        ]);
+
+        $opa->update($validated);
+
+        return redirect()
+            ->route('opas.index')
+            ->with('success', 'Data peminjam berhasil diperbarui!');
     }
 
     /**

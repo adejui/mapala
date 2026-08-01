@@ -23,7 +23,7 @@
 
                 <div class="flex justify-between items-center my-2">
                     {{-- Search --}}
-                    <div class="hidden lg:max-w-[430px] md:block">
+                    <div class="hidden md:flex items-center gap-3">
                         <div class="relative">
                             <span class="absolute top-1/2 left-4 -translate-y-1/2">
                                 <svg class="fill-gray-500 dark:fill-gray-400" width="20" height="20"
@@ -35,6 +35,27 @@
                             <input type="text" placeholder="Search" id="search-input"
                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-[#7653afaa] focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-sm rounded-lg border-2 border-gray-300 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30" />
                         </div>
+
+                        <a href="#" id="exportBtn"
+                            class="inline-flex h-11 items-center gap-2
+                            rounded-xl border-2 border-[#7EE2A8]
+                            bg-white px-5
+                            text-sm font-medium text-[#22C55E]
+                            shadow-sm
+                            transition-all duration-300
+                            hover:bg-[#F0FFF5] hover:shadow-md
+
+                            dark:border-[#22C55E]
+                            dark:bg-gray-900
+                            dark:text-[#4ADE80]
+                            dark:hover:bg-gray-800
+                            dark:hover:shadow-lg">
+
+                            <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="Excel" class="h-4 w-4">
+
+                            <span>Export</span>
+                        </a>
+
                     </div>
 
                     {{-- Filter & Tambah --}}
@@ -151,12 +172,12 @@
                         <span class="text-gray-700 dark:text-gray-400">Reset</span>
                     </button>
 
-                    <a href="#" id="exportBtn"
+                    {{-- <a href="#" id="exportBtn"
                         class="bg-green-600 hover:bg-green-700 text-white
     px-4 py-2 rounded-md text-sm font-medium
     transition flex items-center gap-2 shadow-sm">
-                        Export Excel
-                    </a>
+                        Export
+                    </a> --}}
 
                 </div>
             </div>

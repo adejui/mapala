@@ -83,38 +83,89 @@
 
                     @if (auth()->user()->role === 'admin')
                         <!-- Menu Item Anggota -->
-                        <li>
-                            <a href="{{ route('users.index') }}"
-                                class="menu-item font-normal group rounded-lg py-3.5 {{ request()->routeIs('users*') ? 'bg-[#3A1096]/50' : 'menu-item-inactive' }}">
+                        <li x-data="{
+                            selected: '',
+                            isActive: {{ request()->routeIs('users.*') || request()->routeIs('opas.*') ? 'true' : 'false' }}
+                        }">
+                            <a href="#" @click.prevent="selected = (selected === 'Anggota' ? '' : 'Anggota')"
+                                class="menu-item font-normal group rounded-lg py-3.5 flex items-center relative"
+                                :class="isActive
+                                    ?
+                                    'bg-[#3A1096]/50 text-white' :
+                                    'menu-item-inactive text-gray-700 dark:text-gray-300'">
 
-                                <!-- Icon -->
-                                @if (request()->routeIs('users*'))
-                                    {{-- Route aktif --}}
+                                <!-- ICON -->
+                                @if (request()->routeIs('users.*') || request()->routeIs('opas.*'))
+                                    <!-- Aktif -->
                                     <img src="{{ asset('assets/images/icons/circle-user-round-dark.svg') }}"
-                                        alt="Anggota Icon Active (Light Mode)" class="menu-item-icon ms-1 dark:hidden"
-                                        width="24" height="24">
-
+                                        class="menu-item-icon ms-1 dark:hidden" width="24" height="24">
                                     <img src="{{ asset('assets/images/icons/circle-user-round-dark.svg') }}"
-                                        alt="Anggota Icon Active (Dark Mode)"
                                         class="menu-item-icon ms-1 hidden dark:inline" width="24" height="24">
                                 @else
-                                    {{-- Route tidak aktif --}}
+                                    <!-- Tidak aktif -->
                                     <img src="{{ asset('assets/images/icons/circle-user-round.svg') }}"
-                                        alt="Anggota Icon (Light Mode)" class="menu-item-icon ms-1 dark:hidden"
-                                        width="24" height="24">
-
+                                        class="menu-item-icon ms-1 dark:hidden" width="24" height="24">
                                     <img src="{{ asset('assets/images/icons/circle-user-round-dark.svg') }}"
-                                        alt="Anggota Icon (Dark Mode)" class="menu-item-icon ms-1 hidden dark:inline"
-                                        width="24" height="24">
+                                        class="menu-item-icon ms-1 hidden dark:inline" width="24" height="24">
                                 @endif
 
-                                <!-- Text -->
-                                <span
-                                    class="menu-item-text transition-colors duration-200 dark:text-gray-300 {{ request()->routeIs('users*') ? 'text-white' : 'text-black' }}"
-                                    :class="sidebarToggle ? 'lg:hidden' : ''">
+                                <!-- LABEL -->
+                                <span class="menu-item-text transition-colors duration-200"
+                                    :class="[sidebarToggle ? 'lg:hidden' : '', isActive ? 'text-white' :
+                                        'text-black dark:text-gray-300'
+                                    ]">
                                     Anggota
                                 </span>
+
+                                <!-- PANAH -->
+                                <svg class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current transition-all duration-200"
+                                    :class="[
+                                        isActive ?
+                                        'rotate-180 text-white' :
+                                        (selected === 'Anggota' ?
+                                            'rotate-180 text-black dark:text-gray-300' :
+                                            'text-black dark:text-gray-300'),
+                                        sidebarToggle ? 'lg:hidden' : ''
+                                    ]"
+                                    width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+
                             </a>
+
+                            <!-- DROPDOWN -->
+                            <div class="translate transform overflow-hidden"
+                                :class="(selected === 'Anggota' || isActive) ? 'block' : 'hidden'">
+
+                                <ul class="menu-dropdown mt-2 flex flex-col gap-1 pl-9"
+                                    :class="sidebarToggle ? 'lg:hidden' : 'flex'">
+
+                                    <!-- ANGGOTA INTERNAL -->
+                                    <li>
+                                        <a href="{{ route('users.index') }}"
+                                            class="menu-dropdown-item group font-normal py-3.5
+                                            {{ request()->routeIs('users.*')
+                                                ? 'menu-dropdown-item-active text-white bg-[#3A1096]/40 dark:text-white'
+                                                : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
+                                            Anggota Internal
+                                        </a>
+                                    </li>
+
+                                    <!-- ANGGOTA EKSTERNAL -->
+                                    <li>
+                                        <a href="{{ route('opas.index') }}"
+                                            class="menu-dropdown-item group font-normal py-3.5
+                                            {{ request()->routeIs('opas.*')
+                                                ? 'menu-dropdown-item-active text-white bg-[#3A1096]/40 dark:text-white'
+                                                : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
+                                            Anggota Eksternal
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
                         </li>
                         <!-- Menu Item Anggota -->
 
@@ -148,8 +199,8 @@
                                     </svg>
                                 @else
                                     {{-- Tidak aktif --}}
-                                    <svg class="menu-item-icon ms-1" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg class="menu-item-icon ms-1" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd" clip-rule="evenodd"
                                             d="M8 2C8.41421 2 8.75 2.33579 8.75 2.75V3.75H15.25V2.75C15.25 2.33579 15.5858 2 16 2C16.4142 2 16.75 2.33579 16.75 2.75V3.75H18.5C19.7426 3.75 20.75 4.75736 20.75 6V9V19C20.75 20.2426 19.7426 21.25 18.5 21.25H5.5C4.25736 21.25 3.25 20.2426 3.25 19V9V6C3.25 4.75736 4.25736 3.75 5.5 3.75H7.25V2.75C7.25 2.33579 7.58579 2 8 2ZM8 5.25H5.5C5.08579 5.25 4.75 5.58579 4.75 6V8.25H19.25V6C19.25 5.58579 18.9142 5.25 18.5 5.25H16H8ZM19.25 9.75H4.75V19C4.75 19.4142 5.08579 19.75 5.5 19.75H18.5C18.9142 19.75 19.25 19.4142 19.25 19V9.75Z"
                                             fill="currentColor" class="text-black dark:text-gray-300" />
@@ -294,11 +345,10 @@
                     </li>
                     <!-- Menu Item Inventoris -->
 
-
                     <!-- Menu Item Peminjaman -->
                     <li x-data="{
                         selected: '',
-                        isActive: {{ in_array(Route::currentRouteName(), ['loans.index', 'opas.index', 'loan-details.index', 'loans.manage', 'loans.show', 'notifications.show']) ? 'true' : 'false' }}
+                        isActive: {{ in_array(Route::currentRouteName(), ['loans.index', 'loan-details.index', 'loans.manage', 'loans.show', 'notifications.show']) ? 'true' : 'false' }}
                     }">
                         <a href="#" @click.prevent="selected = (selected === 'Peminjaman' ? '' : 'Peminjaman')"
                             class="menu-item font-normal group rounded-lg py-3.5 flex items-center relative"
@@ -310,7 +360,6 @@
                             <!-- ICON -->
                             @if (in_array(Route::currentRouteName(), [
                                     'loans.index',
-                                    'opas.index',
                                     'loan-details.index',
                                     'loans.manage',
                                     'loans.show',
@@ -360,40 +409,18 @@
                         </a>
 
                         <!-- DROPDOWN -->
-                        <div class="translate transform overflow-hidden"
+                        <div class="overflow-hidden transition-all duration-300"
                             :class="(selected === 'Peminjaman' || isActive) ? 'block' : 'hidden'">
-                            <ul :class="sidebarToggle ? 'lg:hidden' : 'flex'"
-                                class="menu-dropdown mt-2 flex flex-col gap-1 pl-9">
-
+                            <ul class="mt-2 flex flex-col gap-1 pl-9" :class="sidebarToggle ? 'lg:hidden' : 'flex'">
                                 <li>
                                     <a href="{{ route('loans.index') }}"
-                                        class="menu-dropdown-item group font-normal py-3.5
-                        {{ in_array(Route::currentRouteName(), ['loans.index', 'loans.manage', 'loans.show', 'notifications.show'])
-                            ? 'menu-dropdown-item-active text-white bg-[#3A1096]/40 dark:text-white'
-                            : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
+                                        class="menu-dropdown-item group py-3.5 font-normal
+                {{ in_array(Route::currentRouteName(), ['loans.index', 'loans.manage', 'loans.show', 'notifications.show'])
+                    ? 'menu-dropdown-item-active bg-[#3A1096]/40 text-white dark:text-white'
+                    : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
                                         Daftar Peminjaman
                                     </a>
                                 </li>
-
-                                <li>
-                                    <a href="{{ route('opas.index') }}"
-                                        class="menu-dropdown-item group font-normal py-3.5
-                        {{ Route::currentRouteName() == 'opas.index'
-                            ? 'menu-dropdown-item-active text-white bg-[#3A1096]/40 dark:text-white'
-                            : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
-                                        Daftar Peminjam
-                                    </a>
-                                </li>
-
-                                {{-- <li>
-                                    <a href="{{ route('loan-details.index') }}"
-                                        class="menu-dropdown-item group font-normal py-3.5
-                        {{ Route::currentRouteName() == 'loan-details.index'
-                            ? 'menu-dropdown-item-active text-white bg-[#3A1096]/40 dark:text-white'
-                            : 'menu-dropdown-item-inactive text-gray-700 dark:text-gray-300' }}">
-                                        Detail Peminjaman
-                                    </a>
-                                </li> --}}
                             </ul>
                         </div>
                     </li>
@@ -435,6 +462,32 @@
                             </a>
                         </li>
                         <!-- Menu Item Article -->
+
+                        <li>
+                            <a href="{{ route('messages.index') }}"
+                                class="menu-item font-normal group rounded-lg py-3.5 {{ request()->routeIs('messages.*') ? 'bg-[#3A1096]/50' : 'menu-item-inactive' }}">
+
+                                <!-- Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="menu-item-icon ms-1 w-6 h-6 transition-colors duration-200
+            {{ request()->routeIs('messages.*') ? 'text-white' : 'text-gray-600 dark:text-gray-300' }}"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21.75 7.5v9A2.25 2.25 0 0119.5 18.75h-15A2.25 2.25 0 012.25 16.5v-9A2.25 2.25 0 014.5 5.25h15A2.25 2.25 0 0121.75 7.5z" />
+
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5l9 6 9-6" />
+                                </svg>
+
+                                <!-- Text -->
+                                <span
+                                    class="menu-item-text transition-colors duration-200 dark:text-gray-300 {{ request()->routeIs('messages.*') ? 'text-white' : 'text-black' }}"
+                                    :class="sidebarToggle ? 'lg:hidden' : ''">
+                                    Pesan
+                                </span>
+
+                            </a>
+                        </li>
                     @endif
 
                 </ul>

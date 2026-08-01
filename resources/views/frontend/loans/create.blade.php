@@ -39,9 +39,6 @@
                 </nav>
             </div>
 
-
-
-
             @php
 
                 $showCompleteProfileModal = false;
@@ -72,13 +69,8 @@
 
             @endphp
 
-
-
-
-
-
             <form id="loanForm" action="{{ route('frontend.pinjaman.store') }}" method="POST"
-                enctype="multipart/form-data">
+                enctype="multipart/form-data" novalidate>
                 @csrf
                 <input type="hidden" name="cart_items" id="cart_items_input" value="{{ json_encode($cartItems) }}">
 
@@ -186,9 +178,10 @@
             @error('borrow_date') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                             onclick="this.showPicker()">
                                     </div>
-                                    @error('borrow_date')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <p id="borrow_date_error"
+                                        class="text-red-500 text-xs mt-1 {{ $errors->has('borrow_date') ? '' : 'hidden' }}">
+                                        {{ $errors->first('borrow_date') ?: 'Tanggal pinjam wajib diisi.' }}
+                                    </p>
                                 </div>
 
                                 <div>
@@ -202,23 +195,25 @@
             @error('return_date') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                             onclick="this.showPicker()">
                                     </div>
-                                    @error('return_date')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <p id="return_date_error"
+                                        class="text-red-500 text-xs mt-1 {{ $errors->has('return_date') ? '' : 'hidden' }}">
+                                        {{ $errors->first('return_date') ?: 'Tanggal pengembalian wajib diisi.' }}
+                                    </p>
                                 </div>
 
                                 <div class="md:col-span-2">
                                     <label
                                         class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Keperluan
                                         Peminjaman <span class="text-red-500">*</span></label>
-                                    <textarea rows="4" name="notes"
+                                    <textarea rows="4" name="notes" id="notes"
                                         class="w-full bg-gray-50 border rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder-gray-400
                                                 @error('notes') border-red-500 ring-1 ring-red-500 @else border-gray-200 @enderror"
                                         placeholder="Jelaskan keperluan peminjaman secara detail...">{{ old('notes') }}</textarea>
 
-                                    @error('notes')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <p id="notes_error"
+                                        class="text-red-500 text-xs mt-1 {{ $errors->has('notes') ? '' : 'hidden' }}">
+                                        {{ $errors->first('notes') ?: 'Keperluan peminjaman wajib diisi.' }}
+                                    </p>
                                 </div>
 
                             </div>
@@ -365,29 +360,95 @@
         document.addEventListener("DOMContentLoaded", function() {
 
             const form = document.getElementById("loanForm");
-
             const modal = document.getElementById("completeProfileModal");
-
-            const closeButtons = document.querySelectorAll(
-                ".closeCompleteProfileModal"
-            );
+            const closeButtons = document.querySelectorAll(".closeCompleteProfileModal");
 
             const isProfileComplete = @json($isProfileComplete);
+
+            const borrowDateInput = document.getElementById('borrow_date');
+            const returnDateInput = document.getElementById('return_date');
+            const notesInput = document.getElementById('notes');
+
+            const borrowDateError = document.getElementById('borrow_date_error');
+            const returnDateError = document.getElementById('return_date_error');
+            const notesError = document.getElementById('notes_error');
+
+            function showFieldError(input, errorEl, message) {
+                input.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                input.classList.remove('border-gray-200');
+                if (message) {
+                    errorEl.textContent = message;
+                }
+                errorEl.classList.remove('hidden');
+            }
+
+            function clearFieldError(input, errorEl) {
+                input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                input.classList.add('border-gray-200');
+                errorEl.classList.add('hidden');
+            }
+
+            // Bersihkan error saat user mulai mengisi field
+            borrowDateInput.addEventListener('input', () => clearFieldError(borrowDateInput, borrowDateError));
+            returnDateInput.addEventListener('input', () => clearFieldError(returnDateInput, returnDateError));
+            notesInput.addEventListener('input', () => clearFieldError(notesInput, notesError));
 
             // Submit form
             form.addEventListener("submit", function(e) {
 
+                e.preventDefault();
+
+                // 1. Cek dulu kelengkapan Data Peminjam.
+                //    Kalau belum lengkap, modal "Lengkapi Profile" WAJIB muncul,
+                //    apapun kondisi tanggal/keperluan (tidak perlu validasi field lain dulu).
                 if (!isProfileComplete) {
-
-                    e.preventDefault();
-
                     modal.classList.remove("hidden");
                     modal.classList.add("flex");
+                    return;
                 }
 
+                // 2. Data Peminjam sudah lengkap -> baru validasi Tanggal Pinjam,
+                //    Tanggal Pengembalian & Keperluan Peminjaman.
+                //    Kalau belum diisi -> munculkan pesan merah, JANGAN munculkan modal.
+                let isValid = true;
+
+                if (!borrowDateInput.value) {
+                    showFieldError(borrowDateInput, borrowDateError, 'Tanggal pinjam wajib diisi.');
+                    isValid = false;
+                } else {
+                    clearFieldError(borrowDateInput, borrowDateError);
+                }
+
+                if (!returnDateInput.value) {
+                    showFieldError(returnDateInput, returnDateError, 'Tanggal pengembalian wajib diisi.');
+                    isValid = false;
+                } else {
+                    clearFieldError(returnDateInput, returnDateError);
+                }
+
+                if (!notesInput.value.trim()) {
+                    showFieldError(notesInput, notesError, 'Keperluan peminjaman wajib diisi.');
+                    isValid = false;
+                } else {
+                    clearFieldError(notesInput, notesError);
+                }
+
+                if (!isValid) {
+                    const firstError = form.querySelector('.border-red-500');
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                    return;
+                }
+
+                // 3. Semua valid, submit form ke server
+                form.submit();
             });
 
-            // Semua tombol close
+            // Semua tombol close modal
             closeButtons.forEach(button => {
 
                 button.addEventListener("click", function() {

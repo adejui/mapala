@@ -365,8 +365,11 @@
                                     <template x-for="item in filteredItems" :key="item.id">
                                         <div class="flex flex-col gap-1">
                                             <!-- Item row -->
-                                            <div @click="toggleItem(item.id)"
-                                                class="flex cursor-pointer items-center gap-9 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-white/3">
+                                            <div @click="item.quantity > 0 && toggleItem(item.id)"
+                                                :class="item.quantity > 0 ?
+                                                    'cursor-pointer hover:bg-gray-50 dark:hover:bg-white/3' :
+                                                    'cursor-not-allowed opacity-50'"
+                                                class="flex items-center gap-9 rounded-lg p-3">
                                                 <div class="flex items-start gap-3">
                                                     <div class="flex h-5 w-5 items-center justify-center rounded-md border-[1.25px]"
                                                         :class="selectedMap[item.id] ? 'border-brand-500 bg-brand-500' :
@@ -386,7 +389,7 @@
                                                         class="block text-theme-sm font-medium text-gray-700 dark:text-gray-400"
                                                         x-text="item.name"></span>
                                                     <span class="text-theme-xs text-gray-500 dark:text-gray-400"
-                                                        x-text="`${item.category.name} - Stok: ${item.quantity}`"></span>
+                                                        x-text="item.quantity > 0 ? `${item.category.name} - Stok: ${item.quantity}` : `${item.category.name} - Stok Habis`"></span>
                                                 </div>
                                             </div>
 
@@ -424,7 +427,9 @@
 
                                 init() {
                                     this.rawItems.forEach(item => {
-                                        this.selectedMap[item.id] = this.selectedItems.includes(item.id);
+                                        // hanya tandai terpilih jika item punya stok
+                                        this.selectedMap[item.id] = item.quantity > 0 ?
+                                            this.selectedItems.includes(item.id) : false;
                                         this.quantityMap[item.id] = this.loanDetailsQuantity[item.id] ?? 1;
                                     });
                                     this.applyFilter();
@@ -434,21 +439,35 @@
                                     this.filteredItems = this.filterCategory === '' ?
                                         this.rawItems :
                                         this.rawItems.filter(i => i.category_id == this.filterCategory);
-                                    this.selectAll = this.filteredItems.every(i => this.selectedMap[i.id] === true);
+
+                                    // selectAll hanya menghitung item yang stoknya masih ada
+                                    const selectableItems = this.filteredItems.filter(i => i.quantity > 0);
+                                    this.selectAll = selectableItems.length > 0 &&
+                                        selectableItems.every(i => this.selectedMap[i.id] === true);
                                 },
 
                                 toggleAll() {
                                     this.selectAll = !this.selectAll;
                                     this.filteredItems.forEach(i => {
+                                        // item stok 0 dilewati, tidak ikut ter-select
+                                        if (i.quantity <= 0) return;
+
                                         this.selectedMap[i.id] = this.selectAll;
                                         if (this.quantityMap[i.id] === undefined) this.quantityMap[i.id] = 1;
                                     });
                                 },
 
                                 toggleItem(id) {
+                                    const item = this.rawItems.find(i => i.id === id);
+                                    // jaga-jaga: cegah toggle jika stok habis
+                                    if (!item || item.quantity <= 0) return;
+
                                     this.selectedMap[id] = !this.selectedMap[id];
                                     if (this.quantityMap[id] === undefined) this.quantityMap[id] = 1;
-                                    this.selectAll = this.filteredItems.every(i => this.selectedMap[i.id] === true);
+
+                                    const selectableItems = this.filteredItems.filter(i => i.quantity > 0);
+                                    this.selectAll = selectableItems.length > 0 &&
+                                        selectableItems.every(i => this.selectedMap[i.id] === true);
                                 },
 
                                 submitForm() {

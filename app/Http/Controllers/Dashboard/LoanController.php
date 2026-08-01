@@ -44,7 +44,7 @@ class LoanController extends Controller
         $search = $request->get('search');
         $status = $request->get('status');
 
-        $query = Loan::orderBy('created_at', 'desc');
+        $query = Loan::with(['user', 'opa'])->orderBy('created_at', 'desc');
 
         if ($search) {
             $query->where(function ($q) use ($search) {

@@ -46,12 +46,23 @@
                 <div class="flex items-center gap-3">
                     <!-- Export -->
                     <a href="#" id="exportBtn"
-                        class="inline-flex items-center gap-2 border-2 border-[#7EE2A8] text-[#22C55E] bg-white hover:bg-[#F0FFF5] px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 shadow-sm">
+                        class="inline-flex h-11 items-center gap-2 rounded-xl
+                        border-2 border-[#7EE2A8]
+                        bg-white px-5
+                        text-sm font-medium text-[#22C55E]
+                        shadow-sm
+                        transition-all duration-300
+                        hover:bg-[#F0FFF5] hover:shadow-md
 
-                        <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="excel" class="w-4 h-4">
+                        dark:border-[#22C55E]
+                        dark:bg-gray-900
+                        dark:text-[#4ADE80]
+                        dark:hover:bg-gray-800
+                        dark:hover:shadow-lg">
 
-                        Export
+                        <img src="{{ asset('assets/images/icons/logo-excel.png') }}" alt="Excel" class="h-4 w-4">
 
+                        <span>Export</span>
                     </a>
 
                     <button @click="showForm = true"

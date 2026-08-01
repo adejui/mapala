@@ -69,7 +69,7 @@
 
                     @forelse ($upcomingActivities as $activity)
                         <div
-                            class="group bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:shadow-purple-100/50 hover:border-purple-100 transition-all duration-300 relative overflow-hidden">
+                            class="group bg-white border border-gray-300 rounded-3xl p-6 hover:shadow-xl hover:shadow-purple-100/50 hover:border-purple-100 transition-all duration-300 relative overflow-hidden">
 
                             <div class="flex justify-between items-start mb-4">
                                 <div
