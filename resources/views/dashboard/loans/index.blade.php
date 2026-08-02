@@ -14,6 +14,7 @@
 
     <div x-data="{
         showForm: {{ $errors->any() ? 'true' : 'false' }},
+        showStockError: {{ session('stock_error') ? 'true' : 'false' }},
     }">
 
         <div x-data="{ showFilter: false }">
@@ -128,8 +129,21 @@
                             </button>
                         </div>
 
-                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
-                            role="menu" aria-orientation="vertical" aria-labelledby="statusDropdownBtn">
+                        <div
+                            class="hs-dropdown-menu transition-[opacity,margin] duration
+                            hs-dropdown-open:opacity-100
+                            opacity-0
+                            hidden
+                            min-w-60
+                            bg-white
+                            rounded-lg
+                            shadow-xl
+                            border
+                            border-gray-200
+                            mt-2
+                            z-[9999]
+                            relative
+                            dark:bg-gray-800">
                             <div class="p-1 space-y-0.5">
                                 <button type="button" data-value="all"
                                     class="status-option flex items-center w-full  gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
@@ -195,13 +209,13 @@
 
         <!-- Modal Form -->
         <template x-teleport="body">
-            <div x-cloak x-show="showForm" class="fixed inset-0 z-index flex items-center justify-end">
-                <div class="absolute inset-0 bg-black/50" @click="showForm = false"></div>
+            <div x-cloak x-show="showForm" class="fixed inset-0 isolate z-[999999] flex items-center justify-end">
+                <div class="absolute inset-0 -z-10 bg-black/50" @click="showForm = false"></div>
 
                 <div x-show="showForm" x-transition:enter="transform transition ease-in-out duration-500"
                     x-transition:enter-start="translate-x-full opacity-0"
                     x-transition:enter-end="translate-x-0 opacity-100"
-                    class="relative mr-8 z-index bg-white dark:bg-gray-800 w-full sm:w-[500px] h-fit shadow-2xl border-l border-gray-200 dark:border-neutral-700 p-6 overflow-y-auto rounded-2xl">
+                    class="relative mr-8 bg-white dark:bg-gray-800 w-full sm:w-[500px] h-fit shadow-2xl border-l border-gray-200 dark:border-neutral-700 p-6 overflow-y-auto rounded-2xl">
                     <div class="flex justify-between items-center pb-3 mb-4">
                         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">Form Data Peminjaman</h2>
                         <button @click="showForm = false"
@@ -416,6 +430,60 @@
                             </div>
                         </div>
                     </form>
+
+                </div>
+            </div>
+        </template>
+
+        <!-- Modal Stok Tidak Cukup (tampilan disamakan dengan modal Reject) -->
+        <template x-teleport="body">
+            <div x-cloak x-show="showStockError"
+                class="fixed inset-0 isolate z-[999999] overflow-y-auto flex items-center justify-center">
+
+                <div class="absolute inset-0 -z-10 bg-black/50" @click="showStockError = false"></div>
+
+                <div x-show="showStockError" x-transition:enter="transform transition-all ease-in-out duration-200"
+                    x-transition:enter-start="scale-95 opacity-0" x-transition:enter-end="scale-100 opacity-100"
+                    x-transition:leave="transform transition-all ease-in-out duration-150"
+                    x-transition:leave-start="scale-100 opacity-100" x-transition:leave-end="scale-95 opacity-0"
+                    class="relative w-[390px] flex flex-col px-4 py-6 bg-white border border-gray-200 shadow-lg rounded-xl dark:bg-gray-800 dark:border-gray-700">
+
+                    <div class="flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                            fill="none" stroke="#E6353D" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="m15 9-6 6"></path>
+                            <path d="m9 9 6 6"></path>
+                        </svg>
+
+                        <h3 class="text-xl mt-2 mb-1 font-semibold" style="color: #E6353D">
+                            Stok Tidak Cukup
+                        </h3>
+                    </div>
+
+                    <p class="mt-1 mb-7 text-gray-800 text-center dark:text-neutral-400">
+                        {{ session('stock_error') }}
+                    </p>
+
+                    <div class="flex justify-center gap-x-2">
+                        <button type="button"
+                            class="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-neutral-800 dark:text-white"
+                            @click="showStockError = false">
+                            Tutup
+                        </button>
+
+                        @if (session('stock_error_loan_id'))
+                            <form action="{{ route('loans.reject', session('stock_error_loan_id')) }}" method="POST"
+                                class="contents">
+                                @csrf
+                                <button type="submit" class="py-2 px-3 text-sm font-medium rounded-lg text-white"
+                                    style="background-color: #E6353D">
+                                    Tolak
+                                </button>
+                            </form>
+                        @endif
+                    </div>
 
                 </div>
             </div>

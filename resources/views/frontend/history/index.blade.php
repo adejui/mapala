@@ -97,73 +97,140 @@
     </div>
 
     <!-- Modal Detail Peminjaman -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
-        <div class="bg-white rounded-3xl shadow-xl w-full max-w-lg max-h-[85vh] overflow-hidden relative flex flex-col">
+    <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
 
-            <div class="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-gray-100">
+        <div class="relative w-full max-w-2xl h-[700px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-8 py-6 border-b bg-white shrink-0">
+
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900">
-                        Detail Peminjaman <span id="modalId" class="text-[#7C3AED]"></span>
+                    <h3 class="text-xl font-bold text-gray-900">
+                        Detail Peminjaman
+                        <span id="modalId" class="text-[#7C3AED]"></span>
                     </h3>
-                    <div id="modalStatusWrapper" class="mt-1"></div>
+
+                    <div id="modalStatusWrapper" class="mt-2"></div>
                 </div>
-                <button type="button" id="closeDetailModal" class="text-gray-400 hover:text-gray-600 transition shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+
+                <button type="button" id="closeDetailModal"
+                    class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
                     </svg>
+
                 </button>
+
             </div>
 
-            <div class="px-6 sm:px-8 py-5 overflow-y-auto custom-scrollbar">
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto px-8 py-6 custom-scrollbar">
 
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-gray-50 rounded-2xl p-4">
-                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Tanggal Pinjam
-                        </div>
-                        <div id="modalBorrowDate" class="text-sm font-semibold text-gray-900"></div>
+                <!-- Tanggal -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+
+                    <div class="rounded-2xl bg-gray-50 border border-gray-100 p-5">
+
+                        <p class="text-xs uppercase tracking-wider font-semibold text-gray-400">
+                            Tanggal Pinjam
+                        </p>
+
+                        <p id="modalBorrowDate" class="mt-2 text-base font-semibold text-gray-900">
+                        </p>
+
                     </div>
-                    <div class="bg-gray-50 rounded-2xl p-4">
-                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Tanggal Kembali
-                        </div>
-                        <div id="modalReturnDate" class="text-sm font-semibold text-gray-900"></div>
+
+                    <div class="rounded-2xl bg-gray-50 border border-gray-100 p-5">
+
+                        <p class="text-xs uppercase tracking-wider font-semibold text-gray-400">
+                            Tanggal Kembali
+                        </p>
+
+                        <p id="modalReturnDate" class="mt-2 text-base font-semibold text-gray-900">
+                        </p>
+
                     </div>
+
                 </div>
 
+                <!-- Keperluan -->
                 <div class="mb-6">
-                    <div class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">Keperluan Peminjaman
+
+                    <h4 class="text-xs uppercase tracking-wider font-semibold text-gray-400 mb-3">
+                        Keperluan Peminjaman
+                    </h4>
+
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+
+                        <p id="modalNotes" class="text-sm leading-7 text-gray-700">
+                        </p>
+
                     </div>
-                    <p id="modalNotes" class="text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-2xl p-4"></p>
+
                 </div>
 
+                <!-- Barang -->
                 <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="text-xs font-bold uppercase tracking-wide text-gray-400">Barang Dipinjam</div>
-                        <div class="text-xs font-bold text-[#7C3AED]" id="modalTotal"></div>
+
+                    <div class="flex justify-between items-center mb-4">
+
+                        <h4 class="text-xs uppercase tracking-wider font-semibold text-gray-400">
+                            Barang Dipinjam
+                        </h4>
+
+                        <span id="modalTotal" class="text-sm font-semibold text-[#7C3AED]">
+                        </span>
+
                     </div>
-                    <div id="modalItems" class="space-y-3"></div>
+
+                    <div id="modalItems" class="space-y-4">
+                    </div>
+
                 </div>
 
             </div>
 
-            <div class="px-6 sm:px-8 py-4 border-t border-gray-100">
+            <!-- Footer -->
+            <div class="border-t bg-white px-8 py-5 shrink-0">
+
                 <button type="button" id="closeDetailModalBottom"
-                    class="w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all">
+                    class="w-full h-12 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition">
+
                     Tutup
+
                 </button>
+
             </div>
 
         </div>
+
     </div>
 
     <style>
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db transparent;
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #e5e7eb;
+            background: #d1d5db;
             border-radius: 9999px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
         }
     </style>
 
